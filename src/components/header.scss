@@ -1,0 +1,59 @@
+.title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background:rgba(0, 112, 226, 1);
+    height: 56px;
+    position: relative;
+    .title_logo {
+        position: absolute; //logo解决margin
+        left: 120px;
+        width: 120px;
+        height: 39px;
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    }
+    .title_list {
+        cursor: pointer;    
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 120px;
+        height: 56px;
+        opacity: 0.8;
+        &:not(:last-child){
+            margin-right: 32px;
+        }
+        &:hover{
+            
+            background:RGBA(0, 95, 192, 1);
+        }
+        &.active{
+            background:RGBA(0, 95, 192, 1);
+            opacity: 1;
+        }
+        transition: all .3s; 
+        .title_icon {
+            width: 16px;
+            height: 16px;
+            display: inline-flex; //图片和盒子重合在一起
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        }
+        .title_content {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 19px;
+            color:#fff;
+            padding-left: 7px;
+        }
+
+    }
+    
+}

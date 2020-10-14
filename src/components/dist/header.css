@@ -1,0 +1,56 @@
+.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0070e2;
+  height: 56px;
+  position: relative;
+}
+.title .title_logo {
+  position: absolute;
+  left: 120px;
+  width: 120px;
+  height: 39px;
+}
+.title .title_logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.title .title_list {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 56px;
+  opacity: 0.8;
+  transition: all 0.3s;
+}
+.title .title_list:not(:last-child) {
+  margin-right: 32px;
+}
+.title .title_list:hover {
+  background: RGBA(0, 95, 192, 1);
+}
+.title .title_list.active {
+  background: RGBA(0, 95, 192, 1);
+  opacity: 1;
+}
+.title .title_list .title_icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+}
+.title .title_list .title_icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.title .title_list .title_content {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 19px;
+  color: #fff;
+  padding-left: 7px;
+}
