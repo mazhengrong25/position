@@ -1,27 +1,42 @@
 /*
- * @Description: 
+ * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-10-13 18:38:13
+ * @LastEditTime: 2020-10-15 17:58:29
  * @LastEditors: mazhengrong
  */
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 
-import App from './App';
-import Header from './components/header';
+import App from "./App";
+import Rule from "./components/rule";
+import Header from "./components/header";
+import Detail from "./components/detail";
 
-import './index.scss'
+import "./index.scss";
 
-import * as serviceWorker from './serviceWorker';
+import * as serviceWorker from "./serviceWorker";
+
+import { BrowserRouter as Router, Route } from "react-router-dom";
+
+import zhCN from 'antd/es/locale/zh_CN'
+import { ConfigProvider } from 'antd'
+import Axios from 'axios'
+import moment from 'moment'
+import 'moment/locale/zh-cn'
+moment.locale('zh-cn')
 
 ReactDOM.render(
-  
-  <React.StrictMode>
-    <Header></Header>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <ConfigProvider locale={zhCN}>
+    <Router>
+      <Header></Header>
+      <Route exact path="/" component={App}></Route>
+      <Route path="/rule" component={Rule}></Route>
+      <Route path="/detail" component={Detail}></Route>
+    </Router>
+  </ConfigProvider>,
+
+  document.getElementById("root")
 );
 
 serviceWorker.unregister();

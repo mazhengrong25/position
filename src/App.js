@@ -2,15 +2,25 @@
  * @Description: 
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-10-14 09:43:33
+ * @LastEditTime: 2020-10-16 09:45:20
  * @LastEditors: mazhengrong
  */
 import React, { Component } from 'react'
 // 单选框
-import { Radio , Select , DatePicker , Input , Button , Table} from 'antd';
+import { Radio , Select , DatePicker , Input , Button , Table , Tag  } from 'antd';
+
+import Axios from 'axios'
+
 
 import './App.scss'
 
+
+import moment from 'moment';
+
+import "moment/locale/zh-cn"
+import locale from 'antd/lib/date-picker/locale/en_US';
+import { Link } from 'react-router-dom';
+moment.locale('zh-cn')
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
@@ -19,57 +29,32 @@ const renderContent = function (value, row, index) {
       children: value,
       props: {},
     };
-    if (index === 4) {
-      obj.props.colSpan = 0;
-    }
     return obj;
   };
 const columns = [{
     title: '编号',
-    dataIndex: 'name',
-    render(text, row, index) {
-    //   if (index < 4) {
-    //     return <a href="#">{text}</a>;
-    //   }
-    //   return {
-    //     children: <a href="#">{text}</a>,
-    //     props: {
-    //       colSpan: 5,
-    //     },
-    //   };
-    },
-  }, {
-    title: '操作',
-    dataIndex: 'age',
+    dataIndex: 'number',
     render: renderContent,
   }, {
-    title: 'PNR',
-    colSpan: 2,
-    dataIndex: 'tel',
-    render(value, row, index) {
-      const obj = {
-        children: value,
-        props: {},
-      };
-      // 第三列的第三行行合并
-      if (index === 2) {
-        obj.props.rowSpan = 2;
-      }
-  
-      // 第三列的第四行被合并没了，设置 rowSpan = 0 直接不用渲染
-      if (index === 3) {
-        obj.props.rowSpan = 0;
-      }
-  
-      if (index === 4) {
-        obj.props.colSpan = 0;
-      }
-      return obj;
+    title: '操作',
+    coldiv: 2,
+    dataIndex: 'age',
+    render: (text, row, index) => {
+    
+      return  <div>
+        <Link to ="/detail"> <Tag color="#5AB957">详</Tag></Link>
+        <Tag color="#0070E2">处理</Tag>
+      </div>
+      
     },
   }, {
+    title: 'PNR',
+    // coldiv: 2,
+    dataIndex: 'PNR',
+    render: renderContent,
+  }, {
     title: '票号',
-    colSpan: 0,
-    dataIndex: 'phone',
+    dataIndex: 'ticno',
     render: renderContent,
   }, {
     title: 'PNR状态',
@@ -106,7 +91,16 @@ const columns = [{
   }, {
     title: '规则匹配',
     dataIndex: 'address',
-    render: renderContent,
+    render: (text, row, index) => {
+
+  
+    
+      return <div>
+        <Tag color="#5AB957">已关联</Tag>
+       
+      </div>
+      
+    },
   }, {
     title: '已执行时间',
     dataIndex: 'address',
@@ -118,59 +112,50 @@ const columns = [{
   }
 
 ];
-
-  const data = [{
-    key: '1',
-    name: '胡彦斌',
-    age: 32,
-    tel: '0571-22098909',
-    phone: 18889898989,
-    address: '西湖区湖底公园1号',
-  }, {
-    key: '2',
-    name: '胡彦祖',
-    tel: '0571-22098333',
-    phone: 18889898888,
-    age: 42,
-    address: '西湖区湖底公园1号',
-  }, {
-    key: '3',
-    name: '李大嘴',
-    age: 32,
-    tel: '0575-22098909',
-    phone: 18900010002,
-    address: '西湖区湖底公园1号',
-  }, {
-    key: '4',
-    name: '李夫人',
-    age: 18,
-    tel: '0575-22098909',
-    phone: 18900010002,
-    address: '西湖区湖底公园1号',
-  }, {
-    key: '5',
-    name: '习大大',
-    age: 18,
-    tel: '0575-22098909',
-    phone: 18900010002,
-    address: '西湖区湖底公园1号',
-  }];
+  const data = [];
+  for (let i = 1; i < 46; i++) {
+    data.push({
+      key: i,
+      number: `${i}`, //编号
+      PNR:156, //PNR
+      ticno:8865457746996, //票号
+      age: 32,
+      address: `London. ${i}`,
+      tel: `0571- ${i}`,
+      phone: `1888 ${1}`,
+    });
+  }
   
 
 export default class App extends Component {
+
+    componentDidMount() {
+      let data = {
+        airline_code:'', //航空公司二字代码
+        exec_state:'', //执行状态  0：待取位 1：已取位 2：已航变 3:已退票 4：无需取位 -1:取消失败
+
+      };
+      Axios.post('/api/pnr/getdata',data)
+      .then(res => {
+          console.log(res)
+      })
+      .catch(err =>{
+          console.log(err)
+      })
+  }
     render() {
         return (
             <div className="centent">
                 {/* 统计横幅 */}
                 <div className="count">
                   <RadioGroup>
-                    <RadioButton value="a">全部</RadioButton>
-                    <RadioButton value="b">待取位</RadioButton>
-                    <RadioButton value="c">已取位</RadioButton>
-                    <RadioButton value="d">已航变</RadioButton>
-                    <RadioButton value="d">已退票</RadioButton>
-                    <RadioButton value="d">无需取位</RadioButton>
-                    <RadioButton value="d">取消失败</RadioButton>
+                    <RadioButton value="a">全部 <div className="count_tag">3236</div></RadioButton>
+                    <RadioButton value="b">待取位 <div className="count_tag">832</div></RadioButton>
+                    <RadioButton value="c">已取位 <div className="count_tag">2036</div></RadioButton>
+                    <RadioButton value="d">已航变 <div className="count_tag">628</div></RadioButton>
+                    <RadioButton value="d">已退票 <div className="count_tag">103</div>  </RadioButton>
+                    <RadioButton value="d">无需取位 <div className="count_tag">65</div></RadioButton>
+                    <RadioButton value="d">取消失败 <div className="count_tag">24</div></RadioButton>
 
                   </RadioGroup>
                 </div>
@@ -221,37 +206,15 @@ export default class App extends Component {
                             </Select>
                             </div>
                         </div>
-                        {/* 执行类型 */}
-                        <div className="type_name">
-                            <div>执行类型</div>
-                            <div className="radio">
-                            <Select showSearch
-                                style={{ width: 200 }}
-                                placeholder="请选择人员"
-                                optionFilterProp="children"
-                                notFoundContent="无法找到"
-                              
-                            >
-                                <Option value="jack">杰克</Option>
-                                <Option value="lucy">露西</Option>
-                                <Option value="tom">汤姆</Option>
-                            </Select>
-                            </div>
-                        </div>
                         {/* 执行时间 */}
                         <div className="type_name">
-                            <div>执行时间</div>
+                            <Select defaultValue="执行时间" style={{ width: 100 }} bordered={false}>
+                              <Option >执行时间</Option>
+                              <Option >起飞时间</Option>
+                            </Select>
                             <div className="radio">
-                                <DatePicker
-                                   
-                                    placeholder="选择时间"
-                                   
-                                />-
-                                <DatePicker
-                                   
-                                    placeholder="选择时间"
-                                   
-                                />
+                                <DatePicker locale={locale} placeholder="选择时间"/>-
+                                <DatePicker placeholder="选择时间"/>
                             </div>
                         </div>
                         {/* 航空公司 */}
@@ -280,20 +243,15 @@ export default class App extends Component {
                         </div>
                         {/* 乘客姓名 */}
                         <div className="type_name">
-                            <div>乘客姓名</div>
-                            <div className="radio">
-                                <Select showSearch
-                                    style={{ width: 200 }}
-                                    placeholder="输入乘客姓名"
-                                    optionFilterProp="children"
-                                    notFoundContent="无法找到"
-                                
-                                >
-                                    <Option value="jack">杰克</Option>
-                                    <Option value="lucy">露西</Option>
-                                    <Option value="tom">汤姆</Option>
-                                </Select>
-                            </div>
+                          <Select defaultValue="乘客姓名" style={{ width: 100 }} bordered={false}>
+                            <Option >乘客姓名</Option>
+                            <Option >PNR编码</Option>
+                            <Option >票号</Option>
+                            <Option >订单号</Option>
+                          </Select>
+                          <div className="radio">
+                              <Input placeholder="输入乘客姓名" />
+                          </div>
                         </div>
                         {/* 搜索按钮 */}
                         <div className="type_name">
@@ -302,7 +260,7 @@ export default class App extends Component {
                     </div>
 
                     <div className="table_main">
-                        <Table columns={columns} dataSource={data} bordered />
+                        <Table columns={columns} dataSource={data} bordered/>
                     </div>
 
                 </div>

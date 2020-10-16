@@ -2,39 +2,50 @@
  * @Description: 
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-10-13 14:27:51
+ * @LastEditTime: 2020-10-15 17:56:37
  * @LastEditors: mazhengrong
  */
 import  React,{ Component } from 'react'
+import { message } from 'antd';
+import Axios from 'axios'
 // 引用样式
 import './header.scss'
 
+import { Link } from 'react-router-dom';
+
+const info = () => {
+    message.info('功能开发中');
+};
+
 
 export default class Header extends Component {
+
+
     render() {
         return (
             <div className="title">
+                
                 <div className="title_logo">
                     <img src={require("../static/title_logo.png")} alt=""/>
                 </div>
-                <div className="title_list active">
+                <Link className="title_list active" to="/">
                     <div className="title_icon">
                         <img src={require("../static/title_list.png")} alt=""/>
                     </div>
                     <div className="title_content">取位列表</div>
-                </div>
-                <div className="title_list">
+                </Link>
+                <div className="title_list" onClick={info}>
                     <div className="title_icon">
                         <img src={require("../static/key_in.png")} alt=""/>
                     </div>
                     <div className="title_content">手工取位</div>
                 </div>
-                <div className="title_list">
+                <Link className="title_list" to="/rule" >
                     <div className="title_icon">
                         <img src={require("../static/title_rule.png")} alt=""/>
                     </div>
                     <div className="title_content">取位规则</div>
-                </div>   
+                </Link>   
                 
             </div>
         )
