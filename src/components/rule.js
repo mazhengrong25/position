@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-10-16 17:33:53
+ * @LastEditTime: 2020-10-16 18:32:56
  * @LastEditors: Please set LastEditors
  */
 import  React,{ Component } from 'react'
@@ -38,8 +38,8 @@ const Option = Select.Option;
     },
     {
         title: '舱位代码',
-        dataIndex: 'age',
-        key: 'age',
+        dataIndex: 'cabin_code',
+        key: 'cabin_code',
        
     },
     {
@@ -50,32 +50,32 @@ const Option = Select.Option;
     },
     {
         title: '最早取位时限',
-        dataIndex: 'age',
-        key: 'age',
+        dataIndex: 'earliest_limit',
+        key: 'earliest_limit',
        
     },
     {
         title: '实际取位时限',
-        dataIndex: 'age',
-        key: 'age',
+        dataIndex: 'execute_limit',
+        key: 'execute_limit',
        
     },
     {
         title: '最晚取位时限',
-        dataIndex: 'age',
-        key: 'age',
+        dataIndex: 'latest_limit',
+        key: 'latest_limit',
        
     },
     {
         title: '生效日期',
-        dataIndex: 'age',
-        key: 'age',
+        dataIndex: 'effect_date',
+        key: 'effect_date',
        
     },
     {
         title: '截止日期',
-        dataIndex: 'age',
-        key: 'age',
+        dataIndex: 'expiry_date',
+        key: 'expiry_date',
        
     },
     {
@@ -93,10 +93,6 @@ const Option = Select.Option;
   ];
   const selectedRowKeys=[];
   const hasSelected = selectedRowKeys.length > 0;
-//   const rowSelection = {
-//     selectedRowKeys,
-//     // onChange: this.onSelectChange,
-//   };
   
 export default class Rule extends Component {
 
@@ -140,12 +136,12 @@ export default class Rule extends Component {
         let data = {
             "page_no":1,                //类型：Number  必有字段  备注：页码
             "page_size":10,                //类型：Number  必有字段  备注：显示数据条数
-            "airline_code":"test",                //类型：String  必有字段  备注：航空公司二字代码
+            "airline_code":"",                //类型：String  必有字段  备注：航空公司二字代码
             "intl_flag":false,                //类型：Boolean  必有字段  备注：国际国内标识 true:国际 false:国内
             "execute_mode":true,                //类型：Boolean  必有字段  备注：执行模式 true:执行取位 false:禁止取位
-            "cabin_code":"test",                //类型：String  必有字段  备注：舱位模式
+            "cabin_code":"",                //类型：String  必有字段  备注：舱位模式
             "config_state":0,                //类型：Number  必有字段  备注：配置状态 0:所有 1：禁用 2：可用
-            "key_id":1                //类型：Number  可有字段  备注：表id
+            "key_id":0               //类型：Number  可有字段  备注：表id
         };
         Axios.post("/api/pnrcancelconfig/getdata", data)
           .then((res) => {
@@ -182,9 +178,9 @@ export default class Rule extends Component {
                                 <Input placeholder="请输入航司代码" />
                             </div>
                         </div>
-                        {/* 舱位模式 */}
+                        {/* 执行模式 */}
                         <div className="type_name">
-                            <div>舱位模式</div>
+                            <div>执行模式</div>
                             <div className="radio">
                                 <Select showSearch
                                     style={{ width: 200 }}
