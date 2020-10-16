@@ -1,271 +1,359 @@
 /*
- * @Description: 
+ * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-10-16 09:45:20
- * @LastEditors: mazhengrong
+ * @LastEditTime: 2020-10-16 17:49:20
+ * @LastEditors: Please set LastEditors
  */
-import React, { Component } from 'react'
+import React, { Component } from "react";
 // 单选框
-import { Radio , Select , DatePicker , Input , Button , Table , Tag  } from 'antd';
+import { Radio, Select, DatePicker, Input, Button, Table, Tag } from "antd";
 
-import Axios from 'axios'
+import Axios from "axios";
 
+import "./App.scss";
 
-import './App.scss'
+import moment from "moment";
 
+import "moment/locale/zh-cn";
+import locale from "antd/lib/date-picker/locale/en_US";
+import { Link } from "react-router-dom";
+moment.locale("zh-cn");
 
-import moment from 'moment';
-
-import "moment/locale/zh-cn"
-import locale from 'antd/lib/date-picker/locale/en_US';
-import { Link } from 'react-router-dom';
-moment.locale('zh-cn')
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
-const renderContent = function (value, row, index) {
-    const obj = {
-      children: value,
-      props: {},
-    };
-    return obj;
-  };
-const columns = [{
-    title: '编号',
-    dataIndex: 'number',
-    render: renderContent,
-  }, {
-    title: '操作',
+
+const columns = [
+  {
+    title: "编号",
+    dataIndex: "number",
+    key: 'number'
+  },
+  {
+    title: "操作",
     coldiv: 2,
-    dataIndex: 'age',
+    dataIndex: "action",
+    key: 'action',
     render: (text, row, index) => {
-    
-      return  <div>
-        <Link to ="/detail"> <Tag color="#5AB957">详</Tag></Link>
-        <Tag color="#0070E2">处理</Tag>
-      </div>
-      
+      return (
+        <div>
+          <Link to="/detail">
+            <Tag color="#5AB957">详</Tag>
+          </Link>
+          <Tag color="#0070E2">处理</Tag>
+        </div>
+      );
     },
-  }, {
-    title: 'PNR',
-    // coldiv: 2,
-    dataIndex: 'PNR',
-    render: renderContent,
-  }, {
-    title: '票号',
-    dataIndex: 'ticno',
-    render: renderContent,
-  }, {
-    title: 'PNR状态',
-    dataIndex: 'address',
-    render: renderContent,
-  }, {
-    title: 'GDS系统标识',
-    dataIndex: 'address',
-    render: renderContent,
-  }, {
-    title: '票证类型',
-    dataIndex: 'address',
-    render: renderContent,
-  }, {
-    title: '航司代码',
-    dataIndex: 'address',
-    render: renderContent,
-  }, {
-    title: '起飞时间',
-    dataIndex: 'address',
-    render: renderContent,
-  }, {
-    title: '乘客姓名',
-    dataIndex: 'address',
-    render: renderContent,
-  }, {
-    title: '航程类型',
-    dataIndex: 'address',
-    render: renderContent,
-  }, {
-    title: '执行状态',
-    dataIndex: 'address',
-    render: renderContent,
-  }, {
-    title: '规则匹配',
-    dataIndex: 'address',
+  },
+  {
+    title: "PNR",
+    dataIndex: "pnr_code",
+    key: 'pnr_code'
+  },
+  {
+    title: "票号",
+    dataIndex: "ticket_no",
+    key: "ticket_no"
+  },
+  {
+    title: "PNR状态",
+    dataIndex: "issue_dept_code",
+    key: 'issue_dept_code'
+  },
+  {
+    title: "GDS系统标识",
+    dataIndex: "gds_type",
+    key: "gds_type"
+  },
+  {
+    title: "票证类型",
+    dataIndex: "ticket_type",
+    key: "ticket_type"
+  },
+  {
+    title: "航司代码",
+    dataIndex: "airline_code",
+    key: "airline_code"
+  },
+  {
+    title: "起飞时间",
+    dataIndex: "fly_time",
+    key: "fly_time"
+  },
+  {
+    title: "乘客姓名",
+    dataIndex: "passenger_name",
+    key: "passenger_name"
+  },
+  {
+    title: "航程类型",
+    dataIndex: "route_type",
+    key: "route_type",
+    render: (text) => {
+      let newType = text === 'OW'? '单程': ''
+      return newType
+    }
+  },
+  {
+    title: "执行状态",
+    dataIndex: "exec_state",
+    key: "exec_state",
+    render: (motion) => {
+      let newmotion = motion === '0'?'待取位'
+                              :'1'?'已取位'
+                              :'2'?'已航变'
+                              :'3'?'已退票'
+                              :'4'?'无需取位'
+                              :'-1'?'取消失败':''
+      return newmotion
+    }
+  },
+  {
+    title: "规则匹配",
+    dataIndex: "address",
+    key: 'address',
     render: (text, row, index) => {
-
-  
-    
-      return <div>
-        <Tag color="#5AB957">已关联</Tag>
-       
-      </div>
-      
+      return (
+        <div>
+          <Tag color="#5AB957">已关联</Tag>
+        </div>
+      );
     },
-  }, {
-    title: '已执行时间',
-    dataIndex: 'address',
-    render: renderContent,
-  }, {
-    title: '预计下次执行时间',
-    dataIndex: 'address',
-    render: renderContent,
-  }
-
+  },
+  {
+    title: "已执行时间",
+    dataIndex: "exec_time",
+    key: "exec_time"
+  },
+  {
+    title: "预计下次执行时间",
+    dataIndex: "next_exec_time",
+    key: "next_exec_time"
+  },
 ];
-  const data = [];
-  for (let i = 1; i < 46; i++) {
-    data.push({
-      key: i,
-      number: `${i}`, //编号
-      PNR:156, //PNR
-      ticno:8865457746996, //票号
-      age: 32,
-      address: `London. ${i}`,
-      tel: `0571- ${i}`,
-      phone: `1888 ${1}`,
-    });
-  }
-  
 
 export default class App extends Component {
+  componentDidMount() {
+    this.getToken()
 
-    componentDidMount() {
-      let data = {
-        airline_code:'', //航空公司二字代码
-        exec_state:'', //执行状态  0：待取位 1：已取位 2：已航变 3:已退票 4：无需取位 -1:取消失败
-
-      };
-      Axios.post('/api/pnr/getdata',data)
-      .then(res => {
-          console.log(res)
-      })
-      .catch(err =>{
-          console.log(err)
-      })
   }
-    render() {
-        return (
-            <div className="centent">
-                {/* 统计横幅 */}
-                <div className="count">
-                  <RadioGroup>
-                    <RadioButton value="a">全部 <div className="count_tag">3236</div></RadioButton>
-                    <RadioButton value="b">待取位 <div className="count_tag">832</div></RadioButton>
-                    <RadioButton value="c">已取位 <div className="count_tag">2036</div></RadioButton>
-                    <RadioButton value="d">已航变 <div className="count_tag">628</div></RadioButton>
-                    <RadioButton value="d">已退票 <div className="count_tag">103</div>  </RadioButton>
-                    <RadioButton value="d">无需取位 <div className="count_tag">65</div></RadioButton>
-                    <RadioButton value="d">取消失败 <div className="count_tag">24</div></RadioButton>
 
-                  </RadioGroup>
-                </div>
-                {/* 表格 */} 
-                <div className="table">
-                    <div className="table_type">
-                        {/* 订单类型 */}
-                        <div className="type_name">
-                            <div>订单类型</div>
-                            <div className="radio">
-                            <RadioGroup >
-                                <Radio key="a" >国内</Radio>
-                                <Radio key="b" >国际</Radio>
-                            </RadioGroup>
-                            </div>
-                        </div>
-                        {/* 执行状态 */}
-                        <div className="type_name">
-                            <div>执行状态</div>
-                            <div className="radio">
-                            <Select showSearch
-                                style={{ width: 200 }}
-                                placeholder="请选择人员"
-                                optionFilterProp="children"
-                                notFoundContent="无法找到"
-                              
-                            >
-                                <Option value="jack">杰克</Option>
-                                <Option value="lucy">露西</Option>
-                                <Option value="tom">汤姆</Option>
-                            </Select>
-                            </div>
-                        </div>
-                        {/* 票证类型 */}
-                        <div className="type_name">
-                            <div>票证类型</div>
-                            <div className="radio">
-                            <Select showSearch
-                                style={{ width: 200 }}
-                                placeholder="请选择人员"
-                                optionFilterProp="children"
-                                notFoundContent="无法找到"
-                              
-                            >
-                                <Option value="jack">杰克</Option>
-                                <Option value="lucy">露西</Option>
-                                <Option value="tom">汤姆</Option>
-                            </Select>
-                            </div>
-                        </div>
-                        {/* 执行时间 */}
-                        <div className="type_name">
-                            <Select defaultValue="执行时间" style={{ width: 100 }} bordered={false}>
-                              <Option >执行时间</Option>
-                              <Option >起飞时间</Option>
-                            </Select>
-                            <div className="radio">
-                                <DatePicker locale={locale} placeholder="选择时间"/>-
-                                <DatePicker placeholder="选择时间"/>
-                            </div>
-                        </div>
-                        {/* 航空公司 */}
-                        <div className="type_name">
-                            <div>航空公司</div>
-                            <div className="radio">
-                                <Input placeholder="请填写" />
-                            </div>
-                        </div>
-                        {/* 是否自愿 */}
-                        <div className="type_name">
-                            <div>是否自愿</div>
-                            <div className="radio">
-                                <Select showSearch
-                                    style={{ width: 200 }}
-                                    placeholder="请选择"
-                                    optionFilterProp="children"
-                                    notFoundContent="无法找到"
-                                
-                                >
-                                    <Option value="jack">杰克</Option>
-                                    <Option value="lucy">露西</Option>
-                                    <Option value="tom">汤姆</Option>
-                                </Select>
-                            </div>
-                        </div>
-                        {/* 乘客姓名 */}
-                        <div className="type_name">
-                          <Select defaultValue="乘客姓名" style={{ width: 100 }} bordered={false}>
-                            <Option >乘客姓名</Option>
-                            <Option >PNR编码</Option>
-                            <Option >票号</Option>
-                            <Option >订单号</Option>
-                          </Select>
-                          <div className="radio">
-                              <Input placeholder="输入乘客姓名" />
-                          </div>
-                        </div>
-                        {/* 搜索按钮 */}
-                        <div className="type_name">
-                            <Button type="primary">搜索</Button>
-                        </div>
-                    </div>
+  constructor(props) {
+    console.log(props);
+    super(props);
+    this.state = {
+      data: [],
+      pnrValue: '乘客姓名',
+      pnrType: ''
+    };
+  }
 
-                    <div className="table_main">
-                        <Table columns={columns} dataSource={data} bordered/>
-                    </div>
 
-                </div>
-            </div>
-        )
+  // 获取token
+  getToken (){
+    let data = {
+      key: ''
     }
-}
 
+    Axios.get('api/token/Authenticate',data)
+      .then(res =>{
+        console.log(res)
+        if(res.data.status === 0){
+          let token = res.data.token
+          console.log(token)
+          Axios.defaults.headers.common['Authorization'] = 'Bearer '+token;
+  
+          this.getDataList()
+        }
+
+
+      })
+
+  }
+
+  // 获取取位列表
+  getDataList (){
+    let data = {
+      page_no: 1, // 页码
+      page_size: 20, // 当前页条数
+      airline_code: "GJ", // 航空公司二字代码
+      intl_flag: false, // 国际国内标识
+      exec_state: 1, //执行状态，不传或传null查询所有。0：待取位 1：已取位 2：已航变 3:已退票 4：无需取位 -1:取消失败
+      ticket_type: null,
+      refund_type: 1, // 退票类型 0：所有 1：自愿 2：非自愿
+      date_type: 1, // 日期类型 0:导入时间 1：起飞时间 2：执行时间
+      begin_date: null,
+      end_date: null,
+      query_type: 1, // 搜索类型1:PNR编码 2:票号 3:订单号 4:乘客姓名
+      query_value: null,
+    };
+    Axios.post("/api/pnr/getdata", data)
+      .then((res) => {
+        this.setState({
+          data: res.data.datas
+        })
+        console.log(this.state.data)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+   // 搜索类型 点击事件
+  handleChange = (value) => {
+    console.log(value); 
+    this.setState({
+      pnrValue: value.label, //选择类型
+      pnrType: value.value //选择框内容
+    })
+  }
+
+  render() {
+    return (
+      <div className="centent">
+        {/* 统计横幅 */}
+        <div className="count">
+          <RadioGroup>
+            <RadioButton value="a">
+              全部 <div className="count_tag">3236</div>
+            </RadioButton>
+            <RadioButton value="b">
+              待取位 <div className="count_tag">832</div>
+            </RadioButton>
+            <RadioButton value="c">
+              已取位 <div className="count_tag">2036</div>
+            </RadioButton>
+            <RadioButton value="d">
+              已航变 <div className="count_tag">628</div>
+            </RadioButton>
+            <RadioButton value="d">
+              已退票 <div className="count_tag">103</div>{" "}
+            </RadioButton>
+            <RadioButton value="d">
+              无需取位 <div className="count_tag">65</div>
+            </RadioButton>
+            <RadioButton value="d">
+              取消失败 <div className="count_tag">24</div>
+            </RadioButton>
+          </RadioGroup>
+        </div>
+        {/* 表格 */}
+        <div className="table">
+          <div className="table_type">
+            {/* 订单类型 */}
+            <div className="type_name">
+              <div>订单类型</div>
+              <div className="radio">
+                <RadioGroup>
+                  <Radio key="a">国内</Radio>
+                  <Radio key="b">国际</Radio>
+                </RadioGroup>
+              </div>
+            </div>
+            {/* 执行状态 */}
+            <div className="type_name">
+              <div>执行状态</div>
+              <div className="radio">
+                <Select
+                  showSearch
+                  style={{ width: 200 }}
+                  placeholder="请选择人员"
+                  optionFilterProp="children"
+                  notFoundContent="无法找到"
+                >
+                  <Option value="jack">杰克</Option>
+                  <Option value="lucy">露西</Option>
+                  <Option value="tom">汤姆</Option>
+                </Select>
+              </div>
+            </div>
+            {/* 票证类型 */}
+            <div className="type_name">
+              <div>票证类型</div>
+              <div className="radio">
+                <Select
+                  showSearch
+                  style={{ width: 200 }}
+                  placeholder="请选择人员"
+                  optionFilterProp="children"
+                  notFoundContent="无法找到"
+                >
+                  <Option value="jack">杰克</Option>
+                  <Option value="lucy">露西</Option>
+                  <Option value="tom">汤姆</Option>
+                </Select>
+              </div>
+            </div>
+            {/* 执行时间 */}
+            <div className="type_name">
+              <Select
+                defaultValue={{value: "2"}}
+                labelInValue
+                style={{ width: 100 }}
+                bordered={false}
+                onChange={this.handleChange}>
+                <Option value="2">执行时间</Option>
+                <Option value="1">起飞时间</Option>
+                <Option value="0">导入时间</Option>
+              </Select>
+              <div className="radio">
+                <DatePicker locale={locale} placeholder="选择时间" />-
+                <DatePicker placeholder="选择时间" />
+              </div>
+            </div>
+            {/* 航空公司 */}
+            <div className="type_name">
+              <div>航空公司</div>
+              <div className="radio">
+                <Input placeholder="请填写" />
+              </div>
+            </div>
+            {/* 是否自愿 */}
+            <div className="type_name">
+              <div>是否自愿</div>
+              <div className="radio">
+                <Select
+                  showSearch
+                  style={{ width: 200 }}
+                  placeholder="请选择"
+                  optionFilterProp="children"
+                  notFoundContent="无法找到"
+                >
+                  <Option value="jack">杰克</Option>
+                  <Option value="lucy">露西</Option>
+                  <Option value="tom">汤姆</Option>
+                </Select>
+              </div>
+            </div>
+            {/* 乘客姓名 */}
+            <div className="type_name">
+              <Select
+                defaultValue={{value: "4"}}
+                labelInValue 
+                style={{ width: 100 }}
+                bordered={false}
+                onChange={this.handleChange}>
+                <Option value="4">乘客姓名</Option>
+                <Option value="1">PNR编码</Option>
+                <Option value="2">票号</Option>
+                <Option value="3">订单号</Option>
+              </Select>
+              <div className="radio">
+                <Input placeholder={'请输入'+ this.state.pnrValue} />
+              </div>
+            </div>
+            {/* 搜索按钮 */}
+            <div className="type_name">
+              <Button type="primary">搜索</Button>
+            </div>
+          </div>
+
+          <div className="table_main">
+            <Table columns={columns} dataSource={this.state.data} bordered />
+          </div>
+        </div>
+      </div>
+    );
+  }
+}

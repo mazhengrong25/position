@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-10-15 17:56:46
- * @LastEditors: mazhengrong
+ * @LastEditTime: 2020-10-16 17:33:53
+ * @LastEditors: Please set LastEditors
  */
 import  React,{ Component } from 'react'
 
@@ -16,20 +16,6 @@ import './rule.scss'
 
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
-
-const data = [];
-for (let i = 1; i < 46; i++) {
-    data.push({
-      key: i,
-      number: `${i}`, //编号
-      PNR:156, //PNR
-      ticno:8865457746996, //票号
-      age: 32,
-      address: `London. ${i}`,
-      tel: `0571- ${i}`,
-      phone: `1888 ${1}`,
-    });
-  }
 
   const columns = [
     {
@@ -107,34 +93,71 @@ for (let i = 1; i < 46; i++) {
   ];
   const selectedRowKeys=[];
   const hasSelected = selectedRowKeys.length > 0;
-  const rowSelection = {
-    selectedRowKeys,
-    // onChange: this.onSelectChange,
-  };
+//   const rowSelection = {
+//     selectedRowKeys,
+//     // onChange: this.onSelectChange,
+//   };
   
 export default class Rule extends Component {
 
+    componentDidMount() {
+       this.getToken();
+    }
 
-    state = {
-        selectedRowKeys: [], // Check here to configure the default column
-        loading: false,
-      };
+    constructor(props) {
+        console.log(props);
+        super(props);
+        this.state = {
+          data: [],
+        };
+    }
+
+    // 获取token
+    getToken (){
+        let data = {
+        key: ''
+        }
+
+        Axios.get('api/token/Authenticate',data)
+        .then(res =>{
+            console.log(res)
+            if(res.data.status === 0){
+            let token = res.data.token
+            console.log(token)
+            Axios.defaults.headers.common['Authorization'] = 'Bearer '+token;
     
-      start = () => {
-        this.setState({ loading: true });
-        // ajax request after empty completing
-        setTimeout(() => {
-          this.setState({
-            selectedRowKeys: [],
-            loading: false,
+            this.getDataList()
+            }
+
+
+        })
+
+    }
+
+    //获取取位规则列表
+    getDataList () {
+
+        let data = {
+            "page_no":1,                //类型：Number  必有字段  备注：页码
+            "page_size":10,                //类型：Number  必有字段  备注：显示数据条数
+            "airline_code":"test",                //类型：String  必有字段  备注：航空公司二字代码
+            "intl_flag":false,                //类型：Boolean  必有字段  备注：国际国内标识 true:国际 false:国内
+            "execute_mode":true,                //类型：Boolean  必有字段  备注：执行模式 true:执行取位 false:禁止取位
+            "cabin_code":"test",                //类型：String  必有字段  备注：舱位模式
+            "config_state":0,                //类型：Number  必有字段  备注：配置状态 0:所有 1：禁用 2：可用
+            "key_id":1                //类型：Number  可有字段  备注：表id
+        };
+        Axios.post("/api/pnrcancelconfig/getdata", data)
+          .then((res) => {
+            this.setState({
+              data: res.data.datas
+            })
+            console.log(data)
+          })
+          .catch((err) => {
+            console.log(err);
           });
-        }, 1000);
-      };
-    
-      onSelectChange = selectedRowKeys => {
-        console.log('selectedRowKeys changed: ', selectedRowKeys);
-        this.setState({ selectedRowKeys });
-      };
+    }
 
   
     render() {
@@ -226,7 +249,7 @@ export default class Rule extends Component {
                         <span style={{ marginLeft: 8 }}>
                             {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
                         </span>
-                        <Table columns={columns} dataSource={data} rowSelection={rowSelection} onChange={this.handleChange} />
+                        <Table columns={columns} dataSource={this.state.data}  onChange={this.handleChange} bordered/>
                     </div>
 
                 </div>
