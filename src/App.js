@@ -2,12 +2,12 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-10-16 17:49:20
+ * @LastEditTime: 2020-10-19 16:29:40
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from "react";
 // 单选框
-import { Radio, Select, DatePicker, Input, Button, Table, Tag } from "antd";
+import { Radio, Select, DatePicker, Input, Button, Table, Tag , Tooltip} from "antd";
 
 import Axios from "axios";
 
@@ -41,7 +41,9 @@ const columns = [
           <Link to="/detail">
             <Tag color="#5AB957">详</Tag>
           </Link>
-          <Tag color="#0070E2">处理</Tag>
+          <Tooltip title={123}>
+            <Tag color="#0070E2">处理</Tag>
+          </Tooltip>
         </div>
       );
     },
@@ -79,7 +81,10 @@ const columns = [
   {
     title: "起飞时间",
     dataIndex: "fly_time",
-    key: "fly_time"
+    key: "fly_time",
+    render: (state) => {
+      return moment(state).format('YYYY-MM-DD HH:mm')
+    }
   },
   {
     title: "乘客姓名",
@@ -100,23 +105,62 @@ const columns = [
     dataIndex: "exec_state",
     key: "exec_state",
     render: (motion) => {
-      let newmotion = motion === '0'?'待取位'
-                              :'1'?'已取位'
-                              :'2'?'已航变'
-                              :'3'?'已退票'
-                              :'4'?'无需取位'
-                              :'-1'?'取消失败':''
-      return newmotion
+      let style
+      let text 
+      if(motion === 0){
+          style = {
+              color: '#0070E2'
+          }
+          text = '待取位'
+      }else if(motion === 1){
+          style = {
+              color: '#5AB957'
+          }
+          text ='已取位'
+      }else if(motion === 2){
+          style = {
+            color: '#5AB957'
+          }
+          text ='已航变'
+      }else if(motion === 3){
+        style = {
+          color: '#5AB957'
+        }
+        text ='已退票'
+      }else if(motion === 4){
+        style = {
+          color: '#999999'
+        }
+        text ='无需取位'
+      }
+      else if(motion === -1){
+        style = {
+          color: '#FF0000'
+        }
+        text ='取消失败'
+      }
+      return (
+          <div style={style}>{text}</div>
+      )
     }
   },
   {
     title: "规则匹配",
-    dataIndex: "address",
-    key: 'address',
-    render: (text, row, index) => {
+    dataIndex: "config_id",
+    key: 'config_id',
+    render: (state) => {
+      let color
+      let text
+      if(state != '0'){
+          color = '#5AB957'
+          text = '已关联'
+      }else if(state === '0'){
+          color = '#AFB9C4'
+          text = '未关联'
+      }
       return (
         <div>
-          <Tag color="#5AB957">已关联</Tag>
+          <Tag color={color}>{text}</Tag>
         </div>
       );
     },
@@ -124,12 +168,18 @@ const columns = [
   {
     title: "已执行时间",
     dataIndex: "exec_time",
-    key: "exec_time"
+    key: "exec_time",
+    render: (state) => {
+      return moment(state).format('YYYY-MM-DD HH:mm:ss')
+    }
   },
   {
     title: "预计下次执行时间",
     dataIndex: "next_exec_time",
-    key: "next_exec_time"
+    key: "next_exec_time",
+    render: (state) => {
+      return moment(state).format('YYYY-MM-DD HH:mm:ss')
+    }
   },
 ];
 
@@ -258,13 +308,18 @@ export default class App extends Component {
                 <Select
                   showSearch
                   style={{ width: 200 }}
-                  placeholder="请选择人员"
+                  placeholder="所有"
                   optionFilterProp="children"
                   notFoundContent="无法找到"
                 >
-                  <Option value="jack">杰克</Option>
-                  <Option value="lucy">露西</Option>
-                  <Option value="tom">汤姆</Option>
+                  <Option value="jack">所有</Option>
+                  <Option value="lucy">待取位</Option>
+                  <Option value="5">已取位</Option>
+                  <Option value="1">已航变</Option>
+                  <Option value="2">已退票</Option>
+                  <Option value="3">无需取位</Option>
+                  <Option value="4">取消失败</Option>
+
                 </Select>
               </div>
             </div>
@@ -275,13 +330,15 @@ export default class App extends Component {
                 <Select
                   showSearch
                   style={{ width: 200 }}
-                  placeholder="请选择人员"
+                  placeholder="所有"
                   optionFilterProp="children"
                   notFoundContent="无法找到"
-                >
-                  <Option value="jack">杰克</Option>
-                  <Option value="lucy">露西</Option>
-                  <Option value="tom">汤姆</Option>
+                >  
+                  <Option value="jack1">所有</Option>
+                  <Option value="jack">BOP</Option>
+                  <Option value="lucy">BSP</Option>
+                  <Option value="tom">B2B</Option>
+                  <Option value="tom1">OP</Option>
                 </Select>
               </div>
             </div>
@@ -320,9 +377,9 @@ export default class App extends Component {
                   optionFilterProp="children"
                   notFoundContent="无法找到"
                 >
-                  <Option value="jack">杰克</Option>
-                  <Option value="lucy">露西</Option>
-                  <Option value="tom">汤姆</Option>
+                  <Option value="jack">所有</Option>
+                  <Option value="lucy">自愿</Option>
+                  <Option value="tom">非自愿</Option>
                 </Select>
               </div>
             </div>
@@ -350,8 +407,9 @@ export default class App extends Component {
           </div>
 
           <div className="table_main">
-            <Table columns={columns} dataSource={this.state.data} bordered />
+            <Table columns={columns} dataSource={this.state.data} pagination={false} bordered />
           </div>
+  
         </div>
       </div>
     );
