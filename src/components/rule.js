@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-10-19 18:26:36
+ * @LastEditTime: 2020-10-20 10:11:28
  * @LastEditors: Please set LastEditors
  */
 import  React,{ Component } from 'react'
@@ -191,7 +191,9 @@ export default class Rule extends Component {
                 }
                
             },
-          ]
+          ],
+
+          selectedRowKeys: [],
         };
     }
 
@@ -232,8 +234,12 @@ export default class Rule extends Component {
         };
         Axios.post("/api/pnrcancelconfig/getdata", data)
           .then((res) => {
+              let newData  = res.data.datas
+              newData.map((item, index) => {
+                  item['key'] = index
+              })
             this.setState({
-              data: res.data.datas
+              data: newData
             })
             console.log(data)
           })
@@ -275,6 +281,11 @@ export default class Rule extends Component {
     
   
     render() {
+        const { selectedRowKeys } = this.state;
+        const rowSelection = {
+          selectedRowKeys,
+          onChange: this.onSelectChange,
+        };
         return (
         
                 <div className="table">
@@ -350,7 +361,7 @@ export default class Rule extends Component {
                             <Button onClick={this.clearAll}>批量停用</Button>
                             <Button onClick={this.clearAll}>批量删除</Button>
                         </Space>
-                        <Table columns={this.state.columns} dataSource={this.state.data}  
+                        <Table rowSelection={rowSelection} columns={this.state.columns} dataSource={this.state.data}  
                         onChange={this.handleChange} 
                         // rowSelection={rowSelection}
                         pagination={false}

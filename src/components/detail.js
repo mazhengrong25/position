@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: mazhengrong
  * @Date: 2020-10-15 11:40:14
- * @LastEditTime: 2020-10-15 18:13:39
- * @LastEditors: mazhengrong
+ * @LastEditTime: 2020-10-20 11:37:00
+ * @LastEditors: Please set LastEditors
  */
 import  React,{ Component } from 'react'
 import Axios from 'axios'
@@ -13,51 +13,78 @@ import {  Table  } from 'antd';
 // 引用样式
 import './detail.scss'
 
-const renderContent = function (value, row, index) {
-    const obj = {
-      children: value,
-      props: {},
-    };
-    return obj;
-};
 const columns = [{
     title: '操作者',
-    dataIndex: 'name',
-    render: renderContent,
+    dataIndex: 'creator',
+   
   }, {
     title: '操作时间',
-    coldiv: 2,
-    dataIndex: 'time',
+    dataIndex: 'create_time',
+   
   }, {
     title: '日志内容',
-    dataIndex: 'con',
-    render: renderContent,
+    dataIndex: 'content',
+   
   }
 
 ];
-const data = [];
-  for (let i = 1; i < 4; i++) {
-    data.push({
-      key: i,
-      name: `易烊千玺`, //编号
-      time: `2020-10-20 13:23:00`,
-      con: `这里是内容这里是内容这里是内容这里是内容这里是内容，这里是内容这里是内容`
-    });
-  }
 
 export default class Detail extends Component{
 
+    
+
     componentDidMount() {
-        let data = {
-            mock_key:'',
+
+        this.getToken()
+
+    }
+
+    constructor(props) {
+        console.log(props);
+        super(props);
+        this.state = {
+          data: [],
         };
-        Axios.post('/api/pnr/getcancelrecord',data)
-        .then(res => {
+    }
+
+    // 获取token
+    getToken (){
+        let data = {
+            key_id: ''
+        }
+
+        Axios.get('api/token/Authenticate',data)
+        .then(res =>{
             console.log(res)
+            if(res.data.status === 0){
+            let token = res.data.token
+            console.log(token)
+            Axios.defaults.headers.common['Authorization'] = 'Bearer '+token;
+    
+            this.getDataList()
+            }
+
+
         })
-        .catch(err =>{
-            console.log(err)
-        })
+
+    }
+
+    // 获取操作日志列表
+    getDataList() {
+
+        let data = {
+            key_id:'5313402812569210063',
+        };
+        Axios.post("/api/pnr/getcancelrecord", data)
+            .then((res) => {
+                console.log('日志',res.data.datas)
+            this.setState({
+                data: res.data.datas
+            })
+            })
+            .catch((err) => {
+            console.log(err);
+            });
     }
 
     render() {
@@ -153,7 +180,7 @@ export default class Detail extends Component{
                     </div>
 
                     <div className="from">
-                        <Table columns={columns} dataSource={data} bordered />
+                        <Table columns={columns} dataSource={this.state.data} pagination={false} bordered />
                     </div>
                     
                     

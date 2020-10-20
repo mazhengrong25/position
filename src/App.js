@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-10-19 17:46:27
+ * @LastEditTime: 2020-10-20 14:52:45
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from "react";
@@ -193,8 +193,20 @@ export default class App extends Component {
     super(props);
     this.state = {
       data: [],
-      pnrValue: '乘客姓名',
-      pnrType: ''
+      itemType: '', //搜索类型
+      itemValue: '',
+      
+      timeType: '', //日期类型
+      timeValue: '',
+    
+      status: '', //执行状态
+      type: '', //票证类型
+      time: '', //执行时间
+      air: '', //航空公司
+      volun: '', //是否自愿
+      orderType: 'false', //订单类型
+
+      searchFrom: {}
     };
   }
 
@@ -222,25 +234,26 @@ export default class App extends Component {
   }
 
   // 获取取位列表
-  getDataList (){
-    let data = {
-      page_no: 1, // 页码
-      page_size: 20, // 当前页条数
-      airline_code: "GJ", // 航空公司二字代码
-      intl_flag: false, // 国际国内标识
-      exec_state: 1, //执行状态，不传或传null查询所有。0：待取位 1：已取位 2：已航变 3:已退票 4：无需取位 -1:取消失败
-      ticket_type: null,
-      refund_type: 1, // 退票类型 0：所有 1：自愿 2：非自愿
-      date_type: 1, // 日期类型 0:导入时间 1：起飞时间 2：执行时间
-      begin_date: null,
-      end_date: null,
-      query_type: 1, // 搜索类型1:PNR编码 2:票号 3:订单号 4:乘客姓名
-      query_value: null,
-    };
+  getDataList (val){
+    let data
+    if(val){
+      data = val
+    }else {
+      data  = {
+        page_no: 1, // 页码
+        page_size: 20, // 当前页条数
+        airline_code: "GJ", // 航空公司二字代码
+        intl_flag: false, // 国际国内标识
+      };
+    }
     Axios.post("/api/pnr/getdata", data)
       .then((res) => {
+        let newData = res.data.datas
+        newData.forEach((item,index) => {
+          item['key'] = index
+        });
         this.setState({
-          data: res.data.datas
+          data: newData
         })
         console.log(this.state.data)
       })
@@ -249,13 +262,91 @@ export default class App extends Component {
       });
   }
 
-   // 搜索类型 点击事件
-  handleChange = (value) => {
-    console.log(value); 
+  // 执行状态
+  handleStatus = (val) =>{
+    console.log(val)
     this.setState({
-      pnrValue: value.label, //选择类型
-      pnrType: value.value //选择框内容
+      status: val, 
     })
+  } 
+
+  // 票证类型
+  handleType = (val) =>{
+    console.log(val)
+    this.setState({
+      type: val, 
+    })
+  }
+
+  // 是否自愿
+  handleVolun = (val) =>{
+    console.log(val)
+    this.setState({
+      volun: val, 
+    })
+  }
+
+  // 日期类型
+  handleTime = (val) =>{
+    console.log('日期类型',val)
+    this.setState({
+        timeType: val.label, //日期类型
+        timeValue: val.value 
+    })
+  }
+
+  // 订单类型
+  handleOrder = (val) => {
+      console.log('订单类型',val.target.value)
+      this.setState({
+        orderType: val.target.value,
+      })
+  }
+
+   // 搜索类型 点击事件
+  handleChange = (val) => {
+    console.log('搜索类型',val); 
+    this.setState({
+      itemType: val.label, //选择类型
+      itemValue: val.value //
+    })
+  }
+
+
+
+  // 搜索提交
+  submitSeach = () => {
+
+    
+    let data = {
+      page_no: 1, // 页码
+      page_size: 20, // 当前页条数
+      airline_code: "GJ", // 航空公司二字代码
+      intl_flag: false, // 国际国内标识
+      intl_flag: this.state.orderType, // 订单类型
+      exec_state: this.state.status, // 执行状态
+      ticket_type: this.state.type, // 票证类型
+      date_type: this.state.timeType, // 日期类型  0:导入时间 1：起飞时间 2：执行时间
+      refund_type: this.state.volun,  // 退票类型 0：所有 1：自愿 2：非自愿
+      query_type: this.state.itemType, // 搜索类型 1:PNR编码 2:票号 3:订单号 4:乘客姓名
+    }
+    this.getDataList(data)
+    console.log(data)
+    // Axios.post("/api/pnr/getdata", data)
+    //   .then((res) => {
+    //     let newData = res.data.datas
+    //     newData.forEach((item,index) => {
+    //       item['key'] = index
+    //     });
+    //     this.setState({
+    //       data: newData
+    //     })
+    //     console.log(this.state.data)
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+
   }
 
   render() {
@@ -294,10 +385,10 @@ export default class App extends Component {
             <div className="type_name">
               <div>订单类型</div>
               <div className="radio">
-                <RadioGroup>
-                  <Radio key="a">国内</Radio>
-                  <Radio key="b">国际</Radio>
-                </RadioGroup>
+                <Radio.Group onChange={this.handleOrder} value={this.state.orderType}>
+                  <Radio value="false">国内</Radio>
+                  <Radio value="true">国际</Radio>
+                </Radio.Group>
               </div>
             </div>
             {/* 执行状态 */}
@@ -310,14 +401,15 @@ export default class App extends Component {
                   placeholder="所有"
                   optionFilterProp="children"
                   notFoundContent="无法找到"
+                  onChange={this.handleStatus}
                 >
-                  <Option value="jack">所有</Option>
-                  <Option value="lucy">待取位</Option>
-                  <Option value="5">已取位</Option>
-                  <Option value="1">已航变</Option>
-                  <Option value="2">已退票</Option>
-                  <Option value="3">无需取位</Option>
-                  <Option value="4">取消失败</Option>
+                  <Option value="all">所有</Option>
+                  <Option value="0">待取位</Option>
+                  <Option value="1">已取位</Option>
+                  <Option value="2">已航变</Option>
+                  <Option value="3">已退票</Option>
+                  <Option value="4">无需取位</Option>
+                  <Option value="-1">取消失败</Option>
 
                 </Select>
               </div>
@@ -332,12 +424,13 @@ export default class App extends Component {
                   placeholder="所有"
                   optionFilterProp="children"
                   notFoundContent="无法找到"
+                  onChange={this.handleType}
                 >  
-                  <Option value="jack1">所有</Option>
-                  <Option value="jack">BOP</Option>
-                  <Option value="lucy">BSP</Option>
-                  <Option value="tom">B2B</Option>
-                  <Option value="tom1">OP</Option>
+                  <Option value="all">所有</Option>
+                  <Option value="BOP">BOP</Option>
+                  <Option value="BSP">BSP</Option>
+                  <Option value="B2B">B2B</Option>
+                  <Option value="OP">OP</Option>
                 </Select>
               </div>
             </div>
@@ -348,7 +441,7 @@ export default class App extends Component {
                 labelInValue
                 style={{ width: 100 }}
                 bordered={false}
-                onChange={this.handleChange}>
+                onChange={this.handleTime}>
                 <Option value="2">执行时间</Option>
                 <Option value="1">起飞时间</Option>
                 <Option value="0">导入时间</Option>
@@ -362,7 +455,7 @@ export default class App extends Component {
             <div className="type_name">
               <div>航空公司</div>
               <div className="radio">
-                <Input placeholder="请填写" />
+                <Input value={this.state.air} placeholder="请填写" />
               </div>
             </div>
             {/* 是否自愿 */}
@@ -375,10 +468,11 @@ export default class App extends Component {
                   placeholder="请选择"
                   optionFilterProp="children"
                   notFoundContent="无法找到"
+                  onChange={this.handleVolun}
                 >
-                  <Option value="jack">所有</Option>
-                  <Option value="lucy">自愿</Option>
-                  <Option value="tom">非自愿</Option>
+                  <Option value="0">所有</Option>
+                  <Option value="1">自愿</Option>
+                  <Option value="2">非自愿</Option>
                 </Select>
               </div>
             </div>
@@ -396,12 +490,12 @@ export default class App extends Component {
                 <Option value="3">订单号</Option>
               </Select>
               <div className="radio">
-                <Input placeholder={'请输入'+ this.state.pnrValue} />
+                <Input placeholder={'请输入'+ this.state.itemType} />
               </div>
             </div>
             {/* 搜索按钮 */}
             <div className="type_name">
-              <Button type="primary">搜索</Button>
+              <Button type="primary" onClick={this.submitSeach}>搜索</Button>
             </div>
           </div>
 
