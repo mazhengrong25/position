@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-10-19 16:29:40
+ * @LastEditTime: 2020-10-19 17:46:27
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from "react";
@@ -27,8 +27,7 @@ const Option = Select.Option;
 const columns = [
   {
     title: "编号",
-    dataIndex: "number",
-    key: 'number'
+    render: (text, record, index) => `${index + 1}`
   },
   {
     title: "操作",
@@ -151,7 +150,7 @@ const columns = [
     render: (state) => {
       let color
       let text
-      if(state != '0'){
+      if(state !== '0'){
           color = '#5AB957'
           text = '已关联'
       }else if(state === '0'){

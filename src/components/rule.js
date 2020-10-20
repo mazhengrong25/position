@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-10-19 16:41:29
+ * @LastEditTime: 2020-10-19 18:26:36
  * @LastEditors: Please set LastEditors
  */
 import  React,{ Component } from 'react'
@@ -20,7 +20,6 @@ const RadioGroup = Radio.Group;
 const Option = Select.Option;
 
 const selectedRowKeys=[];
-const hasSelected = selectedRowKeys.length > 0;
 
 
 // 分页  上一页  下一页
@@ -33,16 +32,6 @@ function itemRender(current, type, originalElement) {
     }
     return originalElement;
 }
-
-const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
-    getCheckboxProps: record => ({
-      disabled: record.name === 'Disabled User', // Column configuration not to be checked
-      name: record.name,
-    }),
-};
   
 export default class Rule extends Component {
 
@@ -58,6 +47,7 @@ export default class Rule extends Component {
           modalVisible:false, //模态框
           top: 'topLeft',
           bottom: 'bottomRight',
+          selectedRowKeys: [], //选中行
         columns: [
             {
               title: '操作',
@@ -119,7 +109,7 @@ export default class Rule extends Component {
             {
                 title: '退票费区间',
                 render: (state) => {
-                    return state.min_refund_fee.tofixed(2) + "-" + state.max_refund_fee.tofixed(2)
+                    return state.min_refund_fee + "-" + state.max_refund_fee
                 }
                
             },
@@ -252,6 +242,16 @@ export default class Rule extends Component {
           });
     }
 
+    // rowSelection = {
+    //     selectedRowKeys,
+    //     onChange: this.onSelectChange,
+    // };
+
+    onSelectChange = selectedRowKeys => {
+        console.log('selectedRowKeys changed: ', selectedRowKeys);
+        this.setState({ selectedRowKeys });
+    };
+
     //模态框 确定取消
     setModalVisible(val) {
         console.log(val)
@@ -259,19 +259,19 @@ export default class Rule extends Component {
     }
 
     // 新增
-    handleAdd = () => {
-        const { count, dataSource } = this.state;
-        const newData = {
-          key: count,
-          name: `Edward King ${count}`,
-          age: 32,
-          address: `London, Park Lane no. ${count}`,
-        };
-        this.setState({
-          dataSource: [this.state.data, newData],
-          count: count + 1,
-        });
-    };
+    // handleAdd = () => {
+    //     const { count, dataSource } = this.state;
+    //     const newData = {
+    //       key: count,
+    //       name: `Edward King ${count}`,
+    //       age: 32,
+    //       address: `London, Park Lane no. ${count}`,
+    //     };
+    //     this.setState({
+    //       dataSource: [this.state.data, newData],
+    //       count: count + 1,
+    //     });
+    // };
     
   
     render() {
@@ -350,17 +350,13 @@ export default class Rule extends Component {
                             <Button onClick={this.clearAll}>批量停用</Button>
                             <Button onClick={this.clearAll}>批量删除</Button>
                         </Space>
-                        <span style={{ marginLeft: 8 }}>
-                            {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-                        </span>
                         <Table columns={this.state.columns} dataSource={this.state.data}  
                         onChange={this.handleChange} 
-                        rowSelection={rowSelection}
+                        // rowSelection={rowSelection}
                         pagination={false}
-                        // pagination={{ position: [ this.state.bottom] }}
                         bordered/>
                         {/* 分页 */}
-                        <Pagination total={500} itemRender={itemRender}  position={this.state.bottom}/>
+                        <Pagination total={100} itemRender={itemRender}  position={this.state.bottom}/>
                     </div>
 
                 </div>
