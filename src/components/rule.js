@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-10-20 10:11:28
+ * @LastEditTime: 2020-10-21 09:53:13
  * @LastEditors: Please set LastEditors
  */
 import  React,{ Component } from 'react'
@@ -48,6 +48,8 @@ export default class Rule extends Component {
           top: 'topLeft',
           bottom: 'bottomRight',
           selectedRowKeys: [], //选中行
+          orderType: 'false', //订单类型
+          configType:'', // 配置状态
         columns: [
             {
               title: '操作',
@@ -241,17 +243,14 @@ export default class Rule extends Component {
             this.setState({
               data: newData
             })
-            console.log(data)
+            // console.log(data)
           })
           .catch((err) => {
             console.log(err);
           });
     }
 
-    // rowSelection = {
-    //     selectedRowKeys,
-    //     onChange: this.onSelectChange,
-    // };
+   
 
     onSelectChange = selectedRowKeys => {
         console.log('selectedRowKeys changed: ', selectedRowKeys);
@@ -264,20 +263,41 @@ export default class Rule extends Component {
         this.setState({modalVisible: val})
     }
 
-    // 新增
-    // handleAdd = () => {
-    //     const { count, dataSource } = this.state;
-    //     const newData = {
-    //       key: count,
-    //       name: `Edward King ${count}`,
-    //       age: 32,
-    //       address: `London, Park Lane no. ${count}`,
-    //     };
-    //     this.setState({
-    //       dataSource: [this.state.data, newData],
-    //       count: count + 1,
-    //     });
-    // };
+    // 订单类型
+    handleOrder = (val) => {
+        console.log('订单类型',val.target.value)
+        this.setState({
+            orderType: val.target.value,
+        })
+    }
+
+    // 配置状态
+    handleConfig = (val) => {
+        console.log('配置状态',val)
+        this.setState({
+            configType: val,
+        })
+    }
+
+    // 搜索提交
+    submitSeach = () => {
+
+        
+        let data = {
+
+            page_no:1,                //类型：Number  必有字段  备注：页码
+            page_size:10,                //类型：Number  必有字段  备注：显示数据条数
+            airline_code:"mock",                //类型：String  必有字段  备注：航空公司二字代码
+            intl_flag:this.state.orderType,                //类型：Boolean  必有字段  备注：国际国内标识 true:国际 false:国内
+            execute_mode:true,                //类型：Boolean  必有字段  备注：执行模式 true:执行取位 false:禁止取位
+            cabin_code:"mock",                //类型：String  必有字段  备注：舱位模式
+            config_state:0,                //类型：Number  必有字段  备注：配置状态 0:所有 1：禁用 2：可用
+            key_id:1                //类型：Number  可有字段  备注：表id
+        }
+        this.getDataList(data)
+        console.log(data)
+
+    }
     
   
     render() {
@@ -294,10 +314,10 @@ export default class Rule extends Component {
                         <div className="type_name">
                             {/* <div>订单类型</div> */}
                             <div className="radio">
-                            <RadioGroup >
-                                <Radio key="a" >国内</Radio>
-                                <Radio key="b" >国际</Radio>
-                            </RadioGroup>
+                                <Radio.Group onChange={this.handleOrder} value={this.state.orderType}>
+                                    <Radio value="false">国内</Radio>
+                                    <Radio value="true">国际</Radio>
+                                </Radio.Group>
                             </div>
                         </div>
                         {/* 航空公司 */}
@@ -318,8 +338,8 @@ export default class Rule extends Component {
                                     notFoundContent="无法找到"
                                 
                                 >
-                                    <Option value="jack">所有</Option>
-                                    <Option value="lucy">适用</Option>
+                                    <Option value="0">所有</Option>
+                                    <Option value="true">适用</Option>
                                     <Option value="tom">禁止</Option>
                                 </Select>
                             </div>
@@ -340,17 +360,17 @@ export default class Rule extends Component {
                                     placeholder="可用"
                                     optionFilterProp="children"
                                     notFoundContent="无法找到"
-                                
+                                    onChange={this.handleConfig}
                                 >
-                                    <Option value="tom">所有</Option>
-                                    <Option value="jack">可用</Option>
-                                    <Option value="lucy">不可用</Option>
+                                    <Option value="0">所有</Option>
+                                    <Option value="2">可用</Option>
+                                    <Option value="1">不可用</Option>
                                 </Select>
                             </div>
                         </div>
                         {/* 搜索按钮 */}
                         <div className="type_name">
-                            <Button type="primary">搜索</Button>
+                            <Button type="primary" onClick={this.submitSeach}>搜索</Button>
                         </div>
                     </div>
 

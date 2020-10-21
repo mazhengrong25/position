@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: mazhengrong
  * @Date: 2020-10-15 11:40:14
- * @LastEditTime: 2020-10-20 18:56:03
+ * @LastEditTime: 2020-10-21 09:18:37
  * @LastEditors: Please set LastEditors
  */
 import  React,{ Component } from 'react'
@@ -12,6 +12,8 @@ import {  Table  } from 'antd';
 
 // 引用样式
 import './detail.scss'
+
+import moment from "moment";
 
 const columns = [{
     title: '操作者',
@@ -137,8 +139,8 @@ export default class Detail extends Component{
                         <div className="flight_type">{this.state.detailsData.route_type === 'OW' ? '单程' : '往返'}</div> 
                         <div className="segment">
                             <div className="segment_time">
-                                <div className="time_small">07:25</div>
-                                <div className="time_big">({this.state.detailsData.fly_time})</div>
+                                <div className="time_small">{moment(this.state.detailsData.fly_time).format('HH:mm')}</div>
+                                <div className="time_big">({moment(this.state.detailsData.fly_time).format('YYYY-MM-DD')})</div>
                             </div>
                             <div className="time_middle">{this.state.detailsData.from_airport}</div>
                         </div>
@@ -182,14 +184,14 @@ export default class Detail extends Component{
                             this.state.detailsData.exec_state === 4?'无需取位':
                             this.state.detailsData.exec_state === -1?'取消失败':''}
                         </div>
-                        <div className="name">执行消息:</div>
-                        <div className="number">在2020-10-20 13:23:00的时候进行取位</div>
-                        <div className="name">导入时间:</div>
-                        <div className="number">2020-10-20 12:45</div>
+                        <div className="name">执行消息:</div> 
+                        <div className="number">{this.state.detailsData.exec_msg}</div>
+                        <div className="name">导入时间:</div> 
+                        <div className="number">{this.state.detailsData.import_time}</div>
                         <div className="name">执行时间:</div>
-                        <div className="number">2020-10-20 12:45</div>
+                        <div className="number">{this.state.detailsData.exec_time}</div>
                         <div className="name">预订下次执行时间:</div>
-                        <div className="number">2020-10-20 12:45</div>
+                        <div className="number">{this.state.detailsData.next_exec_time}</div>
                         <div className="name">延误消息:</div>
                         <div className="number">这里是消息内容</div>
                     </div>
