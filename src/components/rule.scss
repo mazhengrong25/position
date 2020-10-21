@@ -76,11 +76,17 @@
     &:not(:last-child) {
       margin-bottom: 22px;
     }
+    &:last-child{
+      width: 100%;
+      .list_item{
+        width: 100%;
+      }
+    }
     .list_item {
       display: flex;
       align-items: center;
       &:not(:last-child){
-          margin-right: 35px;
+          margin-right: 30px;
       }
       .list_title {
         font-size: 14px;
@@ -89,11 +95,15 @@
         width: 65px;
       }
       .list_box {
+        flex: 1;
         .ant-switch {
           width: 70px;
           &.ant-switch-checked {
             background-color: RGBA(90, 185, 87, 1);
           }
+        }
+        .ant-picker{
+          width: 174px;
         }
       }
     }

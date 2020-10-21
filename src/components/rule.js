@@ -39,7 +39,6 @@ export default class Rule extends Component {
   }
 
   constructor(props) {
-    console.log(props);
     super(props);
     this.state = {
       data: [],
@@ -174,8 +173,12 @@ export default class Rule extends Component {
       modalType: '国内', // 配置状态类型
       modalMode: '', // 舱位模式
 
-
       checkedList: [], // 选中列表
+
+      pageNumber: 1, // 分页-当前页数
+      pageCount: 1, // 分页-总页码
+      totalCount: 0, // 总条数
+      pageSize: 10, // 分页-页面条数
     };
   }
 
@@ -198,10 +201,10 @@ export default class Rule extends Component {
   }
 
   //获取取位规则列表
-  getDataList() {
+  getDataList(page, size) {
     let data = {
-      page_no: 1, //类型：Number  必有字段  备注：页码
-      page_size: 10, //类型：Number  必有字段  备注：显示数据条数
+      page_no: page || this.state.pageNumber, //类型：Number  必有字段  备注：页码
+      page_size: size || this.state.pageSize, //类型：Number  必有字段  备注：显示数据条数
       airline_code: '', //类型：String  必有字段  备注：航空公司二字代码
       intl_flag: false, //类型：Boolean  必有字段  备注：国际国内标识 true:国际 false:国内
       execute_mode: true, //类型：Boolean  必有字段  备注：执行模式 true:执行取位 false:禁止取位
@@ -217,6 +220,8 @@ export default class Rule extends Component {
         });
         this.setState({
           data: newData,
+          totalCount: res.data.total_count,
+          pageNumber: res.data.page_no,
         });
         console.log(data);
       })
@@ -226,18 +231,18 @@ export default class Rule extends Component {
   }
 
   onSelectChange = (selectedRowKeys) => {
-      this.setState({ selectedRowKeys });
-      let selectList = []
-      this.state.data.forEach((item, index) =>{
-        selectedRowKeys.forEach(oitem =>{
-            if(index === oitem ){
-                selectList.push(item)
-            }
-        })
-      })
-      this.setState({
-          checkedList: selectList
-      })
+    this.setState({ selectedRowKeys });
+    let selectList = [];
+    this.state.data.forEach((item, index) => {
+      selectedRowKeys.forEach((oitem) => {
+        if (index === oitem) {
+          selectList.push(item);
+        }
+      });
+    });
+    this.setState({
+      checkedList: selectList,
+    });
   };
 
   //   关闭模态框
@@ -380,11 +385,48 @@ export default class Rule extends Component {
     });
   };
 
+  // 分页
+  changePage = (page, size) => {
+    this.setState({
+      pageNumber: page,
+      pageSize: size,
+    });
+    this.getDataList(page, size);
+  };
 
-//   表格批量修改
-moreListEdit = (type) =>{
-    console.log(type,this.state.checkedList)
-}
+  //   表格批量修改
+  moreListEdit(type) {
+    if (this.state.checkedList.length < 1) {
+      return message.warning('请至少选择一条数据');
+    }
+    console.log(type, this.state.checkedList);
+    let newData = this.state.checkedList;
+
+    if (type === '禁用') {
+      newData.forEach((item) => {
+        item.config_state = 1;
+      });
+    }
+    if (type === '启用') {
+      newData.forEach((item) => {
+        item.config_state = 2;
+      });
+    }
+
+    let data = {
+      action_code: type === '启用' ? 'enable' : type === '删除' ? 'delete' : type === '停用' ? 'disable' : '',
+      configs: newData,
+    };
+
+    Axios.post('api/pnrcancelconfig/set', data).then((res) => {
+      if (res.status === 200) {
+        message.success(res.data.message);
+        this.getDataList();
+      } else {
+        message.warning(res.data.message);
+      }
+    });
+  }
 
   render() {
     const { selectedRowKeys } = this.state;
@@ -453,9 +495,15 @@ moreListEdit = (type) =>{
         <div className="table_main">
           <Space style={{ marginBottom: 16 }}>
             <Button onClick={this.openAddModal}>+新增</Button>
-            <Button onClick={this.clearFilters} onClick={this.moreListEdit('启用')}>批量启用</Button>
-            <Button onClick={this.clearAll} onClick={this.moreListEdit('停用')}>批量停用</Button>
-            <Button onClick={this.clearAll} onClick={this.moreListEdit('删除')}>批量删除</Button>
+            <Button onClick={this.clearFilters} onClick={() => this.moreListEdit('启用')}>
+              批量启用
+            </Button>
+            <Button onClick={this.clearAll} onClick={() => this.moreListEdit('停用')}>
+              批量停用
+            </Button>
+            <Button onClick={this.clearAll} onClick={() => this.moreListEdit('删除')}>
+              批量删除
+            </Button>
           </Space>
           <Table
             rowSelection={rowSelection}
@@ -467,7 +515,14 @@ moreListEdit = (type) =>{
             bordered
           />
           {/* 分页 */}
-          <Pagination total={100} itemRender={itemRender} position={this.state.bottom} />
+          <Pagination
+            current={this.state.pageNumber}
+            pageSize={this.state.pageSize}
+            total={this.state.totalCount}
+            itemRender={itemRender}
+            position={this.state.bottom}
+            onChange={this.changePage}
+          />
         </div>
 
         <Modal title={this.state.openModalType + '规则'} width={820} centered visible={this.state.modalVisible} onOk={this.submitModalBtn} onCancel={this.closeModal}>
