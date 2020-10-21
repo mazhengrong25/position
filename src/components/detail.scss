@@ -87,18 +87,20 @@
             margin-right: 48px;
             .segment_time {
                 display: flex;
-                justify-content: flex-start;
+                
+                align-items: center;
                 .time_small {
-                    
+                    margin-right: 10px;
                     font-size: 20px;
-                    font-weight: bold;
                 }
                 .time_big {
-                    font-size: 16px;
+                    font-size: 20px;
+                    margin-right: 10px;
                 }
-            }
-            .time_middle{
-                font-size: 12px;
+                .time_middle{
+                    font-size: 18px;
+                    font-weight: bold;
+                }
             }
         }
         .name {

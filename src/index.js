@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-10-16 16:37:37
+ * @LastEditTime: 2020-10-21 14:09:55
  * @LastEditors: Please set LastEditors
  */
 import React from "react";
@@ -21,7 +21,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import zhCN from 'antd/es/locale/zh_CN'
 import { ConfigProvider } from 'antd'
-import Axios from 'axios'
+
 import moment from 'moment'
 import 'moment/locale/zh-cn'
 moment.locale('zh-cn')

@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: mazhengrong
  * @Date: 2020-10-15 11:40:14
- * @LastEditTime: 2020-10-21 09:18:37
+ * @LastEditTime: 2020-10-21 17:33:10
  * @LastEditors: Please set LastEditors
  */
 import  React,{ Component } from 'react'
@@ -83,13 +83,17 @@ export default class Detail extends Component{
     getDataList() {
 
         let data = {
-            key_id:'5313402812569210063',
+            key_id: this.state.detailsData.key_id,
         };
         Axios.post("/api/pnr/getcancelrecord", data)
             .then((res) => {
                 console.log('日志',res.data.datas)
+                let newData = res.data.datas
+                newData.map((item, index) => {
+                    item['key']= index
+                })
             this.setState({
-                data: res.data.datas
+                data: newData
             })
             })
             .catch((err) => {
@@ -139,12 +143,13 @@ export default class Detail extends Component{
                         <div className="flight_type">{this.state.detailsData.route_type === 'OW' ? '单程' : '往返'}</div> 
                         <div className="segment">
                             <div className="segment_time">
+                                <div className="time_big">{moment(this.state.detailsData.fly_time).format('YYYY-MM-DD')}</div>
                                 <div className="time_small">{moment(this.state.detailsData.fly_time).format('HH:mm')}</div>
-                                <div className="time_big">({moment(this.state.detailsData.fly_time).format('YYYY-MM-DD')})</div>
+                                <div className="time_middle">【{this.state.detailsData.from_airport}】 — </div>
+                                <div className="time_middle">【{this.state.detailsData.to_airport}】</div>
                             </div>
-                            <div className="time_middle">{this.state.detailsData.from_airport}</div>
                         </div>
-                        <div className="logo">
+                        {/* <div className="logo">
                             <img src={require("../static/direction.png")} alt=""/>
                         </div>
                         <div className="segment">
@@ -153,7 +158,7 @@ export default class Detail extends Component{
                                 <div className="time_big">(2020-06-28)</div>
                             </div>
                             <div className="time_middle">{this.state.detailsData.to_airport}</div>
-                        </div>
+                        </div> */}
                         <div className="name">航班号:</div>
                         <div className="number">{this.state.detailsData.flight_no}</div>
                         <div className="name">舱位:</div>
@@ -192,8 +197,8 @@ export default class Detail extends Component{
                         <div className="number">{this.state.detailsData.exec_time}</div>
                         <div className="name">预订下次执行时间:</div>
                         <div className="number">{this.state.detailsData.next_exec_time}</div>
-                        <div className="name">延误消息:</div>
-                        <div className="number">这里是消息内容</div>
+                        {/* <div className="name">延误消息:</div>
+                        <div className="number">这里是消息内容</div> */}
                     </div>
                     <div className="nav">
                         <div className="tags"></div>
