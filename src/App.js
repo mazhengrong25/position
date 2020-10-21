@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-10-21 18:35:07
+ * @LastEditTime: 2020-10-21 18:40:25
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from "react";
@@ -635,8 +635,8 @@ export default class App extends Component {
               bordered
             />
             <div style={{display: this.state.configStyle}} className="config_modal">
-              <div className="config_title">执行消息</div>
-              <div className="config_message">{this.state.config_time}</div>
+              <div className="config_title">执行消息</div> 
+              <div className="config_message">将在{this.state.config_time}的时候进行取位</div>
             </div>
 
             {/* 分页 */}
