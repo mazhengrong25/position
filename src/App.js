@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-10-20 14:52:45
+ * @LastEditTime: 2020-10-20 17:40:48
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from "react";
@@ -23,164 +23,6 @@ moment.locale("zh-cn");
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
-
-const columns = [
-  {
-    title: "编号",
-    render: (text, record, index) => `${index + 1}`
-  },
-  {
-    title: "操作",
-    coldiv: 2,
-    dataIndex: "action",
-    key: 'action',
-    render: (text, row, index) => {
-      return (
-        <div>
-          <Link to="/detail">
-            <Tag color="#5AB957">详</Tag>
-          </Link>
-          <Tooltip title={123}>
-            <Tag color="#0070E2">处理</Tag>
-          </Tooltip>
-        </div>
-      );
-    },
-  },
-  {
-    title: "PNR",
-    dataIndex: "pnr_code",
-    key: 'pnr_code'
-  },
-  {
-    title: "票号",
-    dataIndex: "ticket_no",
-    key: "ticket_no"
-  },
-  {
-    title: "PNR状态",
-    dataIndex: "issue_dept_code",
-    key: 'issue_dept_code'
-  },
-  {
-    title: "GDS系统标识",
-    dataIndex: "gds_type",
-    key: "gds_type"
-  },
-  {
-    title: "票证类型",
-    dataIndex: "ticket_type",
-    key: "ticket_type"
-  },
-  {
-    title: "航司代码",
-    dataIndex: "airline_code",
-    key: "airline_code"
-  },
-  {
-    title: "起飞时间",
-    dataIndex: "fly_time",
-    key: "fly_time",
-    render: (state) => {
-      return moment(state).format('YYYY-MM-DD HH:mm')
-    }
-  },
-  {
-    title: "乘客姓名",
-    dataIndex: "passenger_name",
-    key: "passenger_name"
-  },
-  {
-    title: "航程类型",
-    dataIndex: "route_type",
-    key: "route_type",
-    render: (text) => {
-      let newType = text === 'OW'? '单程': ''
-      return newType
-    }
-  },
-  {
-    title: "执行状态",
-    dataIndex: "exec_state",
-    key: "exec_state",
-    render: (motion) => {
-      let style
-      let text 
-      if(motion === 0){
-          style = {
-              color: '#0070E2'
-          }
-          text = '待取位'
-      }else if(motion === 1){
-          style = {
-              color: '#5AB957'
-          }
-          text ='已取位'
-      }else if(motion === 2){
-          style = {
-            color: '#5AB957'
-          }
-          text ='已航变'
-      }else if(motion === 3){
-        style = {
-          color: '#5AB957'
-        }
-        text ='已退票'
-      }else if(motion === 4){
-        style = {
-          color: '#999999'
-        }
-        text ='无需取位'
-      }
-      else if(motion === -1){
-        style = {
-          color: '#FF0000'
-        }
-        text ='取消失败'
-      }
-      return (
-          <div style={style}>{text}</div>
-      )
-    }
-  },
-  {
-    title: "规则匹配",
-    dataIndex: "config_id",
-    key: 'config_id',
-    render: (state) => {
-      let color
-      let text
-      if(state !== '0'){
-          color = '#5AB957'
-          text = '已关联'
-      }else if(state === '0'){
-          color = '#AFB9C4'
-          text = '未关联'
-      }
-      return (
-        <div>
-          <Tag color={color}>{text}</Tag>
-        </div>
-      );
-    },
-  },
-  {
-    title: "已执行时间",
-    dataIndex: "exec_time",
-    key: "exec_time",
-    render: (state) => {
-      return moment(state).format('YYYY-MM-DD HH:mm:ss')
-    }
-  },
-  {
-    title: "预计下次执行时间",
-    dataIndex: "next_exec_time",
-    key: "next_exec_time",
-    render: (state) => {
-      return moment(state).format('YYYY-MM-DD HH:mm:ss')
-    }
-  },
-];
 
 export default class App extends Component {
   componentDidMount() {
@@ -205,10 +47,171 @@ export default class App extends Component {
       air: '', //航空公司
       volun: '', //是否自愿
       orderType: 'false', //订单类型
+      start:'', //开始日期
+      end:'', // 结束日期
 
-      searchFrom: {}
+      columns :[
+        {
+          title: "编号",
+          render: (text, record, index) => `${index + 1}`
+        },
+        {
+          title: "操作",
+          coldiv: 2,
+          dataIndex: "action",
+          key: 'action',
+          render: (text, row, index) => {
+            return (
+              <div>
+
+                <Tag color="#5AB957" onClick={() => this.jumpDetails(row)}>详</Tag>
+                
+                <Tooltip title={123}>
+                  <Tag color="#0070E2">处理</Tag>
+                </Tooltip>
+              </div>
+            );
+          },
+        },
+        {
+          title: "PNR",
+          dataIndex: "pnr_code",
+          key: 'pnr_code'
+        },
+        {
+          title: "票号",
+          dataIndex: "ticket_no",
+          key: "ticket_no"
+        },
+        {
+          title: "PNR状态",
+          dataIndex: "issue_dept_code",
+          key: 'issue_dept_code'
+        },
+        {
+          title: "GDS系统标识",
+          dataIndex: "gds_type",
+          key: "gds_type"
+        },
+        {
+          title: "票证类型",
+          dataIndex: "ticket_type",
+          key: "ticket_type"
+        },
+        {
+          title: "航司代码",
+          dataIndex: "airline_code",
+          key: "airline_code"
+        },
+        {
+          title: "起飞时间",
+          dataIndex: "fly_time",
+          key: "fly_time",
+          render: (state) => {
+            return moment(state).format('YYYY-MM-DD HH:mm')
+          }
+        },
+        {
+          title: "乘客姓名",
+          dataIndex: "passenger_name",
+          key: "passenger_name"
+        },
+        {
+          title: "航程类型",
+          dataIndex: "route_type",
+          key: "route_type",
+          render: (text) => {
+            let newType = text === 'OW'? '单程': ''
+            return newType
+          }
+        },
+        {
+          title: "执行状态",
+          dataIndex: "exec_state",
+          key: "exec_state",
+          render: (motion) => {
+            let style
+            let text 
+            if(motion === 0){
+                style = {
+                    color: '#0070E2'
+                }
+                text = '待取位'
+            }else if(motion === 1){
+                style = {
+                    color: '#5AB957'
+                }
+                text ='已取位'
+            }else if(motion === 2){
+                style = {
+                  color: '#5AB957'
+                }
+                text ='已航变'
+            }else if(motion === 3){
+              style = {
+                color: '#5AB957'
+              }
+              text ='已退票'
+            }else if(motion === 4){
+              style = {
+                color: '#999999'
+              }
+              text ='无需取位'
+            }
+            else if(motion === -1){
+              style = {
+                color: '#FF0000'
+              }
+              text ='取消失败'
+            }
+            return (
+                <div style={style}>{text}</div>
+            )
+          }
+        },
+        {
+          title: "规则匹配",
+          dataIndex: "config_id",
+          key: 'config_id',
+          render: (state) => {
+            let color
+            let text
+            if(state !== '0'){
+                color = '#5AB957'
+                text = '已关联'
+            }else if(state === '0'){
+                color = '#AFB9C4'
+                text = '未关联'
+            }
+            return (
+              <div>
+                <Tag color={color}>{text}</Tag>
+              </div>
+            );
+          },
+        },
+        {
+          title: "已执行时间",
+          dataIndex: "exec_time",
+          key: "exec_time",
+          render: (state) => {
+            return moment(state).format('YYYY-MM-DD HH:mm:ss')
+          }
+        },
+        {
+          title: "预计下次执行时间",
+          dataIndex: "next_exec_time",
+          key: "next_exec_time",
+          render: (state) => {
+            return moment(state).format('YYYY-MM-DD HH:mm:ss')
+          }
+        },
+      ]
     };
   }
+
+
+
 
 
   // 获取token
@@ -313,6 +316,24 @@ export default class App extends Component {
   }
 
 
+  // 日期选择  开始时间
+  startChange = (date, dateString) => {
+    console.log('开始时间',dateString);
+    this.setState({
+      start:dateString,
+      
+    })
+  }
+
+  // 日期选择  结束时间
+  endChange = (date, dateString) => {
+    console.log('结束时间',dateString);
+    this.setState({
+      end:dateString, 
+    })
+  }
+
+
 
   // 搜索提交
   submitSeach = () => {
@@ -321,33 +342,28 @@ export default class App extends Component {
     let data = {
       page_no: 1, // 页码
       page_size: 20, // 当前页条数
-      airline_code: "GJ", // 航空公司二字代码
-      intl_flag: false, // 国际国内标识
+      airline_code: this.state.air, // 航空公司二字代码
       intl_flag: this.state.orderType, // 订单类型
       exec_state: this.state.status, // 执行状态
       ticket_type: this.state.type, // 票证类型
       date_type: this.state.timeType, // 日期类型  0:导入时间 1：起飞时间 2：执行时间
       refund_type: this.state.volun,  // 退票类型 0：所有 1：自愿 2：非自愿
       query_type: this.state.itemType, // 搜索类型 1:PNR编码 2:票号 3:订单号 4:乘客姓名
+      begin_date: this.state.start, // 开始日期
+      end_date: this.state.end, // 结束日期
     }
     this.getDataList(data)
     console.log(data)
-    // Axios.post("/api/pnr/getdata", data)
-    //   .then((res) => {
-    //     let newData = res.data.datas
-    //     newData.forEach((item,index) => {
-    //       item['key'] = index
-    //     });
-    //     this.setState({
-    //       data: newData
-    //     })
-    //     console.log(this.state.data)
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
 
   }
+
+  // 跳转页面
+  jumpDetails = (val) => {
+   
+    console.log('页面跳转',val)
+    this.props.history.push('/detail',{data: val});
+   
+ }
 
   render() {
     return (
@@ -447,15 +463,15 @@ export default class App extends Component {
                 <Option value="0">导入时间</Option>
               </Select>
               <div className="radio">
-                <DatePicker locale={locale} placeholder="选择时间" />-
-                <DatePicker placeholder="选择时间" />
+                <DatePicker locale={locale} placeholder="选择时间"  onChange={this.startChange}/>-
+                <DatePicker placeholder="选择时间"  onChange={this.endChange}/>
               </div>
             </div>
             {/* 航空公司 */}
             <div className="type_name">
               <div>航空公司</div>
               <div className="radio">
-                <Input value={this.state.air} placeholder="请填写" />
+                <Input value={this.state.air} placeholder="请填写" onChange= {this.inputChange}/>
               </div>
             </div>
             {/* 是否自愿 */}
@@ -500,7 +516,7 @@ export default class App extends Component {
           </div>
 
           <div className="table_main">
-            <Table columns={columns} dataSource={this.state.data} pagination={false} bordered />
+            <Table columns={this.state.columns} dataSource={this.state.data} pagination={false} bordered />
           </div>
   
         </div>

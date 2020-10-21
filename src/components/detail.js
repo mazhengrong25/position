@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: mazhengrong
  * @Date: 2020-10-15 11:40:14
- * @LastEditTime: 2020-10-20 11:37:00
+ * @LastEditTime: 2020-10-20 18:56:03
  * @LastEditors: Please set LastEditors
  */
 import  React,{ Component } from 'react'
@@ -34,7 +34,10 @@ export default class Detail extends Component{
     
 
     componentDidMount() {
-
+        console.log(this.props.history.location.state.data)
+        this.setState({
+            detailsData: this.props.history.location.state.data
+        })
         this.getToken()
 
     }
@@ -42,9 +45,14 @@ export default class Detail extends Component{
     constructor(props) {
         console.log(props);
         super(props);
+        
+        
         this.state = {
           data: [],
+          detailsData: {}
         };
+
+        
     }
 
     // 获取token
@@ -98,36 +106,41 @@ export default class Detail extends Component{
                     </div>
                     <div className="level">
                         <div className="name">订单号:</div>
-                        <div className="number_weight">5000202006241509412697348000000014</div>
+                        <div className="number_weight">{this.state.detailsData.order_no}</div>
                         <div className="name">编码:</div>
-                        <div className="number_color">ODKPER</div>
+                        <div className="number_color">{this.state.detailsData.pnr_code}</div>
                         <div className="name">票号:</div>
-                        <div className="number">8865457746996</div>
+                        <div className="number">{this.state.detailsData.ticket_no}</div>
                         <div className="name">订单类型:</div>
-                        <div className="number">国内</div>
+                        <div className="number">{this.state.detailsData.intl_flag === 'true' ? '国际 ':'国内' }</div>
                         <div className="name">GDS系统:</div>
-                        <div className="number">1E:TravelSky </div>
-                        <div className="name">票证类型:</div>
-                        <div className="number">BOP </div>
-                        <div className="name">是否自愿:</div>
-                        <div className="number">自愿 </div>
+                        <div className="number">{this.state.detailsData.gds_type}</div>
+                        <div className="name">票证类型:</div> 
+                        <div className="number">{this.state.detailsData.ticket_type} </div>
+                        <div className="name">是否自愿:</div> 
+                        <div className="number">
+                            {this.state.detailsData.refund_type === 1 ? '自愿':
+                            this.state.detailsData.refund_type === 2 ? '非自愿':
+                            this.state.detailsData.refund_type === 0 ? '所有':''
+                            } 
+                        </div>
                         <div className="name">编码状态:</div>
-                        <div className="number">HN </div>
+                        <div className="number">{this.state.detailsData.pnr_state}</div>
                         <div className="name">OfficeNo:</div>
-                        <div className="number">HN </div>
+                        <div className="number">{this.state.detailsData.office_no}</div>
                     </div>
                     <div className="nav">
                         <div className="tags"></div>
                         <div className="text">航程信息</div>
                     </div>
                     <div className="flight">
-                        <div className="flight_type">单程</div>
+                        <div className="flight_type">{this.state.detailsData.route_type === 'OW' ? '单程' : '往返'}</div> 
                         <div className="segment">
                             <div className="segment_time">
                                 <div className="time_small">07:25</div>
-                                <div className="time_big">(2020-06-28)</div>
+                                <div className="time_big">({this.state.detailsData.fly_time})</div>
                             </div>
-                            <div className="time_middle">重庆江北国际机场</div>
+                            <div className="time_middle">{this.state.detailsData.from_airport}</div>
                         </div>
                         <div className="logo">
                             <img src={require("../static/direction.png")} alt=""/>
@@ -137,24 +150,24 @@ export default class Detail extends Component{
                                 <div className="time_small">09:40</div>
                                 <div className="time_big">(2020-06-28)</div>
                             </div>
-                            <div className="time_middle">深圳宝安国际机场</div>
+                            <div className="time_middle">{this.state.detailsData.to_airport}</div>
                         </div>
                         <div className="name">航班号:</div>
-                        <div className="number">CA1589</div>
+                        <div className="number">{this.state.detailsData.flight_no}</div>
                         <div className="name">舱位:</div>
-                        <div className="number">经济舱</div>
+                        <div className="number">{this.state.detailsData.cabin_code}</div>
                     </div>
                     <div className="nav">
                         <div className="tags"></div>
                         <div className="text">部门信息</div>
                     </div>
                     <div className="level">
-                        <div className="name">出票部门:</div>
-                        <div className="number">国内市场部</div>
-                        <div className="name">退票部门:</div>
-                        <div className="number">国内市场部</div>
-                        <div className="name">采购部门:</div>
-                        <div className="number">国内市场部</div>
+                        <div className="name">出票部门:</div> 
+                        <div className="number">{this.state.detailsData.issue_dept_name}</div>
+                        <div className="name">退票部门:</div> 
+                        <div className="number">{this.state.detailsData.refund_dept_name}</div>
+                        <div className="name">采购部门:</div> 
+                        <div className="number">{this.state.detailsData.buy_channels_name}</div>
                     </div>
                     <div className="nav">
                         <div className="tags"></div>
@@ -162,7 +175,13 @@ export default class Detail extends Component{
                     </div>
                     <div className="level">
                         <div className="name">执行状态:</div>
-                        <div className="number_green">已取位</div>
+                        <div className="number_green">
+                            {this.state.detailsData.exec_state === 1?'已取位':
+                            this.state.detailsData.exec_state === 2?'已航变':
+                            this.state.detailsData.exec_state === 3?'已退票':
+                            this.state.detailsData.exec_state === 4?'无需取位':
+                            this.state.detailsData.exec_state === -1?'取消失败':''}
+                        </div>
                         <div className="name">执行消息:</div>
                         <div className="number">在2020-10-20 13:23:00的时候进行取位</div>
                         <div className="name">导入时间:</div>
