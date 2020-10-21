@@ -1,72 +1,111 @@
 @import '~antd/dist/antd.css';
 .table {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 400px;
+  background: #ffffff;
+  margin: 16px 16px 16px;
+
+  .table_type {
+    padding: 24px 16px 0 16px;
     display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 400px;
-    background: #FFFFFF;
-    margin: 16px 16px 16px;
+    align-items: center;
+    flex-wrap: wrap;
 
-    .table_type {
-        padding: 24px 16px 0 16px;
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
- 
-        .type_name {
-            display: inline-flex;
-            align-items: center;
-            margin-bottom: 22px;
+    .type_name {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 22px;
 
-            &:not(:last-child) {
-                margin-right: 47px;
-            }
+      &:not(:last-child) {
+        margin-right: 47px;
+      }
 
-            // margin-top: 32px;
-            .radio {
-                margin-left: 8px;
+      // margin-top: 32px;
+      .radio {
+        margin-left: 8px;
 
-                //    padding-left: 22px;
-            }
-        }
+        //    padding-left: 22px;
+      }
+    }
+  }
+
+  .table_main {
+    height: 100%;
+
+    .ant-table-thead > tr > th {
+      background: rgba(230, 242, 254, 1);
+      font-size: 12px;
+      color: #333333;
+
+      font-weight: 400;
+      line-height: 16px;
+      border: 1px solid #d9e1ea;
     }
 
-    .table_main {
-
-        height: 100%;
-
-        .ant-table-thead>tr>th {
-            background: rgba(230, 242, 254, 1);
-            font-size: 12px;
-            color: #333333;
-
-            font-weight: 400;
-            line-height: 16px;
-            border: 1px solid #D9E1EA;
-        }
-
-        .ant-table-tbody>tr:nth-child(even) {
-
-            background: rgba(242, 246, 252, 1)
-        }
-
-        .ant-space-align-center {
-            padding: 6px 10px 16px 25px;
-        }
+    .ant-table-tbody > tr:nth-child(even) {
+      background: rgba(242, 246, 252, 1);
     }
+
+    .ant-space-align-center {
+      padding: 6px 10px 16px 25px;
+    }
+  }
 }
-
 
 .cabin_code {
-    text-overflow: ellipsis;
-    white-space: nowrap !important;
-    overflow: hidden;
-    width: 80px;
-    display: inline-block;
+  text-overflow: ellipsis;
+  white-space: nowrap !important;
+  overflow: hidden;
+  width: 80px;
+  display: inline-block;
 }
 
-.ant-pagination{
-    padding: 20px 0;
-    text-align: right;
-    background-color: #fff;
+.ant-pagination {
+  padding: 20px 0;
+  text-align: right;
+  background-color: #fff;
+}
+
+// 规则弹窗
+.rule_modal {
+  .modal_list {
+    display: flex;
+    align-items: center;
+    &:not(:last-child) {
+      margin-bottom: 22px;
+    }
+    &:last-child{
+      width: 100%;
+      .list_item{
+        width: 100%;
+      }
+    }
+    .list_item {
+      display: flex;
+      align-items: center;
+      &:not(:last-child){
+          margin-right: 30px;
+      }
+      .list_title {
+        font-size: 14px;
+        font-weight: 400;
+        color: #333333;
+        width: 65px;
+      }
+      .list_box {
+        flex: 1;
+        .ant-switch {
+          width: 70px;
+          &.ant-switch-checked {
+            background-color: RGBA(90, 185, 87, 1);
+          }
+        }
+        .ant-picker{
+          width: 174px;
+        }
+      }
+    }
+  }
 }

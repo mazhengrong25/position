@@ -11,7 +11,7 @@ import Axios from 'axios'
 // 引用样式
 import './header.scss'
 
-import { Link } from 'react-router-dom';
+import { Link, withRouter  } from 'react-router-dom';
 
 const info = () => {
     message.info('功能开发中');
@@ -19,8 +19,16 @@ const info = () => {
 
 
 export default class Header extends Component {
-
-
+    componentDidMount() {
+    }
+    constructor(props) {
+        super(props);
+        this.state = {
+        }
+      }
+      getPathname ()  {
+        console.log(this.props.location.pathname);
+        }
     render() {
         return (
             <div className="title">
@@ -28,7 +36,7 @@ export default class Header extends Component {
                 <div className="title_logo">
                     <img src={require("../static/title_logo.png")} alt=""/>
                 </div>
-                <Link className="title_list active" to="/">
+                <Link className="title_list" to="/">
                     <div className="title_icon">
                         <img src={require("../static/title_list.png")} alt=""/>
                     </div>
