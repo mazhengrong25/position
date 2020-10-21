@@ -5,35 +5,26 @@
  * @LastEditTime: 2020-10-21 18:40:25
  * @LastEditors: Please set LastEditors
  */
-import React, { Component } from "react";
+import React, { Component } from 'react';
 // 单选框
-import {
-  Radio,
-  Select,
-  DatePicker,
-  Input,
-  Button,
-  Table,
-  Tag,
-  Tooltip,
-  message,
-  Pagination,
-} from "antd";
+import { Radio, Select, DatePicker, Input, Button, Table, Tag, message, Pagination, Modal } from 'antd';
 
-import Axios from "axios";
+import Axios from 'axios';
 
-import "./App.scss";
+import './App.scss';
 
-import moment from "moment";
+import moment from 'moment';
 
-import "moment/locale/zh-cn";
-import locale from "antd/lib/date-picker/locale/en_US";
+import 'moment/locale/zh-cn';
+import locale from 'antd/lib/date-picker/locale/en_US';
 
-moment.locale("zh-cn");
+moment.locale('zh-cn');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
+
+const { TextArea } = Input;
 
 // 分页  上一页  下一页
 function itemRender(current, type, originalElement) {
@@ -57,29 +48,29 @@ export default class App extends Component {
     this.state = {
       data: [],
       itemType: 1, //搜索类型
-      itemValue: "", //搜索关键字
+      itemValue: '', //搜索关键字
 
       timeValue: 2, //日期类型
 
       status: null, //执行状态
       type: null, //票证类型
       time: null, //执行时间
-      air: "", //航空公司
+      air: '', //航空公司
       volun: 0, //是否自愿
       orderType: '国内', //订单类型
-      start: "", //开始日期
-      end: "", // 结束日期
+      start: '', //开始日期
+      end: '', // 结束日期
 
       columns: [
         {
-          title: "编号",
+          title: '编号',
           render: (text, record, index) => `${index + 1}`,
         },
         {
-          title: "操作",
+          title: '操作',
           coldiv: 2,
-          dataIndex: "action",
-          key: "action",
+          dataIndex: 'action',
+          key: 'action',
           render: (text, row, index) => {
             return (
               <div>
@@ -87,67 +78,67 @@ export default class App extends Component {
                   详
                 </Tag>
 
-                <Tooltip title={123}>
-                  <Tag color="#0070E2">处理</Tag>
-                </Tooltip>
+                <Tag color="#0070E2" onClick={() => this.openActionModal(row)}>
+                  处理
+                </Tag>
               </div>
             );
           },
         },
         {
-          title: "PNR",
-          dataIndex: "pnr_code",
-          key: "pnr_code",
+          title: 'PNR',
+          dataIndex: 'pnr_code',
+          key: 'pnr_code',
         },
         {
-          title: "票号",
-          dataIndex: "ticket_no",
-          key: "ticket_no",
+          title: '票号',
+          dataIndex: 'ticket_no',
+          key: 'ticket_no',
         },
         {
-          title: "PNR状态",
-          dataIndex: "issue_dept_code",
-          key: "issue_dept_code",
+          title: 'PNR状态',
+          dataIndex: 'issue_dept_code',
+          key: 'issue_dept_code',
         },
         {
-          title: "GDS系统标识",
-          dataIndex: "gds_type",
-          key: "gds_type",
+          title: 'GDS系统标识',
+          dataIndex: 'gds_type',
+          key: 'gds_type',
         },
         {
-          title: "票证类型",
-          dataIndex: "ticket_type",
-          key: "ticket_type",
+          title: '票证类型',
+          dataIndex: 'ticket_type',
+          key: 'ticket_type',
         },
         {
-          title: "航司代码",
-          dataIndex: "airline_code",
-          key: "airline_code",
+          title: '航司代码',
+          dataIndex: 'airline_code',
+          key: 'airline_code',
         },
         {
-          title: "起飞时间",
-          dataIndex: "fly_time",
-          key: "fly_time",
+          title: '起飞时间',
+          dataIndex: 'fly_time',
+          key: 'fly_time',
           render: (state) => {
-            return moment(state).format("YYYY-MM-DD HH:mm");
+            return moment(state).format('YYYY-MM-DD HH:mm');
           },
         },
         {
-          title: "乘客姓名",
-          dataIndex: "passenger_name",
-          key: "passenger_name",
+          title: '乘客姓名',
+          dataIndex: 'passenger_name',
+          key: 'passenger_name',
         },
         {
-          title: "航程类型",
-          dataIndex: "route_type",
-          key: "route_type",
+          title: '航程类型',
+          dataIndex: 'route_type',
+          key: 'route_type',
           render: (text) => {
-            let newType = text === "OW" ? "单程" : "";
+            let newType = text === 'OW' ? '单程' : '';
             return newType;
           },
         },
         {
-          title: "执行状态",
+          title: '执行状态',
           // dataIndex: "exec_state",
           // key: "exec_state",
           render: (motion) => {
@@ -155,85 +146,91 @@ export default class App extends Component {
             let text;
             if (motion.exec_state === 0) {
               style = {
-                color: "#0070E2",
+                color: '#0070E2',
               };
-              text = "待取位";
+              text = '待取位';
             } else if (motion.exec_state === 1) {
               style = {
-                color: "#5AB957",
+                color: '#5AB957',
               };
-              text = "已取位";
+              text = '已取位';
             } else if (motion.exec_state === 2) {
               style = {
-                color: "#5AB957",
+                color: '#5AB957',
               };
-              text = "已航变";
+              text = '已航变';
             } else if (motion.exec_state === 3) {
               style = {
-                color: "#5AB957",
+                color: '#5AB957',
               };
-              text = "已退票";
+              text = '已退票';
             } else if (motion.exec_state === 4) {
               style = {
-                color: "#999999",
+                color: '#999999',
               };
-              text = "无需取位";
+              text = '无需取位';
             } else if (motion.exec_state === -1) {
               style = {
-                color: "#FF0000",
+                color: '#FF0000',
               };
-              text = "取消失败";
+              text = '取消失败';
             }
-            return <div onMouseEnter={() =>this.hoverMotion(motion)} style={style}>{text}</div>;
-          },
-        },
-        {
-          title: "规则匹配",
-          dataIndex: "config_id",
-          key: "config_id",
-          render: (state) => {
-            let color;
-            let text;
-            let style
-            if (state !== "0") {
-              color = "#5AB957";
-              text = "已关联";
-            } else if (state === "0") {
-              color = "#AFB9C4";
-              text = "未关联";
-              style = {
-                'cursor': 'not-allowed'
-              }
-            }
-            
             return (
-              <div>
-                <Tag style={style} onClick={() =>this.jumpRule(state)} color={color}>{text}</Tag>
+              <div onMouseEnter={() => this.hoverMotion(motion)} style={style}>
+                {text}
               </div>
             );
           },
         },
         {
-          title: "已执行时间",
-          dataIndex: "exec_time",
-          key: "exec_time",
+          title: '规则匹配',
+          dataIndex: 'config_id',
+          key: 'config_id',
           render: (state) => {
-            return moment(state).format("YYYY-MM-DD HH:mm:ss");
+            let color;
+            let text;
+            let style;
+            if (state !== '0') {
+              color = '#5AB957';
+              text = '已关联';
+            } else if (state === '0') {
+              color = '#AFB9C4';
+              text = '未关联';
+              style = {
+                cursor: 'not-allowed',
+              };
+            }
+
+            return (
+              <div>
+                <Tag style={style} onClick={() => this.jumpRule(state)} color={color}>
+                  {text}
+                </Tag>
+              </div>
+            );
           },
         },
         {
-          title: "预计下次执行时间",
-          dataIndex: "next_exec_time",
-          key: "next_exec_time",
+          title: '已执行时间',
+          dataIndex: 'exec_time',
+          key: 'exec_time',
           render: (state) => {
-            return moment(state).format("YYYY-MM-DD HH:mm:ss");
+            return moment(state).format('YYYY-MM-DD HH:mm:ss');
+          },
+        },
+        {
+          title: '预计下次执行时间',
+          dataIndex: 'next_exec_time',
+          key: 'next_exec_time',
+          render: (state) => {
+            return moment(state).format('YYYY-MM-DD HH:mm:ss');
           },
         },
       ],
 
       headerStatus: null, // 头部状态
 
-      statistics:{},
+      statistics: {},
 
       pageNumber: 1, // 分页-当前页数
       pageCount: 1, // 分页-总页码
@@ -241,22 +238,27 @@ export default class App extends Component {
       pageSize: 10, // 分页-页面条数
 
       config_time: '',
-      configStyle: 'none'
+      configStyle: 'none',
+
+      actionModal: false, // 处理弹窗
+      actionType: '',
+      actionMessage: '',
+      actionKey: ''
     };
   }
 
   // 获取token
   getToken() {
     let data = {
-      key: "",
+      key: '',
     };
 
-    Axios.get("api/token/Authenticate", data).then((res) => {
+    Axios.get('api/token/Authenticate', data).then((res) => {
       console.log(res);
       if (res.data.status === 0) {
         let token = res.data.token;
         console.log(token);
-        Axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+        Axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 
         this.getDataList();
         this.getStatistic();
@@ -270,7 +272,7 @@ export default class App extends Component {
       page_no: page || this.state.pageNumber,
       page_size: size || this.state.pageSize, // 当前页条数
       airline_code: this.state.air, // 航空公司二字代码
-      intl_flag: this.state.orderType === '国内'?false:true, // 订单类型
+      intl_flag: this.state.orderType === '国内' ? false : true, // 订单类型
       ticket_type: this.state.type, // 票证类型
       date_type: Number(this.state.timeValue), // 日期类型  0:导入时间 1：起飞时间 2：执行时间
       refund_type: Number(this.state.volun), // 退票类型 0：所有 1：自愿 2：非自愿
@@ -280,17 +282,17 @@ export default class App extends Component {
       end_date: this.state.end, // 结束日期
       exec_state: Number(this.state.headerStatus) || null,
     };
-    Axios.post("/api/pnr/getdata", data)
+    Axios.post('/api/pnr/getdata', data)
       .then((res) => {
         let newData = res.data.datas;
-        if (newData === null || newData === "") {
+        if (newData === null || newData === '') {
           this.setState({
             data: [],
           });
           return message.warning(res.data.message);
         }
         newData.forEach((item, index) => {
-          item["key"] = index;
+          item['key'] = index;
         });
         this.setState({
           data: newData,
@@ -333,14 +335,14 @@ export default class App extends Component {
     this.setState({
       timeValue: Number(val.value),
     });
-    setTimeout(() =>{
-      console.log("日期类型", this.state.timeValue);
-    },300)
+    setTimeout(() => {
+      console.log('日期类型', this.state.timeValue);
+    }, 300);
   };
 
   // 订单类型
   handleOrder = (val) => {
-    console.log("订单类型", val.target.value);
+    console.log('订单类型', val.target.value);
     this.setState({
       orderType: val.target.value,
     });
@@ -348,25 +350,25 @@ export default class App extends Component {
 
   // 搜索类型 点击事件
   handleChange = (val) => {
-    console.log(val.label)
+    console.log(val.label);
     this.setState({
       itemType: Number(val.value),
     });
-    setTimeout(() =>{
-      console.log("搜索类型", this.state.itemType,this.state.itemValue);
-    },300)
+    setTimeout(() => {
+      console.log('搜索类型', this.state.itemType, this.state.itemValue);
+    }, 300);
   };
 
   // 搜素类型 内容
-  changeModalInpit(val){
+  changeModalInpit(val) {
     this.setState({
-      itemValue: val.target.value
-    })
+      itemValue: val.target.value,
+    });
   }
 
   // 日期选择  开始时间
   startChange = (date, dateString) => {
-    console.log("开始时间", dateString);
+    console.log('开始时间', dateString);
     this.setState({
       start: dateString,
     });
@@ -374,19 +376,19 @@ export default class App extends Component {
 
   // 日期选择  结束时间
   endChange = (date, dateString) => {
-    console.log("结束时间", dateString);
+    console.log('结束时间', dateString);
     this.setState({
       end: dateString,
     });
   };
 
-   // 航空公司
+  // 航空公司
   handleAir = (val) => {
-    console.log('航空公司',val.target.value)
+    console.log('航空公司', val.target.value);
     this.setState({
-        air: val.target.value,
-    })
-  }
+      air: val.target.value,
+    });
+  };
 
   // 搜索提交
   submitSeach = () => {
@@ -395,18 +397,26 @@ export default class App extends Component {
 
   // 跳转页面
   jumpDetails = (val) => {
-    console.log("页面跳转", val);
-    this.props.history.push("/detail", { data: val });
+    console.log('页面跳转', val);
+    this.props.history.push('/detail', { data: val });
   };
 
+  // 打开处理弹窗
+  openActionModal = (val) => {
+    console.log(val);
+    this.setState({
+      actionKey: val.key_id,
+      actionModal: true
+    })
+  };
 
   // 跳转规则页面
-  jumpRule(val){
-    console.log(val)
-    if(val === '0'){
-      return false
+  jumpRule(val) {
+    console.log(val);
+    if (val === '0') {
+      return false;
     }
-    this.props.history.push("/rule?key="+ val);
+    this.props.history.push('/rule?key=' + val);
   }
 
   // 统计
@@ -414,16 +424,16 @@ export default class App extends Component {
     let data = {
       intl_flag: false,
     };
-    Axios.post("api/pnr/statistics", data).then((res) => {
+    Axios.post('api/pnr/statistics', data).then((res) => {
       console.log(res);
-      let statisticsTotal =  res.data.statistics
+      let statisticsTotal = res.data.statistics;
       this.setState({
         statistics: statisticsTotal,
       });
 
-      setTimeout(() =>{
-        console.log(this.state.statistics)
-      },300)
+      setTimeout(() => {
+        console.log(this.state.statistics);
+      }, 300);
     });
   }
 
@@ -432,24 +442,21 @@ export default class App extends Component {
     this.setState({
       headerStatus: e.target.value,
     });
-
   };
 
-
   // 取位执行时间弹窗
-  hoverMotion(val){
-    console.log(val)
+  hoverMotion(val) {
+    console.log(val);
     this.setState({
       config_time: val.next_exec_time,
-      configStyle: 'block'
-    })
-    setTimeout(() =>{
+      configStyle: 'block',
+    });
+    setTimeout(() => {
       this.setState({
-        configStyle: 'none'
-      })
-    },2000)
+        configStyle: 'none',
+      });
+    }, 2000);
   }
-
 
   // 分页
   changePage = (page, size) => {
@@ -459,7 +466,45 @@ export default class App extends Component {
     });
     this.getDataList(page, size);
   };
-  
+
+  // 处理弹窗提交
+  submitChangeAction = () => {
+    let data = {
+      "key_id": this.state.actionKey,                //类型：Number  必有字段  备注：表id
+      "exec_state": Number(this.state.actionType),                //类型：Number  必有字段  备注：执行状态 0：待取位 1：已取位 2：已航变 3:已退票 4：无需取位
+      "exec_msg": this.state.actionMessage 
+    }
+    Axios.post('api/pnr/updateExecuteState',data)
+      .then(res =>{
+        if(res.data.status === 0){
+          this.closeChangeAction()
+          this.getDataList()
+          return message.success(res.data.message)
+        }else{
+          return message.warning(res.data.message)
+        }
+      })
+  }
+  // 关闭处理弹窗
+  closeChangeAction = () => {
+    this.setState({
+      actionModal: false,
+    });
+  }
+
+  // 处理弹窗选择器
+  changeActionSelect =(val) =>{
+    this.setState({
+      actionType: val
+    })
+  }
+  // 处理弹窗输入框
+  changeActionMessage (val){
+    this.setState({
+      actionMessage: val.target.value
+    })
+  }
+
   render() {
     return (
       <div className="centent">
@@ -496,10 +541,7 @@ export default class App extends Component {
             <div className="type_name">
               <div>订单类型</div>
               <div className="radio">
-                <Radio.Group
-                  onChange={this.handleOrder}
-                  value={this.state.orderType}
-                >
+                <Radio.Group onChange={this.handleOrder} value={this.state.orderType}>
                   <Radio value="国内">国内</Radio>
                   <Radio value="国际">国际</Radio>
                 </Radio.Group>
@@ -532,14 +574,7 @@ export default class App extends Component {
             <div className="type_name">
               <div>票证类型</div>
               <div className="radio">
-                <Select
-                  allowClear
-                  style={{ width: 200 }}
-                  placeholder="所有"
-                  optionFilterProp="children"
-                  notFoundContent="无法找到"
-                  onChange={this.handleType}
-                >
+                <Select allowClear style={{ width: 200 }} placeholder="所有" optionFilterProp="children" notFoundContent="无法找到" onChange={this.handleType}>
                   <Option value="all">所有</Option>
                   <Option value="BOP">BOP</Option>
                   <Option value="BSP">BSP</Option>
@@ -550,23 +585,13 @@ export default class App extends Component {
             </div>
             {/* 执行时间 */}
             <div className="type_name">
-              <Select
-                defaultValue={{ value: "2" }}
-                labelInValue
-                style={{ width: 100 }}
-                bordered={false}
-                onChange={this.handleTime}
-              >
+              <Select defaultValue={{ value: '2' }} labelInValue style={{ width: 100 }} bordered={false} onChange={this.handleTime}>
                 <Option value="2">执行时间</Option>
                 <Option value="1">起飞时间</Option>
                 <Option value="0">导入时间</Option>
               </Select>
               <div className="radio">
-                <DatePicker
-                  locale={locale}
-                  placeholder="选择时间"
-                  onChange={this.startChange}
-                />
+                <DatePicker locale={locale} placeholder="选择时间" onChange={this.startChange} />
                 -
                 <DatePicker placeholder="选择时间" onChange={this.endChange} />
               </div>
@@ -575,25 +600,14 @@ export default class App extends Component {
             <div className="type_name">
               <div>航空公司</div>
               <div className="radio">
-                <Input
-                  allowClear  
-                  placeholder="请填写"
-                  onChange={this.handleAir.bind(this)}
-                />
+                <Input allowClear placeholder="请填写" onChange={this.handleAir.bind(this)} />
               </div>
             </div>
             {/* 是否自愿 */}
             <div className="type_name">
               <div>是否自愿</div>
               <div className="radio">
-                <Select
-                  allowClear
-                  style={{ width: 200 }}
-                  placeholder="请选择"
-                  optionFilterProp="children"
-                  notFoundContent="无法找到"
-                  onChange={this.handleVolun}
-                >
+                <Select allowClear style={{ width: 200 }} placeholder="请选择" optionFilterProp="children" notFoundContent="无法找到" onChange={this.handleVolun}>
                   <Option value="0">所有</Option>
                   <Option value="1">自愿</Option>
                   <Option value="2">非自愿</Option>
@@ -602,13 +616,7 @@ export default class App extends Component {
             </div>
             {/* 乘客姓名 */}
             <div className="type_name">
-              <Select
-                defaultValue={{ value: "4" }}
-                labelInValue
-                style={{ width: 100 }}
-                bordered={false}
-                onChange={this.handleChange}
-              >
+              <Select defaultValue={{ value: '4' }} labelInValue style={{ width: 100 }} bordered={false} onChange={this.handleChange}>
                 <Option value="4">乘客姓名</Option>
                 <Option value="1">PNR编码</Option>
                 <Option value="2">票号</Option>
@@ -627,15 +635,9 @@ export default class App extends Component {
           </div>
 
           <div className="table_main">
-
-            <Table
-              columns={this.state.columns}
-              dataSource={this.state.data}
-              pagination={false}
-              bordered
-            />
-            <div style={{display: this.state.configStyle}} className="config_modal">
-              <div className="config_title">执行消息</div> 
+            <Table columns={this.state.columns} dataSource={this.state.data} pagination={false} bordered />
+            <div style={{ display: this.state.configStyle }} className="config_modal">
+              <div className="config_title">执行消息</div>
               <div className="config_message">将在{this.state.config_time}的时候进行取位</div>
             </div>
 
@@ -650,6 +652,25 @@ export default class App extends Component {
             />
           </div>
         </div>
+
+        <Modal centered title="Basic Modal" visible={this.state.actionModal} onOk={this.submitChangeAction} onCancel={this.closeChangeAction}>
+          <div className="action_modal">
+            <div className="modal_select">
+              <div className="select_name">类型选择</div>
+              <Select defaultValue="0" style={{ width: 120 }} onChange={this.changeActionSelect}>
+                <Option value="0">待取位</Option>
+                <Option value="1">已取位</Option>
+                <Option value="2">已航变</Option>
+                <Option value="3">已退票</Option>
+                <Option value="4">无需取位</Option>
+              </Select>
+            </div>
+
+            <div className="modal_input">
+              <TextArea onChange={this.changeActionMessage.bind(this)} row={6} placeholder="请输入备注原因" />
+            </div>
+          </div>
+        </Modal>
       </div>
     );
   }

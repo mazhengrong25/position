@@ -128,3 +128,14 @@
         }
     }
 }
+
+.action_modal{
+    .modal_select{
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        .select_name{
+            margin-right: 10px;
+        }
+    }
+}
