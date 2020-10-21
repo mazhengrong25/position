@@ -38,10 +38,10 @@ const Option = Select.Option;
 // 分页  上一页  下一页
 function itemRender(current, type, originalElement) {
   if (type === 'prev') {
-    return <a>上一页</a>;
+    return <p>上一页</p>;
   }
   if (type === 'next') {
-    return <a>下一页</a>;
+    return <p>下一页</p>;
   }
   return originalElement;
 }

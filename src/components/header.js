@@ -7,11 +7,10 @@
  */
 import  React,{ Component } from 'react'
 import { message } from 'antd';
-import Axios from 'axios'
 // 引用样式
 import './header.scss'
 
-import { Link, withRouter  } from 'react-router-dom';
+import { Link  } from 'react-router-dom';
 
 const info = () => {
     message.info('功能开发中');

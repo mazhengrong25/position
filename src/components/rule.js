@@ -17,18 +17,15 @@ import './rule.scss';
 // 时间处理
 import moment from 'moment';
 
-const RadioGroup = Radio.Group;
 const Option = Select.Option;
-
-const selectedRowKeys = [];
 
 // 分页  上一页  下一页
 function itemRender(current, type, originalElement) {
   if (type === 'prev') {
-    return <a>上一页</a>;
+    return <p>上一页</p>;
   }
   if (type === 'next') {
-    return <a>下一页</a>;
+    return <p>下一页</p>;
   }
   return originalElement;
 }
@@ -188,8 +185,6 @@ export default class Rule extends Component {
                 },
             ],
 
-            selectedRowKeys: [],
-
             modalData: {},
             openModalType: '新增',
 
@@ -248,7 +243,7 @@ export default class Rule extends Component {
             });
             return message.warning(res.data.message);
         }
-        newData.map((item, index) => {
+        newData.forEach((item, index) => {
           item['key'] = index;
         });
         this.setState({
@@ -577,13 +572,13 @@ export default class Rule extends Component {
             <div className="table_main">
             <Space style={{ marginBottom: 16 }}>
                 <Button onClick={this.openAddModal}>+新增</Button>
-                <Button onClick={this.clearFilters} onClick={() => this.moreListEdit('启用')}>
+                <Button onClick={() => this.moreListEdit('启用')}>
                 批量启用
                 </Button>
-                <Button onClick={this.clearAll} onClick={() => this.moreListEdit('停用')}>
+                <Button onClick={() => this.moreListEdit('停用')}>
                 批量停用
                 </Button>
-                <Button onClick={this.clearAll} onClick={() => this.moreListEdit('删除')}>
+                <Button onClick={() => this.moreListEdit('删除')}>
                 批量删除
                 </Button>
             </Space>
