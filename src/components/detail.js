@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-15 11:40:14
- * @LastEditTime: 2020-10-21 17:33:10
+ * @LastEditTime: 2020-10-22 17:45:53
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from 'react';
@@ -34,11 +34,10 @@ const columns = [
 
 export default class Detail extends Component {
   componentDidMount() {
-    console.log(this.props.history.location.state.data);
+    this.getToken();
     this.setState({
       detailsData: this.props.history.location.state.data,
     });
-    this.getToken();
   }
 
   constructor(props) {
@@ -178,7 +177,8 @@ export default class Detail extends Component {
               ? '无需取位'
               : this.state.detailsData.exec_state === -1
               ? '取消失败'
-              : ''}
+              : this.state.detailsData.exec_state === 0
+              ? '待取位':''}
           </div>
           <div className="name">执行消息:</div>
           <div className="number">{this.state.detailsData.exec_msg}</div>

@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-10-22 09:42:58
+ * @LastEditTime: 2020-10-22 16:46:32
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from 'react';
@@ -301,12 +301,13 @@ export default class Rule extends Component {
       openModalType: '修改',
       modalVisible: true,
     });
+
   }
 
   //   模态框状态开关
   modalChangeStatus = (type) => {
-    console.log(type);
     let data = Object.assign({}, this.state.modalData, { config_state: type });
+    console.log(data);
     this.setState({
       modalData: data,
     });
@@ -396,15 +397,21 @@ export default class Rule extends Component {
   // 模态框数据提交
   submitModalBtn = () => {
     console.log('提交', this.state.modalData);
-    let newConfig = this.state.modalData;
+    let newConfig = JSON.parse(JSON.stringify(this.state.modalData));
     newConfig.config_state = newConfig.config_state ? 2 : 1;
+    newConfig.latest_limit = Number(newConfig.latest_limit) 
+    newConfig.execute_limit = Number(newConfig.execute_limit) 
+    newConfig.earliest_limit = Number(newConfig.earliest_limit) 
+    newConfig.max_refund_fee = Number(newConfig.max_refund_fee) 
+    newConfig.min_refund_fee = Number(newConfig.min_refund_fee) 
 
+    console.log('弹窗提交',newConfig)
     let data = {
       action_code: this.state.openModalType === '修改' ? 'update' : this.state.openModalType === '添加' ? 'add' : '',
       configs: [newConfig],
     };
     post('api/pnrcancelconfig/set', data).then((res) => {
-      if (res.status === 200) {
+      if (res.status === 0) {
         message.success(res.message);
         this.getDataList();
         this.closeModal();
@@ -448,13 +455,13 @@ export default class Rule extends Component {
     };
 
     post('api/pnrcancelconfig/set', data).then((res) => {
-        if (res.status === 200) {
+        if (res.status === 0) {
           message.success(res.message);
           this.getDataList();
         } else {
           message.warning(res.message);
         }
-      });
+    });
     }
     // 订单类型
     handleOrder = (val) => {
@@ -572,14 +579,14 @@ export default class Rule extends Component {
 
             <div className="table_main">
             <Space style={{ marginBottom: 16 }}>
-                <Button onClick={this.openAddModal}>+新增</Button>
-                <Button onClick={() => this.moreListEdit('启用')}>
+                <Button  onClick={this.openAddModal}>+新增</Button>
+                <Button  onClick={() => this.moreListEdit('启用')}>
                 批量启用
                 </Button>
-                <Button onClick={() => this.moreListEdit('停用')}>
+                <Button  onClick={() => this.moreListEdit('停用')}>
                 批量停用
                 </Button>
-                <Button onClick={() => this.moreListEdit('删除')}>
+                <Button  onClick={() => this.moreListEdit('删除')}>
                 批量删除
                 </Button>
             </Space>
@@ -694,7 +701,7 @@ export default class Rule extends Component {
                 <div className="list_item">
                     <div className="list_title">备注</div>
                     <div className="list_box">
-                    <TextArea defaultValue={this.state.modalData.remarks} rows={4} onChange={this.editRemarksInput.bind(this)} />
+                    <TextArea placeholder="添加备注" defaultValue={this.state.modalData.remarks} rows={4} onChange={this.editRemarksInput.bind(this)} />
                     </div>
                 </div>
                 </div>

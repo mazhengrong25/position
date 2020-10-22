@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-10-22 09:33:39
+ * @LastEditTime: 2020-10-22 18:13:15
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from 'react';
@@ -55,7 +55,7 @@ export default class App extends Component {
       timeValue: 2, //日期类型
 
       status: null, //执行状态
-      type: null, //票证类型
+      type: '', //票证类型
       time: null, //执行时间
       air: '', //航空公司
       volun: 0, //是否自愿
@@ -178,7 +178,7 @@ export default class App extends Component {
               text = '取消失败';
             }
             return (
-              <div onMouseEnter={() => this.hoverMotion(motion)} style={style}>
+              <div onMouseEnter={() => this.hoverMotion(motion)} style={style} >
                 {text}
               </div>
             );
@@ -230,7 +230,7 @@ export default class App extends Component {
         },
       ],
 
-      headerStatus: null, // 头部状态
+      headerStatus: 'all', // 头部状态
 
       statistics: {},
 
@@ -270,20 +270,22 @@ export default class App extends Component {
 
   // 获取取位列表
   getDataList(page, size) {
+    console.log(this.state.headerStatus)
     let data = {
       page_no: page || this.state.pageNumber,
       page_size: size || this.state.pageSize, // 当前页条数
       airline_code: this.state.air, // 航空公司二字代码
       intl_flag: this.state.orderType === '国内' ? false : true, // 订单类型
-      ticket_type: this.state.type, // 票证类型
+      ticket_type: this.state.type === 'all'? '':this.state.type, // 票证类型
       date_type: Number(this.state.timeValue), // 日期类型  0:导入时间 1：起飞时间 2：执行时间
       refund_type: Number(this.state.volun), // 退票类型 0：所有 1：自愿 2：非自愿
       query_type: Number(this.state.itemType), // 搜索类型 1:PNR编码 2:票号 3:订单号 4:乘客姓名
       query_value: this.state.itemValue, // 类型：String  可有字段  备注：搜索关键字，取决于query_type的搜索类型
       begin_date: this.state.start, // 开始日期
       end_date: this.state.end, // 结束日期
-      exec_state: Number(this.state.headerStatus) || null,
+      exec_state: Number(this.state.headerStatus) ?? null,
     };
+    console.log(data.exec_state)
     post('/api/pnr/getdata', data)
       .then((res) => {
         let newData = res.datas;
@@ -450,6 +452,9 @@ export default class App extends Component {
   // 取位执行时间弹窗
   hoverMotion(val) {
     console.log(val);
+    if(val.exec_state !== 0){
+      return false
+    }
     this.setState({
       config_time: val.next_exec_time,
       configStyle: 'block',
@@ -513,7 +518,8 @@ export default class App extends Component {
       <div className="centent">
         {/* 统计横幅 */}
         <div className="count">
-          <RadioGroup onChange={this.changeHeaderBtn}>
+          <RadioGroup onChange={this.changeHeaderBtn}
+          buttonStyle="solid"  optionType="button">
             <RadioButton value="all">
               全部 <div className="count_tag">{this.state.statistics.total}</div>
             </RadioButton>

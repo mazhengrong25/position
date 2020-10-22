@@ -5,8 +5,7 @@
     flex-direction: column;
 
     .count {
-        // display: flex;
-        // justify-content: flex-start;
+        display: inline-flex;
         height: 32px;
         margin: 0 16px 16px;
         flex-shrink: 0;
@@ -20,7 +19,7 @@
             border-radius: 8px;
             color: rgba(255, 0, 0, 1);
             font-weight: 400;
-            vertical-align: middle; //标签居中
+            // vertical-align: middle; //标签居中
             align-items: center;
             justify-content: center;
         }

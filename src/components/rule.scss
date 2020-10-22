@@ -36,12 +36,12 @@
 
     .ant-table-thead > tr > th {
       background: rgba(230, 242, 254, 1);
-      font-size: 12px;
+      // font-size: 12px;
       color: #333333;
 
       font-weight: 400;
       line-height: 16px;
-      border: 1px solid #d9e1ea;
+      // border: 1px solid #d9e1ea;
     }
 
     .ant-table-tbody > tr:nth-child(even) {
@@ -51,6 +51,17 @@
     .ant-space-align-center {
       padding: 6px 10px 16px 25px;
     }
+
+    .ant-btn {
+      border-color: #40a9ff;
+      color: #40a9ff;
+
+    }
+
+    .ant-btn-link{
+      border:none;
+    }
+    
   }
 }
 
@@ -67,6 +78,7 @@
   text-align: right;
   background-color: #fff;
 }
+
 
 // 规则弹窗
 .rule_modal {
@@ -108,4 +120,19 @@
       }
     }
   }
+}
+
+.ant-modal-footer{
+  text-align: center;
+  border-top: none;
+}
+
+.ant-modal-title {
+  text-align: center;
+  font-weight: bold;
+
+}
+
+.ant-modal-header {
+  background-color: #F1F3F5;
 }
