@@ -8,6 +8,8 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
 
+import {get, post} from '../api/api'
+
 import { Table } from 'antd';
 
 // 引用样式
@@ -55,10 +57,10 @@ export default class Detail extends Component {
       key_id: '',
     };
 
-    Axios.get('api/token/Authenticate', data).then((res) => {
+    get('api/token/Authenticate', data).then((res) => {
       console.log(res);
-      if (res.data.status === 0) {
-        let token = res.data.token;
+      if (res.status === 0) {
+        let token = res.token;
         console.log(token);
         Axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 
@@ -72,10 +74,10 @@ export default class Detail extends Component {
     let data = {
       key_id: this.state.detailsData.key_id,
     };
-    Axios.post('/api/pnr/getcancelrecord', data)
+    post('/api/pnr/getcancelrecord', data)
       .then((res) => {
-        console.log('日志', res.data.datas);
-        let newData = res.data.datas;
+        console.log('日志', res.datas);
+        let newData = res.datas;
         newData.forEach((item, index) => {
           item['key'] = index;
         });
