@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-10-21 18:40:25
+ * @LastEditTime: 2020-10-22 09:33:39
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from 'react';
@@ -310,7 +310,8 @@ export default class App extends Component {
   handleStatus = (val) => {
     console.log(val);
     this.setState({
-      headerStatus: Number(val),
+      // headerStatus: Number(val),
+      headerStatus: val,
     });
   };
 
@@ -653,7 +654,7 @@ export default class App extends Component {
           </div>
         </div>
 
-        <Modal centered title="Basic Modal" visible={this.state.actionModal} onOk={this.submitChangeAction} onCancel={this.closeChangeAction}>
+        <Modal centered title="执行状态" visible={this.state.actionModal} onOk={this.submitChangeAction} onCancel={this.closeChangeAction}>
           <div className="action_modal">
             <div className="modal_select">
               <div className="select_name">类型选择</div>

@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-10-21 18:11:04
+ * @LastEditTime: 2020-10-22 09:42:58
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from 'react';
@@ -49,7 +49,7 @@ export default class Rule extends Component {
             selectedRowKeys: [], //选中行
             orderType: '国内', //订单类型
             configType: 0, // 配置状态
-            executeType: '0', // 执行模式
+            executeType: 0, // 执行模式   测试  之前是'0'
             cabinType:'', // 舱位模式
             air:'', // 航空公司
             columns: [
