@@ -11,6 +11,8 @@ import { Radio, Select, DatePicker, Input, Button, Table, Tag, message, Paginati
 
 import Axios from 'axios';
 
+import {get, post} from './api/api'
+
 import './App.scss';
 
 import moment from 'moment';
@@ -253,10 +255,10 @@ export default class App extends Component {
       key: '',
     };
 
-    Axios.get('api/token/Authenticate', data).then((res) => {
+    get('/api/token/Authenticate', data).then((res) => {
       console.log(res);
-      if (res.data.status === 0) {
-        let token = res.data.token;
+      if (res.status === 0) {
+        let token = res.token;
         console.log(token);
         Axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 
@@ -282,22 +284,22 @@ export default class App extends Component {
       end_date: this.state.end, // 结束日期
       exec_state: Number(this.state.headerStatus) || null,
     };
-    Axios.post('/api/pnr/getdata', data)
+    post('/api/pnr/getdata', data)
       .then((res) => {
-        let newData = res.data.datas;
+        let newData = res.datas;
         if (newData === null || newData === '') {
           this.setState({
             data: [],
           });
-          return message.warning(res.data.message);
+          return message.warning(res.message);
         }
         newData.forEach((item, index) => {
           item['key'] = index;
         });
         this.setState({
           data: newData,
-          totalCount: res.data.total_count,
-          pageNumber: res.data.page_no,
+          totalCount: res.total_count,
+          pageNumber: res.page_no,
         });
         console.log(this.state.data);
       })
@@ -425,9 +427,9 @@ export default class App extends Component {
     let data = {
       intl_flag: false,
     };
-    Axios.post('api/pnr/statistics', data).then((res) => {
+    post('/api/pnr/statistics', data).then((res) => {
       console.log(res);
-      let statisticsTotal = res.data.statistics;
+      let statisticsTotal = res.statistics;
       this.setState({
         statistics: statisticsTotal,
       });
@@ -475,14 +477,14 @@ export default class App extends Component {
       "exec_state": Number(this.state.actionType),                //类型：Number  必有字段  备注：执行状态 0：待取位 1：已取位 2：已航变 3:已退票 4：无需取位
       "exec_msg": this.state.actionMessage 
     }
-    Axios.post('api/pnr/updateExecuteState',data)
+    post('api/pnr/updateExecuteState',data)
       .then(res =>{
-        if(res.data.status === 0){
+        if(res.status === 0){
           this.closeChangeAction()
           this.getDataList()
-          return message.success(res.data.message)
+          return message.success(res.message)
         }else{
-          return message.warning(res.data.message)
+          return message.warning(res.message)
         }
       })
   }

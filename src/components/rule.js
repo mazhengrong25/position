@@ -12,6 +12,7 @@ import { Radio, Select, Input, Button, Table, Space, Modal, Pagination, Tooltip,
 // const { TextArea } = Input;
 
 import Axios from 'axios';
+import {get, post} from '../api/api'
 // 引用样式
 import './rule.scss';
 // 时间处理
@@ -210,10 +211,10 @@ export default class Rule extends Component {
       key: '',
     };
 
-    Axios.get('api/token/Authenticate', data).then((res) => {
+    get('api/token/Authenticate', data).then((res) => {
       console.log(res);
-      if (res.data.status === 0) {
-        let token = res.data.token;
+      if (res.status === 0) {
+        let token = res.token;
         console.log(token);
         Axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 
@@ -234,22 +235,22 @@ export default class Rule extends Component {
       config_state: Number(this.state.configType), //类型：Number  必有字段  备注：配置状态 0:所有 1：禁用 2：可用
       key_id: this.state.keyId, //类型：Number  可有字段  备注：表id
     };
-    Axios.post('/api/pnrcancelconfig/getdata', data)
+    post('api/pnrcancelconfig/getdata', data)
       .then((res) => {
-        let newData = res.data.datas;
+        let newData = res.datas;
         if (newData === null || newData === "") {
             this.setState({
               data: [],
             });
-            return message.warning(res.data.message);
+            return message.warning(res.message);
         }
         newData.forEach((item, index) => {
           item['key'] = index;
         });
         this.setState({
           data: newData,
-          totalCount: res.data.total_count,
-          pageNumber: res.data.page_no,
+          totalCount: res.total_count,
+          pageNumber: res.page_no,
         });
         console.log(data);
       })
@@ -402,13 +403,13 @@ export default class Rule extends Component {
       action_code: this.state.openModalType === '修改' ? 'update' : this.state.openModalType === '添加' ? 'add' : '',
       configs: [newConfig],
     };
-    Axios.post('api/pnrcancelconfig/set', data).then((res) => {
+    post('api/pnrcancelconfig/set', data).then((res) => {
       if (res.status === 200) {
-        message.success(res.data.message);
+        message.success(res.message);
         this.getDataList();
         this.closeModal();
       } else {
-        message.warning(res.data.message);
+        message.warning(res.message);
       }
     });
   };
@@ -446,12 +447,12 @@ export default class Rule extends Component {
       configs: newData,
     };
 
-    Axios.post('api/pnrcancelconfig/set', data).then((res) => {
+    post('api/pnrcancelconfig/set', data).then((res) => {
         if (res.status === 200) {
-          message.success(res.data.message);
+          message.success(res.message);
           this.getDataList();
         } else {
-          message.warning(res.data.message);
+          message.warning(res.message);
         }
       });
     }
