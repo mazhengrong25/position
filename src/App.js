@@ -41,7 +41,8 @@ function itemRender(current, type, originalElement) {
 
 export default class App extends Component {
   componentDidMount() {
-    this.getToken();
+    this.getDataList();
+    this.getStatistic();
   }
 
   constructor(props) {
@@ -247,25 +248,6 @@ export default class App extends Component {
       actionMessage: '',
       actionKey: ''
     };
-  }
-
-  // 获取token
-  getToken() {
-    let data = {
-      key: '',
-    };
-
-    get('/api/token/Authenticate', data).then((res) => {
-      console.log(res);
-      if (res.status === 0) {
-        let token = res.token;
-        console.log(token);
-        Axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-
-        this.getDataList();
-        this.getStatistic();
-      }
-    });
   }
 
   // 获取取位列表
