@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-10-15 17:56:37
- * @LastEditors: mazhengrong
+ * @LastEditTime: 2020-10-23 12:00:15
+ * @LastEditors: Please set LastEditors
  */
 import  React,{ Component } from 'react'
 import { message } from 'antd';
@@ -24,10 +24,10 @@ export default class Header extends Component {
         super(props);
         this.state = {
         }
-      }
-      getPathname ()  {
-        console.log(this.props.location.pathname);
-        }
+   }
+    // getPathname ()  {
+    //     console.log('getPathname',this.props.location.pathname);
+    // }
     render() {
         return (
             <div className="title">
