@@ -44,6 +44,10 @@
       // border: 1px solid #d9e1ea;
     }
 
+    .ant-table-tbody > tr:hover >td{
+      background: #E4EAF2 !important;
+    }
+
     .ant-table-tbody > tr:nth-child(even) {
       background: rgba(242, 246, 252, 1);
     }

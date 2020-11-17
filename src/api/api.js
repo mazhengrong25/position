@@ -1,59 +1,65 @@
+/*
+ * @Description: 
+ * @Author: wish.WuJunLong
+ * @Date: 2020-10-22 09:26:28
+ * @LastEditTime: 2020-11-17 17:41:45
+ * @LastEditors: wish.WuJunLong
+ */
 import axios from 'axios';
 
+import {message} from 'antd'
 
-if (process.env.NODE_ENV === 'development') {    
-  axios.defaults.baseURL = '';
-} else if (process.env.NODE_ENV === 'production') {    
-  axios.defaults.baseURL = 'http://192.168.0.69:7996/';
+let baseUrl = ""
+if (process.env.NODE_ENV === 'development') {
+    baseUrl = 'http://192.168.0.31:7996';
+} else if (process.env.NODE_ENV === 'production') {
+    baseUrl = 'http://192.168.0.69:7996';
 }
 
+axios.defaults.baseURL = baseUrl; 
 
-// 请求超时时间
-axios.defaults.timeout = 10000;
+let instance = axios.create({
+  timeout: 1000 * 12,
+});
 
-// post请求头
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+// http request 拦截器
+instance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    token && (config.headers.Authorization = 'Bearer ' + token);
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-// 请求拦截器
-axios.interceptors.request.use(    
-    config => {
-        return config;    
-    },    
-    error => {        
-        return Promise.error(error);    
-    })
+// http response 拦截器
+instance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if(!localStorage.getItem('token')){
+      message.error('获取数据失败，请重新获取权限')
+    }else {
+      message.destroy();
+      message.error(error.response?error.response.data.msg: '请求失败，请联系管理员');
+      localStorage.removeItem('token')
+    }
+    return Promise.reject(error);
+      
+    // if(String(error).indexOf('Network Error') > 0){
+    //   message.destroy();
+    //   message.error('token失效，请重新获取权限')
+    //   localStorage.removeItem('token')
+    //   return Promise.reject(error);
+    // }else{
+    //   message.destroy();
+    //   message.error(error.response?error.response.data.msg: '请求失败，请联系管理员');
+    //   return Promise.reject(error);
+    // }
+  }
+);
 
-/** 
- * get方法，对应get请求 
- * @param {String} url [请求的url地址] 
- * @param {Object} params [请求时携带的参数] 
- */
-export function get(url, params){    
-    return new Promise((resolve, reject) =>{        
-        axios.get(url, {            
-            params: params        
-        })        
-        .then(res => {            
-            resolve(res.data);        
-        })        
-        .catch(err => {            
-            reject(err.data)        
-        })    
-    });
-}
-/** 
- * post方法，对应post请求 
- * @param {String} url [请求的url地址] 
- * @param {Object} params [请求时携带的参数] 
- */
-export function post(url, params) {    
-    return new Promise((resolve, reject) => {         
-        axios.post(url, params)        
-        .then(res => {            
-            resolve(res.data);        
-        })        
-        .catch(err => {            
-            reject(err.data)        
-        })    
-    });
-}
+export default instance;

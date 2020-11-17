@@ -5,74 +5,57 @@
  * @LastEditTime: 2020-10-23 10:47:27
  * @LastEditors: Please set LastEditors
  */
-import React, { Component } from "react";
-import Axios from "axios";
+import React, { Component } from 'react';
 
-import { get, post } from "../api/api";
+import axios from '@/api/api';
 
-import { Table } from "antd";
+import { message, Table } from 'antd';
 
 // 引用样式
-import "./detail.scss";
+import './detail.scss';
 
-import moment from "moment";
+import moment from 'moment';
 
 const columns = [
   {
-    title: "操作者",
-    dataIndex: "creator",
+    title: '操作者',
+    dataIndex: 'creator',
   },
   {
-    title: "操作时间",
-    dataIndex: "create_time",
+    title: '操作时间',
+    dataIndex: 'create_time',
   },
   {
-    title: "日志内容",
-    dataIndex: "content",
+    title: '日志内容',
+    dataIndex: 'content',
   },
 ];
 
 export default class Detail extends Component {
-  componentDidMount() {
-    this.getToken();
-    this.setState({
-      detailsData: this.props.history.location.state.data,
-    });
-  }
-
   constructor(props) {
-    console.log(props);
     super(props);
 
     this.state = {
       data: [],
-      detailsData: {},
+      detailsData: this.props.location.state.data || {},
       style: {
         background: 'rgba(243, 218, 188, .8)',
-        color: '#FB9826'
+        color: '#FB9826',
       },
-      blue:{color:'#0070E2'},
-      red:{color:'#FF0000'},
-      gray:{color:'#999999'},
+      blue: { color: '#0070E2' },
+      red: { color: '#FF0000' },
+      gray: { color: '#999999' },
     };
   }
 
-  // 获取token
-  getToken() {
-    let data = {
-      key_id: "",
-    };
-
-    get("api/token/Authenticate", data).then((res) => {
-      console.log(res);
-      if (res.status === 0) {
-        let token = res.token;
-        console.log(token);
-        Axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-
-        this.getDataList();
-      }
+  componentWillMount (){
+    this.setState({
+      detailsData: this.props.location.state.data,
     });
+  }
+
+  componentDidMount() {
+    this.getDataList();
   }
 
   // 获取操作日志列表
@@ -80,21 +63,17 @@ export default class Detail extends Component {
     let data = {
       key_id: this.state.detailsData.key_id,
     };
-    post("/api/pnr/getcancelrecord", data)
-      .then((res) => {
-        console.log("日志", res.datas);
-        let newData = res.datas;
-        newData.forEach((item, index) => {
-          item["key"] = index;
-        });
+    axios.post('/api/pnr/getcancelrecord', data).then((res) => {
+      if (res.data.status === 0) {
         this.setState({
-          data: newData,
+          data: res.datas,
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      } else {
+        message.warning(res.data.message);
+      }
+    });
   }
+  
 
   render() {
     return (
@@ -112,22 +91,14 @@ export default class Detail extends Component {
           <div className="name">票号:</div>
           <div className="number">{this.state.detailsData.ticket_no}</div>
           <div className="name">订单类型:</div>
-          <div className="number">
-            {this.state.detailsData.intl_flag === "true" ? "国际 " : "国内"}
-          </div>
+          <div className="number">{this.state.detailsData.intl_flag === 'true' ? '国际 ' : '国内'}</div>
           <div className="name">GDS系统:</div>
           <div className="number">{this.state.detailsData.gds_type}</div>
           <div className="name">票证类型:</div>
           <div className="number">{this.state.detailsData.ticket_type} </div>
           <div className="name">是否自愿:</div>
           <div className="number">
-            {this.state.detailsData.refund_type === 1
-              ? "自愿"
-              : this.state.detailsData.refund_type === 2
-              ? "非自愿"
-              : this.state.detailsData.refund_type === 0
-              ? "所有"
-              : ""}
+            {this.state.detailsData.refund_type === 1 ? '自愿' : this.state.detailsData.refund_type === 2 ? '非自愿' : this.state.detailsData.refund_type === 0 ? '所有' : ''}
           </div>
           <div className="name">编码状态:</div>
           <div className="number">{this.state.detailsData.pnr_state}</div>
@@ -139,26 +110,15 @@ export default class Detail extends Component {
           <div className="text">航程信息</div>
         </div>
         <div className="flight">
-          <div
-            className="flight_type"
-            style={this.state.detailsData.route_type !== "OW"?this.state.style:{}}
-            >
-            {this.state.detailsData.route_type === "OW" ? "单程" : "往返"}
+          <div className="flight_type" style={this.state.detailsData.route_type !== 'OW' ? this.state.style : {}}>
+            {this.state.detailsData.route_type === 'OW' ? '单程' : '往返'}
           </div>
           <div className="segment">
             <div className="segment_time">
-              <div className="time_big">
-                {moment(this.state.detailsData.fly_time).format("YYYY-MM-DD")}
-              </div>
-              <div className="time_small">
-                {moment(this.state.detailsData.fly_time).format("HH:mm")}
-              </div>
-              <div className="time_middle">
-                【{this.state.detailsData.from_airport}】 —{" "}
-              </div>
-              <div className="time_middle">
-                【{this.state.detailsData.to_airport}】
-              </div>
+              <div className="time_big">{moment(this.state.detailsData.fly_time).format('YYYY-MM-DD')}</div>
+              <div className="time_small">{moment(this.state.detailsData.fly_time).format('HH:mm')}</div>
+              <div className="time_middle">【{this.state.detailsData.from_airport}】 — </div>
+              <div className="time_middle">【{this.state.detailsData.to_airport}】</div>
             </div>
           </div>
           {/* <div className="logo">
@@ -184,13 +144,9 @@ export default class Detail extends Component {
           <div className="name">出票部门:</div>
           <div className="number">{this.state.detailsData.issue_dept_name}</div>
           <div className="name">退票部门:</div>
-          <div className="number">
-            {this.state.detailsData.refund_dept_name}
-          </div>
+          <div className="number">{this.state.detailsData.refund_dept_name}</div>
           <div className="name">采购部门:</div>
-          <div className="number">
-            {this.state.detailsData.buy_channels_name}
-          </div>
+          <div className="number">{this.state.detailsData.buy_channels_name}</div>
         </div>
         <div className="nav">
           <div className="tags"></div>
@@ -198,23 +154,31 @@ export default class Detail extends Component {
         </div>
         <div className="level">
           <div className="name">执行状态:</div>
-          <div className="number_green"
-          style={this.state.detailsData.exec_state === 0 ?this.state.blue:
-            this.state.detailsData.exec_state === -1 ? this.state.red:
-            this.state.detailsData.exec_state === 4 ? this.state.gray:{}}>
+          <div
+            className="number_green"
+            style={
+              this.state.detailsData.exec_state === 0
+                ? this.state.blue
+                : this.state.detailsData.exec_state === -1
+                ? this.state.red
+                : this.state.detailsData.exec_state === 4
+                ? this.state.gray
+                : {}
+            }
+          >
             {this.state.detailsData.exec_state === 1
-              ? "已取位"
+              ? '已取位'
               : this.state.detailsData.exec_state === 2
-              ? "已航变"
+              ? '已航变'
               : this.state.detailsData.exec_state === 3
-              ? "已退票"
+              ? '已退票'
               : this.state.detailsData.exec_state === 4
-              ? "无需取位"
+              ? '无需取位'
               : this.state.detailsData.exec_state === -1
-              ? "取消失败"
+              ? '取消失败'
               : this.state.detailsData.exec_state === 0
-              ? "待取位"
-              : ""}
+              ? '待取位'
+              : ''}
           </div>
           <div className="name">执行消息:</div>
           <div className="number">{this.state.detailsData.exec_msg}</div>
@@ -233,13 +197,7 @@ export default class Detail extends Component {
         </div>
 
         <div className="from">
-          <Table
-            columns={columns}
-            dataSource={this.state.data}
-            pagination={{ pageSize: 10 }}
-            scroll={{ y: 240 }}
-            bordered
-          />
+          <Table size="small" columns={columns} dataSource={this.state.data} pagination={{ pageSize: 10 }} scroll={{ y: 240 }} rowKey="key_id" bordered />
         </div>
       </div>
     );

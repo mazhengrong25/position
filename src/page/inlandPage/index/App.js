@@ -2,16 +2,14 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-10-22 18:13:15
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2020-11-17 18:25:48
+ * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from 'react';
 // 单选框
 import { Radio, Select, DatePicker, Input, Button, Table, Tag, message, Pagination, Modal } from 'antd';
 
-import Axios from 'axios';
-
-import {get, post} from './api/api'
+import axios from '@/api/api'
 
 import './App.scss';
 
@@ -40,13 +38,7 @@ function itemRender(current, type, originalElement) {
 }
 
 export default class App extends Component {
-  componentDidMount() {
-    this.getDataList();
-    this.getStatistic();
-  }
-
   constructor(props) {
-    console.log(props);
     super(props);
     this.state = {
       data: [],
@@ -250,9 +242,13 @@ export default class App extends Component {
     };
   }
 
+  componentDidMount() {
+    this.getDataList();
+    this.getStatistic();
+  }
+
   // 获取取位列表
   getDataList(page, size) {
-    console.log(this.state.headerStatus)
     let data = {
       page_no: page || this.state.pageNumber,
       page_size: size || this.state.pageSize, // 当前页条数
@@ -267,23 +263,19 @@ export default class App extends Component {
       end_date: this.state.end, // 结束日期
       exec_state: Number(this.state.headerStatus) ?? null,
     };
-    console.log(data.exec_state)
-    post('/api/pnr/getdata', data)
+    axios.post('/api/pnr/getdata', data)
       .then((res) => {
-        let newData = res.datas;
+        let newData = res.data.datas;
         if (newData === null || newData === '') {
           this.setState({
             data: [],
           });
-          return message.warning(res.message);
+          return message.warning(res.data.message);
         }
-        newData.forEach((item, index) => {
-          item['key'] = index;
-        });
         this.setState({
           data: newData,
-          totalCount: res.total_count,
-          pageNumber: res.page_no,
+          totalCount: res.data.total_count,
+          pageNumber: res.data.page_no,
         });
         console.log(this.state.data);
       })
@@ -411,16 +403,11 @@ export default class App extends Component {
     let data = {
       intl_flag: false,
     };
-    post('/api/pnr/statistics', data).then((res) => {
-      console.log(res);
-      let statisticsTotal = res.statistics;
+    axios.post('/api/pnr/statistics', data).then((res) => {
+      let statisticsTotal = res.data.statistics;
       this.setState({
         statistics: statisticsTotal,
       });
-
-      setTimeout(() => {
-        console.log(this.state.statistics);
-      }, 300);
     });
   }
 
@@ -464,14 +451,14 @@ export default class App extends Component {
       "exec_state": Number(this.state.actionType),                //类型：Number  必有字段  备注：执行状态 0：待取位 1：已取位 2：已航变 3:已退票 4：无需取位
       "exec_msg": this.state.actionMessage 
     }
-    post('api/pnr/updateExecuteState',data)
+    axios.post('api/pnr/updateExecuteState',data)
       .then(res =>{
-        if(res.status === 0){
+        if(res.data.status === 0){
           this.closeChangeAction()
           this.getDataList()
-          return message.success(res.message)
+          return message.success(res.data.message)
         }else{
-          return message.warning(res.message)
+          return message.warning(res.data.message)
         }
       })
   }
@@ -626,7 +613,7 @@ export default class App extends Component {
           </div>
 
           <div className="table_main">
-            <Table columns={this.state.columns} dataSource={this.state.data} pagination={false} bordered />
+            <Table size="small" columns={this.state.columns} dataSource={this.state.data} pagination={false} bordered rowKey="key_id"/>
             <div style={{ display: this.state.configStyle }} className="config_modal">
               <div className="config_title">执行消息</div>
               <div className="config_message">将在{this.state.config_time}的时候进行取位</div>
