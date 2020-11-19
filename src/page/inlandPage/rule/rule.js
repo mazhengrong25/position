@@ -2,8 +2,8 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-10-23 09:23:15
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2020-11-19 09:52:46
+ * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from 'react';
 
@@ -82,12 +82,12 @@ export default class Rule extends Component {
             );
           },
         },
-        {
-          title: '退票费区间',
-          render: (state) => {
-            return state.min_refund_fee + '-' + state.max_refund_fee;
-          },
-        },
+        // {
+        //   title: '退票费区间',
+        //   render: (state) => {
+        //     return state.min_refund_fee + '-' + state.max_refund_fee;
+        //   },
+        // },
         {
           title: '最早取位时限',
           dataIndex: 'earliest_limit',
@@ -364,8 +364,8 @@ export default class Rule extends Component {
     newConfig.latest_limit = Number(newConfig.latest_limit);
     newConfig.execute_limit = Number(newConfig.execute_limit);
     newConfig.earliest_limit = Number(newConfig.earliest_limit);
-    newConfig.max_refund_fee = Number(newConfig.max_refund_fee);
-    newConfig.min_refund_fee = Number(newConfig.min_refund_fee);
+    newConfig.max_refund_fee = 0;
+    newConfig.min_refund_fee = 0;
 
     console.log('弹窗提交', newConfig);
     let data = {
@@ -566,7 +566,7 @@ export default class Rule extends Component {
           />
         </div>
 
-        <Modal title={this.state.openModalType + '规则'} width={820} centered visible={this.state.modalVisible} onOk={this.submitModalBtn} onCancel={this.closeModal}>
+        <Modal maskClosable={false} title={this.state.openModalType + '规则'} width={820} centered visible={this.state.modalVisible} onOk={this.submitModalBtn} onCancel={this.closeModal}>
           <div className="rule_modal">
             <div className="modal_list">
               <div className="list_item">
@@ -592,11 +592,11 @@ export default class Rule extends Component {
                 </div>
               </div>
               <div className="list_item">
-                <div className="list_title">舱位模式</div>
+                <div className="list_title">取位模式</div>
                 <div className="list_box">
-                  <Select value={this.state.modalData.execute_mode ? '适用' : '禁止'} allowClear style={{ width: 120 }} onChange={this.modalChangeMode}>
-                    <Option value={true}>适用</Option>
-                    <Option value={false}>禁止</Option>
+                  <Select value={this.state.modalData.execute_mode ? '需要取位' : '无需取位'} allowClear style={{ width: 120 }} onChange={this.modalChangeMode}>
+                    <Option value={true}>需要取位</Option>
+                    <Option value={false}>无需取位</Option>
                   </Select>
                 </div>
               </div>
@@ -607,7 +607,7 @@ export default class Rule extends Component {
                 </div>
               </div>
             </div>
-            <div className="modal_list">
+            {/* <div className="modal_list">
               <div className="list_item">
                 <div className="list_title">退票费</div>
                 <div className="list_box">
@@ -619,7 +619,7 @@ export default class Rule extends Component {
                   <Input allowClear placeholder="最高" defaultValue={this.state.modalData.max_refund_fee} onChange={this.editMaxRefundInput.bind(this)} />
                 </div>
               </div>
-            </div>
+            </div> */}
             <div className="modal_list">
               <div className="list_item">
                 <div className="list_title">最早取位</div>

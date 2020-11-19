@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 15:41:17
- * @LastEditTime: 2020-11-17 09:00:30
+ * @LastEditTime: 2020-11-19 10:09:31
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from 'react';
@@ -22,21 +22,22 @@ export default class Rule extends Component {
     };
   }
 
-  componentWillMount() {
+  async componentWillMount() {
+    
+  }
+
+  async componentDidMount() {
     let data = React.$filterUrlParams(this.props.location.search)
-    this.setState({
+    await this.setState({
       url: data.url,
       key_id: data.token
     });
-  }
-
-  componentDidMount() {
-    this.getToken();
+    await this.getToken();
   }
 
   getToken() {
     let data = {
-      key: this.state.key_id || '0',
+      key: this.state.key_id || 0,
     };
 
     axios.get('api/token/Authenticate', { params: data }).then((res) => {
