@@ -2,7 +2,7 @@
  * @Description: 国际取位详情
  * @Author: wish.WuJunLong
  * @Date: 2020-11-19 10:41:17
- * @LastEditTime: 2020-11-19 15:14:53
+ * @LastEditTime: 2020-11-20 10:59:17
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -212,7 +212,7 @@ export default class interDetails extends Component {
                     : this.state.detailsData.exec_state === 4
                     ? "无需取位"
                     : this.state.detailsData.exec_state === -1
-                    ? "取消失败"
+                    ? "取位失败"
                     : ""}
                 </div>
               </div>

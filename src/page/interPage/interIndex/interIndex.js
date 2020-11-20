@@ -2,7 +2,7 @@
  * @Description: 国际取位首页
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 17:10:51
- * @LastEditTime: 2020-11-19 15:17:45
+ * @LastEditTime: 2020-11-20 11:24:25
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -91,7 +91,7 @@ export default class interIndex extends Component {
         : null;
     data.page_no = Number(data.page_no);
     data.page_size = Number(data.page_size);
-    data.exec_state = data.exec_state !== null ?Number(data.exec_state): null;
+    data.exec_state = data.exec_state !== null ? Number(data.exec_state) : null;
     data.refund_type = Number(data.refund_type);
     data.date_type = Number(data.date_type);
     data.query_type = Number(data.query_type);
@@ -214,7 +214,7 @@ export default class interIndex extends Component {
     console.log(val);
     let data = {
       key_id: val.key_id,
-      exec_state: String(val.exec_state) || '0',
+      exec_state: String(val.exec_state) || "0",
       exec_msg: val.exec_msg,
       ignore_stop_rule: val.rule_match_mode === 0,
       is_flight_changes: val.is_flight_changes,
@@ -232,26 +232,25 @@ export default class interIndex extends Component {
       actionLoading: true,
     });
 
-    let data = JSON.parse(JSON.stringify(this.state.actionFrom))
-    data.exec_state = Number(data.exec_state)
+    let data = JSON.parse(JSON.stringify(this.state.actionFrom));
+    data.exec_state = Number(data.exec_state);
 
-    axios.post('api/IntlPnrData/UpdateExecuteState',data)
-      .then(res =>{
-        if(res.data.status === 0){
-          this.setState({
-            actionModal: false,
-            actionLoading: false,
-          });
-          this.getDataList()
-          message.success(res.data.message)
-        }else {
-          this.setState({
-            actionLoading: false,
-          });
-          message.warning(res.data.message)
-        }
-      })
-    
+    axios.post("api/IntlPnrData/UpdateExecuteState", data).then((res) => {
+      if (res.data.status === 0) {
+        this.setState({
+          actionModal: false,
+          actionLoading: false,
+        });
+        this.getDataList();
+        message.success(res.data.message);
+      } else {
+        this.setState({
+          actionLoading: false,
+        });
+        message.warning(res.data.message);
+      }
+    });
+
     console.log(this.state.actionFrom);
   };
 
@@ -266,7 +265,7 @@ export default class interIndex extends Component {
     });
   };
   // 状态弹窗输入框返回值
-  actionInput = (label,val) => {
+  actionInput = (label, val) => {
     console.log(val);
     let data = this.state.actionFrom;
     data[label] = val.target.value;
@@ -282,6 +281,14 @@ export default class interIndex extends Component {
     this.setState({
       actionFrom: data,
     });
+  };
+
+  jumpRule = (val, type) => {
+    if (!val) {
+      return false;
+    }
+    let url = type === 4 ? "/intelStopRule?key=" : "/intelNeedRule?key=";
+    this.props.history.push(url + val);
   };
 
   render() {
@@ -518,36 +525,56 @@ export default class interIndex extends Component {
               <Column
                 title="执行状态"
                 dataIndex="exec_state"
-                render={(text) => (
+                render={(text, record) => (
                   <>
-                    <div
-                      style={{
-                        color:
-                          text === 0
-                            ? "#0070E2"
-                            : text === 1
-                            ? "#5AB957"
-                            : text === 3
-                            ? "#5AB957"
-                            : text === 4
-                            ? "#999999"
-                            : text === -1
-                            ? "#FF0000"
-                            : "",
-                      }}
+                    <Tooltip
+                      title={() => (
+                        <>
+                          <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                            执行信息
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "12px",
+                              color: "rgba(255, 255, 255, .8)",
+                              minWidth: "200px",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            {record.exec_msg}
+                          </p>
+                        </>
+                      )}
                     >
-                      {text === 0
-                        ? "待取位"
-                        : text === 1
-                        ? "已取位"
-                        : text === 3
-                        ? "已退票"
-                        : text === 4
-                        ? "无需取位"
-                        : text === -1
-                        ? "取消失败"
-                        : text}
-                    </div>
+                      <div
+                        style={{
+                          color:
+                            record.exec_state === 0
+                              ? "#0070E2"
+                              : record.exec_state === 1
+                              ? "#5AB957"
+                              : record.exec_state === 3
+                              ? "#5AB957"
+                              : record.exec_state === 4
+                              ? "#999999"
+                              : record.exec_state === -1
+                              ? "#FF0000"
+                              : "",
+                        }}
+                      >
+                        {record.exec_state === 0
+                          ? "待取位"
+                          : record.exec_state === 1
+                          ? "已取位"
+                          : record.exec_state === 3
+                          ? "已退票"
+                          : record.exec_state === 4
+                          ? "无需取位"
+                          : record.exec_state === -1
+                          ? "取位失败"
+                          : record.exec_state}
+                      </div>
+                    </Tooltip>
                   </>
                 )}
               />
@@ -559,7 +586,23 @@ export default class interIndex extends Component {
                       overlayStyle={{
                         display: !record.is_flight_changes ? "none" : "",
                       }}
-                      title={record.flight_changes_msg}
+                      title={() => (
+                        <>
+                          <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                            航变信息
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "12px",
+                              color: "rgba(255, 255, 255, .8)",
+                              minWidth: "200px",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            {record.flight_changes_msg}
+                          </p>
+                        </>
+                      )}
                     >
                       <span>
                         {record.is_flight_changes ? "已航变" : "未航变"}
@@ -572,7 +615,12 @@ export default class interIndex extends Component {
                 title="规则匹配"
                 render={(text, record) => (
                   <>
-                    <Tag color={record.rule_id ? "#5AB957" : "#AFB9C4"}>
+                    <Tag
+                      onClick={() =>
+                        this.jumpRule(record.rule_id, record.exec_state)
+                      }
+                      color={record.rule_id ? "#5AB957" : "#AFB9C4"}
+                    >
                       {record.rule_id ? "已匹配" : "未匹配"}
                     </Tag>
                   </>
@@ -644,7 +692,7 @@ export default class interIndex extends Component {
                   <Option value="1">已取位</Option>
                   <Option value="3">已退票</Option>
                   <Option value="4">无需取位</Option>
-                  <Option value="-1">取消失败</Option>
+                  <Option value="-1">取位失败</Option>
                 </Select>
               </div>
             </div>
@@ -654,7 +702,7 @@ export default class interIndex extends Component {
               <div className="list_input">
                 <Input
                   allowClear
-                  onChange={this.actionInput.bind(this,'exec_msg')}
+                  onChange={this.actionInput.bind(this, "exec_msg")}
                   value={this.state.actionFrom.exec_msg}
                 />
               </div>
@@ -690,7 +738,7 @@ export default class interIndex extends Component {
                 <TextArea
                   rows={3}
                   allowClear
-                  onChange={this.actionInput.bind(this,'flight_changes_msg')}
+                  onChange={this.actionInput.bind(this, "flight_changes_msg")}
                   value={this.state.actionFrom.flight_changes_msg}
                 />
               </div>

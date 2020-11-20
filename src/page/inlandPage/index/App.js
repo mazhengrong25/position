@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-11-19 14:19:31
+ * @LastEditTime: 2020-11-20 14:31:43
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -18,6 +18,7 @@ import {
   message,
   Pagination,
   Modal,
+  Tooltip,
 } from "antd";
 
 import axios from "@/api/api";
@@ -141,46 +142,50 @@ export default class App extends Component {
         },
         {
           title: "执行状态",
-          // dataIndex: "exec_state",
-          // key: "exec_state",
-          render: (motion) => {
-            let style;
-            let text;
-            if (motion.exec_state === 0) {
-              style = {
-                color: "#0070E2",
-              };
-              text = "待取位";
-            } else if (motion.exec_state === 1) {
-              style = {
-                color: "#5AB957",
-              };
-              text = "已取位";
-            } else if (motion.exec_state === 2) {
-              style = {
-                color: "#5AB957",
-              };
-              text = "已航变";
-            } else if (motion.exec_state === 3) {
-              style = {
-                color: "#5AB957",
-              };
-              text = "已退票";
-            } else if (motion.exec_state === 4) {
-              style = {
-                color: "#999999",
-              };
-              text = "无需取位";
-            } else if (motion.exec_state === -1) {
-              style = {
-                color: "#FF0000",
-              };
-              text = "取消失败";
-            }
+          dataIndex: "exec_state",
+          render: (text, record) => {
             return (
-              <div onMouseEnter={() => this.hoverMotion(motion)} style={style}>
-                {text}
-              </div>
+              <Tooltip
+                title={() => (
+                  <>
+                    <p style={{fontSize: "14px",marginBottom: "5px" }}>
+                      执行信息
+                    </p>
+                    <p style={{ fontSize: "12px", color: 'rgba(255, 255, 255, .8)', minWidth: '200px',marginBottom: "5px" }}>
+                      {record.exec_msg}
+                    </p>
+                  </>
+                )}
+              >
+                <div
+                  style={{
+                    color:
+                      record.exec_state === 0
+                        ? "#0070E2"
+                        : record.exec_state === 1
+                        ? "#5AB957"
+                        : record.exec_state === 3
+                        ? "#5AB957"
+                        : record.exec_state === 4
+                        ? "#999999"
+                        : record.exec_state === -1
+                        ? "#FF0000"
+                        : "",
+                  }}
+                >
+                  {record.exec_state === 0
+                    ? "待取位"
+                    : record.exec_state === 1
+                    ? "已取位"
+                    : record.exec_state === 3
+                    ? "已退票"
+                    : record.exec_state === 4
+                    ? "无需取位"
+                    : record.exec_state === -1
+                    ? "取位失败"
+                    : record.exec_state}
+                </div>
+              </Tooltip>
             );
           },
         },
@@ -259,7 +264,7 @@ export default class App extends Component {
   componentDidMount() {
     this.getDataList();
     this.getStatistic();
-    this.getTicketType()
+    this.getTicketType();
   }
 
   // 获取取位列表
@@ -268,7 +273,7 @@ export default class App extends Component {
       page_no: page || this.state.pageNumber,
       page_size: size || this.state.pageSize, // 当前页条数
       airline_code: this.state.air, // 航空公司二字代码
-      intl_flag: this.state.orderType === "国内" ? false : true, // 订单类型
+      intl_flag: false, // 订单类型
       ticket_type: this.state.type === "all" ? "" : this.state.type, // 票证类型
       date_type: Number(this.state.timeValue), // 日期类型  0:导入时间 1：起飞时间 2：执行时间
       refund_type: Number(this.state.volun), // 退票类型 0：所有 1：自愿 2：非自愿
@@ -278,38 +283,35 @@ export default class App extends Component {
       end_date: this.state.end, // 结束日期
       exec_state: Number(this.state.headerStatus) ?? null,
     };
-    axios
-      .post("/api/pnr/getdata", data)
-      .then((res) => {
-        if(res.data.status === 0){
-          let newData = res.data.datas || [];
-          this.setState({
-            data: newData,
-            totalCount: res.data.total_count,
-            pageNumber: res.data.page_no,
-          });
-        }else {
-          this.setState({
-            data: [],
-            totalCount: res.data.total_count,
-            pageNumber: res.data.page_no,
-          });
-          message.warning(res.data.message)
-        }
-      })
+    axios.post("/api/pnr/getdata", data).then((res) => {
+      if (res.data.status === 0) {
+        let newData = res.data.datas || [];
+        this.setState({
+          data: newData,
+          totalCount: res.data.total_count,
+          pageNumber: res.data.page_no,
+        });
+      } else {
+        this.setState({
+          data: [],
+          totalCount: res.data.total_count,
+          pageNumber: res.data.page_no,
+        });
+        message.warning(res.data.message);
+      }
+    });
   }
 
-  getTicketType(){
-    axios.get('api/DomcPnrData/getTicketTypes')
-      .then(res =>{
-        if(res.data.status === 0){
-          this.setState({
-            ticketTypeList: res.data.ticket_types
-          })
-        }else{
-          message.warning(res.data.message)
-        }
-      })
+  getTicketType() {
+    axios.get("api/DomcPnrData/getTicketTypes").then((res) => {
+      if (res.data.status === 0) {
+        this.setState({
+          ticketTypeList: res.data.ticket_types,
+        });
+      } else {
+        message.warning(res.data.message);
+      }
+    });
   }
 
   // 执行状态
@@ -443,11 +445,11 @@ export default class App extends Component {
   }
 
   // 统计 点击
-  changeHeaderBtn = async(e) => {
+  changeHeaderBtn = async (e) => {
     await this.setState({
       headerStatus: e.target.value,
     });
-    await this.getDataList()
+    await this.getDataList();
   };
 
   // 取位执行时间弹窗
@@ -570,7 +572,7 @@ export default class App extends Component {
         <div className="table">
           <div className="table_type">
             {/* 订单类型 */}
-            <div className="type_name">
+            {/* <div className="type_name">
               <div>订单类型</div>
               <div className="radio">
                 <Radio.Group
@@ -581,7 +583,7 @@ export default class App extends Component {
                   <Radio value="国际">国际</Radio>
                 </Radio.Group>
               </div>
-            </div>
+            </div> */}
             {/* 执行状态 */}
             {/* <div className="type_name">
               <div>执行状态</div>
@@ -615,11 +617,11 @@ export default class App extends Component {
                   placeholder="所有"
                   onChange={this.handleType}
                 >
-                  {
-                    this.state.ticketTypeList.map(item =>(
-                      <Option value={item} key={item}>{item}</Option>
-                    ))
-                  }
+                  {this.state.ticketTypeList.map((item) => (
+                    <Option value={item} key={item}>
+                      {item}
+                    </Option>
+                  ))}
                 </Select>
               </div>
             </div>
@@ -725,9 +727,9 @@ export default class App extends Component {
 
             {/* 分页 */}
             <Pagination
-              current={this.state.pageNumber}
-              pageSize={this.state.pageSize}
-              total={this.state.totalCount}
+              current={Number(this.state.pageNumber)}
+              pageSize={Number(this.state.pageSize)}
+              total={Number(this.state.totalCount)}
               itemRender={itemRender}
               position={this.state.bottom}
               onChange={this.changePage}

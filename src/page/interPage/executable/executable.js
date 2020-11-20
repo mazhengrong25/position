@@ -2,7 +2,7 @@
  * @Description: 国际取位 - 可执行取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 17:10:12
- * @LastEditTime: 2020-11-19 16:26:47
+ * @LastEditTime: 2020-11-20 10:29:39
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -27,6 +27,8 @@ export default class executable extends Component {
       pageTotal: 0, // 数据总条数
       pageSize: 10, // 每页数据条数
 
+      keyID: '0', // 
+
       searchFrom: {
         data_type: null,
         refund_type: null,
@@ -47,9 +49,13 @@ export default class executable extends Component {
     };
   }
 
-  componentDidMount() {
-    this.getData();
+  async componentDidMount() {
+    await this.setState({
+      keyID: this.props.history.location.search.split("=").pop() || '0',
+    });
+    await this.getData();
   }
+
 
   // 获取可执行取位列表
   getData() {
@@ -61,7 +67,7 @@ export default class executable extends Component {
       data.config_state !== null ? Number(data.config_state) : null;
     data["page_no"] = this.state.pageNumber;
     data["page_size"] = this.state.pageSize;
-    data["key_id"] = "0";
+    data["key_id"] = this.state.keyID;
 
     axios.post("/api/IntlNeedRule/getpage", data).then((res) => {
       if (res.data.status !== 0) {

@@ -2,7 +2,7 @@
  * @Description: 无需取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-11-18 17:19:52
- * @LastEditTime: 2020-11-19 17:12:46
+ * @LastEditTime: 2020-11-20 10:26:53
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -60,8 +60,13 @@ export default class intlStopRule extends Component {
     };
   }
 
-  componentDidMount() {
-    this.getData();
+  async componentDidMount() {
+    let data = JSON.parse(JSON.stringify(this.state.searchFrom));
+    data.key_id = this.props.history.location.search.split("=").pop() || '0'
+    await this.setState({
+      searchFrom: data,
+    });
+    await this.getData();
   }
 
   // 获取无需取位列表
