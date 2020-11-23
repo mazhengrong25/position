@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-11-20 14:31:43
+ * @LastEditTime: 2020-11-23 10:14:13
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -72,9 +72,7 @@ export default class App extends Component {
         {
           title: "操作",
           coldiv: 2,
-          dataIndex: "action",
-          key: "action",
-          render: (text, row, index) => {
+          render: (text, row) => {
             return (
               <div>
                 <Tag color="#5AB957" onClick={() => this.jumpDetails(row)}>
@@ -90,38 +88,55 @@ export default class App extends Component {
         },
         {
           title: "PNR",
-          dataIndex: "pnr_code",
-          key: "pnr_code",
+          render: (text, record) => (
+            <>
+              <Tooltip
+                title={() => (
+                  <>
+                    <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                      PNR状态
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "12px",
+                        color: "rgba(255, 255, 255, .8)",
+                        minWidth: "200px",
+                        marginBottom: "5px",
+                      }}
+                    >
+                      {record.pnr_state || ""}
+                    </p>
+                  </>
+                )}
+              >
+                <div>{record.pnr_code}</div>
+              </Tooltip>
+            </>
+          ),
         },
         {
           title: "票号",
           dataIndex: "ticket_no",
-          key: "ticket_no",
-        },
-        {
-          title: "PNR状态",
-          dataIndex: "issue_dept_code",
-          key: "issue_dept_code",
         },
         {
           title: "GDS系统标识",
           dataIndex: "gds_type",
-          key: "gds_type",
         },
         {
           title: "票证类型",
           dataIndex: "ticket_type",
-          key: "ticket_type",
         },
         {
           title: "航司代码",
           dataIndex: "airline_code",
-          key: "airline_code",
+        },
+        {
+          title: "舱位",
+          dataIndex: "cabin_code",
         },
         {
           title: "起飞时间",
           dataIndex: "fly_time",
-          key: "fly_time",
           render: (state) => {
             return this.$moment(state).format("YYYY-MM-DD HH:mm");
           },
@@ -129,12 +144,10 @@ export default class App extends Component {
         {
           title: "乘客姓名",
           dataIndex: "passenger_name",
-          key: "passenger_name",
         },
         {
           title: "航程类型",
           dataIndex: "route_type",
-          key: "route_type",
           render: (text) => {
             let newType = text === "OW" ? "单程" : "";
             return newType;
@@ -148,10 +161,17 @@ export default class App extends Component {
               <Tooltip
                 title={() => (
                   <>
-                    <p style={{fontSize: "14px",marginBottom: "5px" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "5px" }}>
                       执行信息
                     </p>
-                    <p style={{ fontSize: "12px", color: 'rgba(255, 255, 255, .8)', minWidth: '200px',marginBottom: "5px" }}>
+                    <p
+                      style={{
+                        fontSize: "12px",
+                        color: "rgba(255, 255, 255, .8)",
+                        minWidth: "200px",
+                        marginBottom: "5px",
+                      }}
+                    >
                       {record.exec_msg}
                     </p>
                   </>
@@ -192,7 +212,6 @@ export default class App extends Component {
         {
           title: "规则匹配",
           dataIndex: "config_id",
-          key: "config_id",
           render: (state) => {
             let color;
             let text;
@@ -224,7 +243,6 @@ export default class App extends Component {
         {
           title: "已执行时间",
           dataIndex: "exec_time",
-          key: "exec_time",
           render: (state) => {
             return this.$moment(state).format("YYYY-MM-DD HH:mm");
           },
@@ -232,7 +250,6 @@ export default class App extends Component {
         {
           title: "预计下次执行时间",
           dataIndex: "next_exec_time",
-          key: "next_exec_time",
           render: (state) => {
             return this.$moment(state).format("YYYY-MM-DD HH:mm");
           },

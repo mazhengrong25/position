@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-11-20 15:17:43
+ * @LastEditTime: 2020-11-23 09:33:28
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -409,6 +409,9 @@ export default class Rule extends Component {
   submitModalBtn = () => {
     // console.log("提交", this.state.modalData);
     let newConfig = JSON.parse(JSON.stringify(this.state.modalData));
+
+    // let regin = /\$\d.*?\d/g
+    // console.log(newConfig.latest_limit.split(/(?<=d)&(?<=h)&(?<=m)/g))
     newConfig.config_state = newConfig.config_state ? 2 : 1;
     newConfig.latest_limit = Number(newConfig.latest_limit);
     newConfig.execute_limit = Number(newConfig.execute_limit);
@@ -448,7 +451,7 @@ export default class Rule extends Component {
   //   表格批量修改
   moreListEdit(type) {
     console.log(this.state.data, this.state.selectedRowKeys);
-    if (this.state.selectedRowKeys.length < 0) {
+    if (this.state.selectedRowKeys.length < 1) {
       return message.warning("请至少选择一条数据");
     }
     console.log(type, this.state.selectedRowKeys);

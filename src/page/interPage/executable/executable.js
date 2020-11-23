@@ -2,7 +2,7 @@
  * @Description: 国际取位 - 可执行取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 17:10:12
- * @LastEditTime: 2020-11-20 10:29:39
+ * @LastEditTime: 2020-11-23 09:36:47
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -10,7 +10,16 @@ import React, { Component } from "react";
 import "./executable.scss";
 import axios from "@/api/api";
 
-import { Select, Button, Input, Table, message, Modal, Switch, Pagination } from "antd";
+import {
+  Select,
+  Button,
+  Input,
+  Table,
+  message,
+  Modal,
+  Switch,
+  Pagination,
+} from "antd";
 
 const { Column } = Table;
 
@@ -27,7 +36,7 @@ export default class executable extends Component {
       pageTotal: 0, // 数据总条数
       pageSize: 10, // 每页数据条数
 
-      keyID: '0', // 
+      keyID: "0", //
 
       searchFrom: {
         data_type: null,
@@ -51,11 +60,10 @@ export default class executable extends Component {
 
   async componentDidMount() {
     await this.setState({
-      keyID: this.props.history.location.search.split("=").pop() || '0',
+      keyID: this.props.history.location.search.split("=").pop() || "0",
     });
     await this.getData();
   }
-
 
   // 获取可执行取位列表
   getData() {
@@ -121,10 +129,10 @@ export default class executable extends Component {
 
   // 分页器样式
   itemRender(current, type, originalElement) {
-    if (type === 'prev') {
+    if (type === "prev") {
       return <p>上一页</p>;
     }
-    if (type === 'next') {
+    if (type === "next") {
       return <p>下一页</p>;
     }
     return originalElement;
@@ -159,14 +167,14 @@ export default class executable extends Component {
         message.success(res.data.message);
         this.getData();
         this.setState({
-          executableModal: false
-        })
+          executableModal: false,
+        });
       } else {
         message.warning(res.data.message);
       }
       this.setState({
-        submitLoading: false
-      })
+        submitLoading: false,
+      });
     });
   }
 
@@ -215,10 +223,10 @@ export default class executable extends Component {
     let data = this.state.modalFrom;
     data[label] = val ? val.value : null;
 
-    if(label === 'cancel_mode' && val.value ===  '1'){
-      data['earliest_limit'] = ""
-      data['execute_limit'] = ""
-      data['latest_limit'] = ""
+    if (label === "cancel_mode" && val.value === "1") {
+      data["earliest_limit"] = "";
+      data["execute_limit"] = "";
+      data["latest_limit"] = "";
     }
     this.setState({
       modalFrom: data,
@@ -235,43 +243,61 @@ export default class executable extends Component {
   };
 
   // 弹窗开关数据回调
-  changeSwitch = (val) =>{
-    console.log(val)
+  changeSwitch = (val) => {
+    console.log(val);
     let data = this.state.modalFrom;
-    data.config_state = val? 2: 1;
+    data.config_state = val ? 2 : 1;
     this.setState({
       modalFrom: data,
     });
-  }
+  };
 
   // 弹窗提交按钮
   submitBtn = () => {
     this.setState({
-      submitLoading: true
-    })
+      submitLoading: true,
+    });
 
-    let newData = JSON.parse(JSON.stringify(this.state.modalFrom))
+    let newData = JSON.parse(JSON.stringify(this.state.modalFrom));
 
-    newData.data_type = Number(newData.data_type)
-    newData.refund_type = Number(newData.refund_type)
-    newData.departure_mode = Number(newData.departure_mode)
-    newData.arrival_mode = Number(newData.arrival_mode)
-    newData.include_refund_fee = Number(newData.include_refund_fee)
-    newData.cancel_mode = Number(newData.cancel_mode)
-    newData.cancel_of_change = Number(newData.cancel_of_change)
-    newData.begin_refund_fee = Number(newData.begin_refund_fee)
-    newData.end_refund_fee = Number(newData.end_refund_fee)
-    newData.earliest_limit = Number(newData.earliest_limit)
-    newData.execute_limit = Number(newData.execute_limit)
-    newData.latest_limit = Number(newData.latest_limit)
-    newData.suspend_type = Number(newData.suspend_type)
+    newData.data_type = Number(newData.data_type);
+    newData.refund_type = Number(newData.refund_type);
+    newData.departure_mode = Number(newData.departure_mode);
+    newData.arrival_mode = Number(newData.arrival_mode);
+    newData.include_refund_fee = Number(newData.include_refund_fee);
+    newData.cancel_mode = Number(newData.cancel_mode);
+    newData.cancel_of_change = Number(newData.cancel_of_change);
+    newData.begin_refund_fee = Number(newData.begin_refund_fee);
+    newData.end_refund_fee = Number(newData.end_refund_fee);
+    newData.earliest_limit = Number(newData.earliest_limit);
+    newData.execute_limit = Number(newData.execute_limit);
+    newData.latest_limit = Number(newData.latest_limit);
+    newData.suspend_type = Number(newData.suspend_type);
 
     let data = {
-      action_code: this.state.modalType === '新增'?'add':'update',
+      action_code: this.state.modalType === "新增" ? "add" : "update",
       rules: [newData],
     };
     this.setExecutableData(data);
   };
+
+  // 分钟转换
+  timeStamp(StatusMinute) {
+    let day = parseInt(StatusMinute / 60 / 24);
+    let hour = parseInt((StatusMinute / 60) % 24);
+    let min = parseInt(StatusMinute % 60);
+    StatusMinute = StatusMinute > 0 ? "" : "0";
+    if (day > 0) {
+      StatusMinute = day + "天";
+    }
+    if (hour > 0) {
+      StatusMinute += hour + "小时";
+    }
+    if (min > 0) {
+      StatusMinute += parseFloat(min) + "分";
+    }
+    return StatusMinute;
+  }
 
   render() {
     const { selectedRowKeys } = this.state;
@@ -455,9 +481,23 @@ export default class executable extends Component {
                 </>
               )}
             />
-            <Column title="最早取位时限" dataIndex="earliest_limit" />
-            <Column title="实际取位时限" dataIndex="execute_limit" />
-            <Column title="最晚取位时限" dataIndex="latest_limit" />
+            <Column
+              title="最早取位时限"
+              dataIndex="earliest_limit"
+              render={(text) => {
+                return this.timeStamp(text);
+              }}
+            />
+            <Column title="实际取位时限" dataIndex="execute_limit"
+              render={(text) => {
+                return this.timeStamp(text);
+              }}
+            />
+            <Column title="最晚取位时限" dataIndex="latest_limit"
+              render={(text) => {
+                return this.timeStamp(text);
+              }}
+            />
             <Column
               title="挂起类型"
               dataIndex="suspend_type"
@@ -535,7 +575,7 @@ export default class executable extends Component {
                 </div>
               </div>
               <div className="modal_list">
-              <div className="list_title"></div>
+                <div className="list_title"></div>
                 <div className="list_input"></div>
               </div>
             </div>
@@ -644,7 +684,9 @@ export default class executable extends Component {
                 className="address_input dep_address"
                 style={{
                   display:
-                    String(this.state.modalFrom.departure_mode) === "0" ? "none" : "",
+                    String(this.state.modalFrom.departure_mode) === "0"
+                      ? "none"
+                      : "",
                 }}
               >
                 <TextArea
@@ -659,7 +701,9 @@ export default class executable extends Component {
                 className="address_input arr_address"
                 style={{
                   display:
-                    String(this.state.modalFrom.arrival_mode) === "0" ? "none" : "",
+                    String(this.state.modalFrom.arrival_mode) === "0"
+                      ? "none"
+                      : "",
                 }}
               >
                 <TextArea
@@ -731,7 +775,12 @@ export default class executable extends Component {
               </div>
             </div>
 
-            <div className="modal_box" style={{display: this.state.modalFrom.cancel_mode === '1'?'none':''}}>
+            <div
+              className="modal_box"
+              style={{
+                display: this.state.modalFrom.cancel_mode === "1" ? "none" : "",
+              }}
+            >
               <div className="modal_list">
                 <div className="list_title">最早取位</div>
                 <div className="list_input">
@@ -785,8 +834,6 @@ export default class executable extends Component {
             </div>
           </div>
         </Modal>
-
-        
       </div>
     );
   }
