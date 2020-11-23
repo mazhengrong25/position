@@ -2,7 +2,7 @@
  * @Description: 国际取位 - 可执行取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 17:10:12
- * @LastEditTime: 2020-11-23 10:47:23
+ * @LastEditTime: 2020-11-23 13:45:17
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -19,6 +19,7 @@ import {
   Modal,
   Switch,
   Pagination,
+  Tooltip
 } from "antd";
 
 const { Column } = Table;
@@ -60,7 +61,7 @@ export default class executable extends Component {
 
   async componentDidMount() {
     await this.setState({
-      keyID: this.props.keyId || '0',
+      keyID: this.props.keyId || "0",
     });
     await this.getData();
   }
@@ -485,17 +486,87 @@ export default class executable extends Component {
               title="最早取位时限"
               dataIndex="earliest_limit"
               render={(text) => {
-                return this.timeStamp(text);
+                return (
+                  <Tooltip
+                    title={() => (
+                      <>
+                        <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                          最早取位时限
+                        </p>
+                        <p
+                          style={{
+                            fontSize: "12px",
+                            color: "rgba(255, 255, 255, .8)",
+                            minWidth: "200px",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          {text} 分
+                        </p>
+                      </>
+                    )}
+                  >
+                    {this.timeStamp(text)}
+                  </Tooltip>
+                );
               }}
             />
-            <Column title="实际取位时限" dataIndex="execute_limit"
+            <Column
+              title="实际取位时限"
+              dataIndex="execute_limit"
               render={(text) => {
-                return this.timeStamp(text);
+                return (
+                  <Tooltip
+                    title={() => (
+                      <>
+                        <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                          实际取位时限
+                        </p>
+                        <p
+                          style={{
+                            fontSize: "12px",
+                            color: "rgba(255, 255, 255, .8)",
+                            minWidth: "200px",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          {text} 分
+                        </p>
+                      </>
+                    )}
+                  >
+                    {this.timeStamp(text)}
+                  </Tooltip>
+                );
               }}
             />
-            <Column title="最晚取位时限" dataIndex="latest_limit"
+            <Column
+              title="最晚取位时限"
+              dataIndex="latest_limit"
               render={(text) => {
-                return this.timeStamp(text);
+                return (
+                  <Tooltip
+                    title={() => (
+                      <>
+                        <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                          最晚取位时限
+                        </p>
+                        <p
+                          style={{
+                            fontSize: "12px",
+                            color: "rgba(255, 255, 255, .8)",
+                            minWidth: "200px",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          {text} 分
+                        </p>
+                      </>
+                    )}
+                  >
+                    {this.timeStamp(text)}
+                  </Tooltip>
+                );
               }}
             />
             <Column

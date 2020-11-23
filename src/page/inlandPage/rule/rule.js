@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-11-23 10:46:00
+ * @LastEditTime: 2020-11-23 13:44:21
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -105,7 +105,29 @@ export default class Rule extends Component {
           dataIndex: "earliest_limit",
           key: "earliest_limit",
           render: (state) => {
-            return this.timeStamp(state);
+            return (
+              <Tooltip
+                title={() => (
+                  <>
+                    <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                      最早取位时限
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "12px",
+                        color: "rgba(255, 255, 255, .8)",
+                        minWidth: "200px",
+                        marginBottom: "5px",
+                      }}
+                    >
+                      {state} 分
+                    </p>
+                  </>
+                )}
+              >
+                {this.timeStamp(state)}
+              </Tooltip>
+            );
           },
         },
         {
@@ -113,7 +135,29 @@ export default class Rule extends Component {
           dataIndex: "execute_limit",
           key: "execute_limit",
           render: (state) => {
-            return this.timeStamp(state);
+            return (
+              <Tooltip
+                title={() => (
+                  <>
+                    <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                      实际取位时限
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "12px",
+                        color: "rgba(255, 255, 255, .8)",
+                        minWidth: "200px",
+                        marginBottom: "5px",
+                      }}
+                    >
+                      {state} 分
+                    </p>
+                  </>
+                )}
+              >
+                {this.timeStamp(state)}
+              </Tooltip>
+            );
           },
         },
         {
@@ -121,7 +165,29 @@ export default class Rule extends Component {
           dataIndex: "latest_limit",
           key: "latest_limit",
           render: (state) => {
-            return this.timeStamp(state);
+            return (
+              <Tooltip
+                title={() => (
+                  <>
+                    <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                      最晚取位时限
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "12px",
+                        color: "rgba(255, 255, 255, .8)",
+                        minWidth: "200px",
+                        marginBottom: "5px",
+                      }}
+                    >
+                      {state} 分
+                    </p>
+                  </>
+                )}
+              >
+                {this.timeStamp(state)}
+              </Tooltip>
+            );
           },
         },
         {
@@ -198,13 +264,13 @@ export default class Rule extends Component {
 
   // 分钟转换
   timeStamp(StatusMinute) {
-    let day = parseInt(StatusMinute / 60 / 24);
-    let hour = parseInt((StatusMinute / 60) % 24);
+    // let day = parseInt(StatusMinute / 60 / 24);
+    let hour = parseInt(StatusMinute / 60);
     let min = parseInt(StatusMinute % 60);
     StatusMinute = StatusMinute > 0 ? "" : "0";
-    if (day > 0) {
-      StatusMinute = day + "天";
-    }
+    // if (day > 0) {
+    //   StatusMinute = day + "天";
+    // }
     if (hour > 0) {
       StatusMinute += hour + "小时";
     }

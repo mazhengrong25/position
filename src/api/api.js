@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wish.WuJunLong
  * @Date: 2020-10-22 09:26:28
- * @LastEditTime: 2020-11-23 10:38:27
+ * @LastEditTime: 2020-11-23 13:40:40
  * @LastEditors: wish.WuJunLong
  */
 import axios from 'axios';
@@ -11,8 +11,8 @@ import {message} from 'antd'
 
 let baseUrl = ""
 if (process.env.NODE_ENV === 'development') {
-    baseUrl = 'http://192.168.0.31:7996';
-    // baseUrl = 'http://192.168.0.69:7996';
+    // baseUrl = 'http://192.168.0.31:7996';
+    baseUrl = 'http://192.168.0.69:7996';
 } else if (process.env.NODE_ENV === 'production') {
     baseUrl = 'http://192.168.0.69:7996';
 }
