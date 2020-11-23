@@ -2,7 +2,7 @@
  * @Description: 国际取位 - 可执行取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 17:10:12
- * @LastEditTime: 2020-11-23 09:36:47
+ * @LastEditTime: 2020-11-23 10:47:23
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -60,7 +60,7 @@ export default class executable extends Component {
 
   async componentDidMount() {
     await this.setState({
-      keyID: this.props.history.location.search.split("=").pop() || "0",
+      keyID: this.props.keyId || '0',
     });
     await this.getData();
   }

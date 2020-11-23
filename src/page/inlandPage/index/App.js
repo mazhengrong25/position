@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-11-23 10:14:13
+ * @LastEditTime: 2020-11-23 10:45:14
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -26,6 +26,8 @@ import axios from "@/api/api";
 import "./App.scss";
 
 import Detail from "@/page/inlandPage/detail/detail";
+
+import RulePage from "@/page/inlandPage/rule/rule"
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -275,6 +277,10 @@ export default class App extends Component {
 
       detailModal: false, // 取位详情弹窗
       details: {}, // 详情
+
+      ruleModal: false,
+      ruleKey: '', // 规则key
+      
     };
   }
 
@@ -441,11 +447,14 @@ export default class App extends Component {
 
   // 跳转规则页面
   jumpRule(val) {
-    console.log(val);
     if (val === "0") {
       return false;
     }
-    this.props.history.push("/rule?key=" + val);
+
+    this.setState({
+      ruleModal: true,
+      ruleKey: val
+    })
   }
 
   // 统计
@@ -798,6 +807,18 @@ export default class App extends Component {
           onCancel={() => this.setState({ detailModal: false })}
         >
           <Detail details={this.state.details}></Detail>
+        </Modal>
+
+        {/* 取位规则弹窗 */}
+        <Modal
+          centered
+          footer={null}
+          title="取位规则"
+          width={1200}
+          visible={this.state.ruleModal}
+          onCancel={() => this.setState({ ruleModal: false })}
+        >
+          <RulePage keyId={this.state.ruleKey}></RulePage>
         </Modal>
       </div>
     );

@@ -2,7 +2,7 @@
  * @Description: 国际取位首页
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 17:10:51
- * @LastEditTime: 2020-11-20 11:24:25
+ * @LastEditTime: 2020-11-23 10:51:59
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -11,6 +11,9 @@ import "./interIndex.scss";
 import axios from "@/api/api";
 
 import Details from "@/page/interPage/interDetails/interDetails";
+
+import RulePage from "@/page/interPage/executable/executable"; // 可取位页面
+import StopRulePage from "@/page/interPage/intelStopRule/intelStopRule"; // 无需取位页面
 
 import {
   Radio,
@@ -69,6 +72,10 @@ export default class interIndex extends Component {
       actionModal: false, // 执行状态弹窗
 
       actionLoading: false, // 航变提交加载
+
+      stopRuleModal: false, // 无需取位弹窗
+      ruleModal: false, // 可取位弹窗
+      ruleKey: '', // 取位id
     };
   }
 
@@ -287,8 +294,17 @@ export default class interIndex extends Component {
     if (!val) {
       return false;
     }
-    let url = type === 4 ? "/intelStopRule?key=" : "/intelNeedRule?key=";
-    this.props.history.push(url + val);
+    if(type === 4){
+      this.setState({
+        stopRuleModal: true,
+        ruleKey: val
+      })
+    }else {
+      this.setState({
+        ruleModal: true,
+        ruleKey: val
+      })
+    }
   };
 
   render() {
@@ -754,6 +770,30 @@ export default class interIndex extends Component {
           onCancel={() => this.setState({ showDetails: false })}
         >
           <Details detailData={this.state.detailsData}></Details>
+        </Modal>
+
+        {/* 取位规则弹窗 */}
+        <Modal
+          centered
+          footer={null}
+          title="可执行规则"
+          width={1200}
+          visible={this.state.ruleModal}
+          onCancel={() => this.setState({ ruleModal: false })}
+        >
+          <RulePage keyId={this.state.ruleKey}></RulePage>
+        </Modal>
+
+        {/* 取位规则弹窗 */}
+        <Modal
+          centered
+          footer={null}
+          title="无需取位规则"
+          width={1200}
+          visible={this.state.stopRuleModal}
+          onCancel={() => this.setState({ stopRuleModal: false })}
+        >
+          <StopRulePage keyId={this.state.ruleKey}></StopRulePage>
         </Modal>
       </div>
     );

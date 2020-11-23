@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-11-23 09:33:28
+ * @LastEditTime: 2020-11-23 10:46:00
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -191,7 +191,7 @@ export default class Rule extends Component {
 
   async componentDidMount() {
     await this.setState({
-      keyId: this.props.history.location.search.split("=").pop() || 0,
+      keyId: this.props.keyId || 0,
     });
     await this.getDataList();
   }

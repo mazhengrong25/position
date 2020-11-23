@@ -2,7 +2,7 @@
  * @Description: 无需取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-11-18 17:19:52
- * @LastEditTime: 2020-11-20 10:26:53
+ * @LastEditTime: 2020-11-23 10:47:01
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -62,7 +62,7 @@ export default class intlStopRule extends Component {
 
   async componentDidMount() {
     let data = JSON.parse(JSON.stringify(this.state.searchFrom));
-    data.key_id = this.props.history.location.search.split("=").pop() || '0'
+    data.key_id = this.props.keyId || '0'
     await this.setState({
       searchFrom: data,
     });
