@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-15 11:40:14
- * @LastEditTime: 2020-11-19 15:03:42
+ * @LastEditTime: 2020-11-24 15:28:40
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -186,6 +186,12 @@ export default class Detail extends Component {
                 ? this.state.blue
                 : this.state.detailsData.exec_state === -1
                 ? this.state.red
+                : this.state.detailsData.exec_state === -2
+                ? this.state.red
+                : this.state.detailsData.exec_state === -3
+                ? this.state.red
+                : this.state.detailsData.exec_state === -4
+                ? this.state.red
                 : this.state.detailsData.exec_state === 4
                 ? this.state.gray
                 : {}
@@ -203,6 +209,12 @@ export default class Detail extends Component {
               ? "取消失败"
               : this.state.detailsData.exec_state === 0
               ? "待取位"
+              : this.state.detailsData.exec_state === -2
+              ? "无效编码"
+              : this.state.detailsData.exec_state === -3
+              ? "操作失败"
+              : this.state.detailsData.exec_state === -4
+              ? "非法操作"
               : ""}
           </div>
           <div className="name">执行消息:</div>

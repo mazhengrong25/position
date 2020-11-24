@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-11-23 10:45:14
+ * @LastEditTime: 2020-11-24 15:23:29
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -192,6 +192,12 @@ export default class App extends Component {
                         ? "#999999"
                         : record.exec_state === -1
                         ? "#FF0000"
+                        : record.exec_state === -2
+                        ? "#FF0000"
+                        : record.exec_state === -3
+                        ? "#FF0000"
+                        : record.exec_state === -4
+                        ? "#FF0000"
                         : "",
                   }}
                 >
@@ -205,6 +211,12 @@ export default class App extends Component {
                     ? "无需取位"
                     : record.exec_state === -1
                     ? "取位失败"
+                    : record.exec_state === -2
+                    ? "无效编码"
+                    : record.exec_state === -3
+                    ? "操作失败"
+                    : record.exec_state === -4
+                    ? "非法操作"
                     : record.exec_state}
                 </div>
               </Tooltip>
@@ -280,6 +292,9 @@ export default class App extends Component {
 
       ruleModal: false,
       ruleKey: '', // 规则key
+
+      pnr_code: '',
+      ticket_no: ''
       
     };
   }
@@ -305,6 +320,8 @@ export default class App extends Component {
       begin_date: this.state.start, // 开始日期
       end_date: this.state.end, // 结束日期
       exec_state: Number(this.state.headerStatus) ?? null,
+      pnr_code: this.state.pnr_code,
+      ticket_no: this.state.ticket_no
     };
     axios.post("/api/pnr/getdata", data).then((res) => {
       if (res.data.status === 0) {
@@ -421,6 +438,19 @@ export default class App extends Component {
       air: val.target.value,
     });
   };
+
+  changeInput = (label,e) => {
+    if(label === 'ticket_no'){
+      this.setState({
+        ticket_no: e.target.value
+      })
+    }
+    if(label === 'pnr_code'){
+      this.setState({
+        pnr_code: e.target.value
+      })
+    }
+  }
 
   // 搜索提交
   submitSeach = () => {
@@ -592,47 +622,29 @@ export default class App extends Component {
                 {this.state.statistics.cancel_failed_total}
               </div>
             </RadioButton>
+            <RadioButton value="-2">
+            无效编码{" "}
+              <div className="count_tag">
+                {this.state.statistics.invalid_pnr_total}
+              </div>
+            </RadioButton>
+            <RadioButton value="-3">
+            操作失败{" "}
+              <div className="count_tag">
+                {this.state.statistics.oper_failed_total}
+              </div>
+            </RadioButton>
+            <RadioButton value="-4">
+            非法操作{" "}
+              <div className="count_tag">
+                {this.state.statistics.illegal_oper_total}
+              </div>
+            </RadioButton>
           </RadioGroup>
         </div>
         {/* 表格 */}
         <div className="table">
           <div className="table_type">
-            {/* 订单类型 */}
-            {/* <div className="type_name">
-              <div>订单类型</div>
-              <div className="radio">
-                <Radio.Group
-                  onChange={this.handleOrder}
-                  value={this.state.orderType}
-                >
-                  <Radio value="国内">国内</Radio>
-                  <Radio value="国际">国际</Radio>
-                </Radio.Group>
-              </div>
-            </div> */}
-            {/* 执行状态 */}
-            {/* <div className="type_name">
-              <div>执行状态</div>
-              <div className="radio">
-                <Select
-                  allowClear
-                  style={{ width: 200 }}
-                  placeholder="所有"
-                  optionFilterProp="children"
-                  notFoundContent="无法找到"
-                  onChange={this.handleStatus}
-                  value={this.state.headerStatus || "all"}
-                >
-                  <Option value="all">所有</Option>
-                  <Option value="0">待取位</Option>
-                  <Option value="1">已取位</Option>
-                  <Option value="2">已航变</Option>
-                  <Option value="3">已退票</Option>
-                  <Option value="4">无需取位</Option>
-                  <Option value="-1">取消失败</Option>
-                </Select>
-              </div>
-            </div> */}
             {/* 票证类型 */}
             <div className="type_name">
               <div>票证类型</div>
@@ -712,14 +724,34 @@ export default class App extends Component {
                 onChange={this.handleChange}
               >
                 <Option value="4">乘客姓名</Option>
-                <Option value="1">PNR编码</Option>
-                <Option value="2">票号</Option>
                 <Option value="3">订单号</Option>
               </Select>
               <div className="radio">
                 <Input
                   allowClear
                   onChange={this.changeModalInpit.bind(this)}
+                  placeholder="请输入"
+                />
+              </div>
+            </div>
+            {/* PNR编码 */}
+            <div className="type_name">
+              <div>PNR编码</div>
+              <div className="radio">
+              <Input
+                  allowClear
+                  onChange={this.changeInput.bind(this,'pnr_code')}
+                  placeholder="请输入"
+                />
+              </div>
+            </div>
+            {/* 票号 */}
+            <div className="type_name">
+              <div>票号</div>
+              <div className="radio">
+              <Input
+                  allowClear
+                  onChange={this.changeInput.bind(this,'ticket_no')}
                   placeholder="请输入"
                 />
               </div>

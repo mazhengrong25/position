@@ -6,48 +6,58 @@
 
     .count {
         display: inline-flex;
-        height: 32px;
         margin: 0 16px 16px;
         flex-shrink: 0;
-        .ant-radio-button-wrapper-checked{
-            .count_tag{
-                background: #FFFFFF;
+        .ant-radio-group {
+            .ant-radio-button-wrapper {
+              height: 32px;
+              max-width: 128px;
+              padding: 0 10px;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              background: transparent;
+              font-size: 12px;
+              font-weight: 400;
+              color: #333333;
+              &:first-child {
+                border-radius: 16px 0 0 16px;
+                -webkit-border-radius: 16px 0 0 16px;
+                -moz-border-radius: 16px 0 0 16px;
+                -ms-border-radius: 16px 0 0 16px;
+                -o-border-radius: 16px 0 0 16px;
+              }
+              &:last-child {
+                border-radius: 0 16px 16px 0;
+                -webkit-border-radius: 0 16px 16px 0;
+                -moz-border-radius: 0 16px 16px 0;
+                -ms-border-radius: 0 16px 16px 0;
+                -o-border-radius: 0 16px 16px 0;
+              }
+              &.ant-radio-button-wrapper-checked {
+                color: #ffffff;
+                background: #0070e2;
+                border-color: #0070e2;
+                .count_tag {
+                  background: #ffffff;
+                }
+              }
             }
-        }
-
-        .count_tag {
-            display: inline-flex;
-            width: 48px;
+          }
+          .count_tag {
+            min-width: 38px;
+            padding: 0 5px;
             height: 16px;
-            background: rgba(217, 225, 234, .6);
+            background: rgba(217, 225, 234, 0.6);
             border-radius: 8px;
-            color: rgba(255, 0, 0, 1);
+            font-size: 12px;
             font-weight: 400;
-            // vertical-align: middle; //标签居中
+            color: #ff0000;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .ant-table table {
-            border-collapse: collapse;
-        }
-
-        .ant-table-tbody>tr>td {
-            border-collapse: collapse;
-        }
-
-        .ant-radio-group {
-            border-radius: 16px;
-            border: 1px solid #CCD4DC;
-            overflow: hidden;
-        }
-
-        .ant-radio-button-wrapper {
-
-            background: #F4F6FA;
-            font-size: 12px;
-            border: unset;
-        }
+            margin-left: 2px;
+          }
     }
 
     .table {

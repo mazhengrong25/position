@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-11-23 13:44:21
+ * @LastEditTime: 2020-11-23 13:51:48
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -75,11 +75,11 @@ export default class Rule extends Component {
           key: "airline_code",
         },
         {
-          title: "舱位模式",
+          title: "执行模式",
           dataIndex: "execute_mode",
           key: "execute_mode",
           render: (mode) => {
-            return mode ? "适用" : "禁止";
+            return mode ? "执行取位" : "禁止取位";
           },
         },
         {
@@ -774,15 +774,15 @@ export default class Rule extends Component {
                   <Select
                     value={
                       this.state.modalData.execute_mode
-                        ? "需要取位"
-                        : "无需取位"
+                        ? "执行取位"
+                        : "禁止取位"
                     }
                     allowClear
                     style={{ width: 173 }}
                     onChange={this.modalChangeMode}
                   >
-                    <Option value={true}>需要取位</Option>
-                    <Option value={false}>无需取位</Option>
+                    <Option value={true}>执行取位</Option>
+                    <Option value={false}>禁止取位</Option>
                   </Select>
                 </div>
               </div>
