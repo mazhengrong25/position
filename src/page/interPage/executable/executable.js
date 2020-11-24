@@ -2,7 +2,7 @@
  * @Description: 国际取位 - 可执行取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 17:10:12
- * @LastEditTime: 2020-11-23 13:45:17
+ * @LastEditTime: 2020-11-24 16:28:34
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -21,6 +21,8 @@ import {
   Pagination,
   Tooltip
 } from "antd";
+
+import Calculator from "@/components/calculator"
 
 const { Column } = Table;
 
@@ -647,7 +649,7 @@ export default class executable extends Component {
               </div>
               <div className="modal_list">
                 <div className="list_title"></div>
-                <div className="list_input"></div>
+                <div className="list_input"><Calculator></Calculator></div>
               </div>
             </div>
             <div className="modal_box">

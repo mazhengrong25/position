@@ -1,0 +1,33 @@
+
+// 金额计算器
+.tool_input{
+  .ant-popover-message{
+    padding: 0;
+    .ant-popover-message-title{
+      padding: 0;
+      .tool_main{
+        width: 150px;
+        p{
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          margin-bottom: 0;
+          text-align: justify;
+          &:not(:last-child){
+            margin-bottom: 5px;
+          }
+          .ant-input{
+            margin-right: 5px;
+          }
+          .ant-btn{
+            margin-left: auto;
+          }
+        }
+      }
+      
+    }
+  }
+  .ant-popover-buttons{
+    display: none;
+  }
+}

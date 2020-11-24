@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-11-23 13:51:48
+ * @LastEditTime: 2020-11-24 16:27:50
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -28,6 +28,8 @@ import axios from "@/api/api";
 import "./rule.scss";
 // 时间处理
 import moment from "moment";
+
+import Calculator from "@/components/calculator"
 
 const Option = Select.Option;
 
@@ -610,6 +612,8 @@ export default class Rule extends Component {
     this.getDataList();
   };
 
+  
+
   render() {
     const { selectedRowKeys } = this.state;
 
@@ -747,14 +751,9 @@ export default class Rule extends Component {
                   />
                 </div>
               </div>
-              {/* <div className="list_item">
-                <div className="list_box">
-                  <Radio.Group onChange={this.modalChangeType} value={this.state.modalType}>
-                    <Radio value={'国内'}>国内</Radio>
-                    <Radio value={'国际'}>国际</Radio>
-                  </Radio.Group>
-                </div>
-              </div> */}
+              <div className="tool_box">
+                <Calculator></Calculator>
+              </div>
             </div>
             <div className="modal_list">
               <div className="list_item">

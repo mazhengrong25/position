@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-11-24 15:23:29
+ * @LastEditTime: 2020-11-24 15:38:05
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -27,7 +27,7 @@ import "./App.scss";
 
 import Detail from "@/page/inlandPage/detail/detail";
 
-import RulePage from "@/page/inlandPage/rule/rule"
+import RulePage from "@/page/inlandPage/rule/rule";
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -256,16 +256,35 @@ export default class App extends Component {
         },
         {
           title: "已执行时间",
-          dataIndex: "exec_time",
-          render: (state) => {
-            return this.$moment(state).format("YYYY-MM-DD HH:mm");
-          },
-        },
-        {
-          title: "预计下次执行时间",
-          dataIndex: "next_exec_time",
-          render: (state) => {
-            return this.$moment(state).format("YYYY-MM-DD HH:mm");
+          render: (state, record) => {
+            return (
+              <>
+                <Tooltip
+                  placement="bottomLeft"
+                  title={() => (
+                    <>
+                      <p style={{ width: "240px" }}>
+                        已执行时间：
+                        {this.$moment(record.exec_time).format(
+                          "YYYY-MM-DD HH:mm"
+                        )}
+                      </p>
+                      <p style={{ width: "240px", marginBottom: "0" }}>
+                        预计下次执行时间：
+                        {this.$moment(record.next_exec_time).format(
+                          "YYYY-MM-DD HH:mm"
+                        )}
+                      </p>
+                    </>
+                  )}
+                >
+                  <span>
+                    {this.$moment(record.exec_time).format("YYYY-MM-DD HH:mm")}
+                  </span>
+                </Tooltip>
+                
+              </>
+            );
           },
         },
       ],
@@ -291,11 +310,10 @@ export default class App extends Component {
       details: {}, // 详情
 
       ruleModal: false,
-      ruleKey: '', // 规则key
+      ruleKey: "", // 规则key
 
-      pnr_code: '',
-      ticket_no: ''
-      
+      pnr_code: "",
+      ticket_no: "",
     };
   }
 
@@ -321,7 +339,7 @@ export default class App extends Component {
       end_date: this.state.end, // 结束日期
       exec_state: Number(this.state.headerStatus) ?? null,
       pnr_code: this.state.pnr_code,
-      ticket_no: this.state.ticket_no
+      ticket_no: this.state.ticket_no,
     };
     axios.post("/api/pnr/getdata", data).then((res) => {
       if (res.data.status === 0) {
@@ -439,18 +457,18 @@ export default class App extends Component {
     });
   };
 
-  changeInput = (label,e) => {
-    if(label === 'ticket_no'){
+  changeInput = (label, e) => {
+    if (label === "ticket_no") {
       this.setState({
-        ticket_no: e.target.value
-      })
+        ticket_no: e.target.value,
+      });
     }
-    if(label === 'pnr_code'){
+    if (label === "pnr_code") {
       this.setState({
-        pnr_code: e.target.value
-      })
+        pnr_code: e.target.value,
+      });
     }
-  }
+  };
 
   // 搜索提交
   submitSeach = () => {
@@ -483,8 +501,8 @@ export default class App extends Component {
 
     this.setState({
       ruleModal: true,
-      ruleKey: val
-    })
+      ruleKey: val,
+    });
   }
 
   // 统计
@@ -623,19 +641,19 @@ export default class App extends Component {
               </div>
             </RadioButton>
             <RadioButton value="-2">
-            无效编码{" "}
+              无效编码{" "}
               <div className="count_tag">
                 {this.state.statistics.invalid_pnr_total}
               </div>
             </RadioButton>
             <RadioButton value="-3">
-            操作失败{" "}
+              操作失败{" "}
               <div className="count_tag">
                 {this.state.statistics.oper_failed_total}
               </div>
             </RadioButton>
             <RadioButton value="-4">
-            非法操作{" "}
+              非法操作{" "}
               <div className="count_tag">
                 {this.state.statistics.illegal_oper_total}
               </div>
@@ -738,9 +756,9 @@ export default class App extends Component {
             <div className="type_name">
               <div>PNR编码</div>
               <div className="radio">
-              <Input
+                <Input
                   allowClear
-                  onChange={this.changeInput.bind(this,'pnr_code')}
+                  onChange={this.changeInput.bind(this, "pnr_code")}
                   placeholder="请输入"
                 />
               </div>
@@ -749,9 +767,9 @@ export default class App extends Component {
             <div className="type_name">
               <div>票号</div>
               <div className="radio">
-              <Input
+                <Input
                   allowClear
-                  onChange={this.changeInput.bind(this,'ticket_no')}
+                  onChange={this.changeInput.bind(this, "ticket_no")}
                   placeholder="请输入"
                 />
               </div>
