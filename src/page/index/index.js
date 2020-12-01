@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 15:41:17
- * @LastEditTime: 2020-11-19 10:09:31
+ * @LastEditTime: 2020-12-01 10:02:47
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from 'react';
@@ -39,8 +39,8 @@ export default class Rule extends Component {
     let data = {
       key: this.state.key_id || 0,
     };
-
-    axios.get('api/token/Authenticate', { params: data }).then((res) => {
+    
+    axios.get('api/token/Authenticate', { params: data },{type: 'Auth'}).then((res) => {
       console.log(res);
       if (res.data.status === 0) {
         localStorage.setItem('token', res.data.token);

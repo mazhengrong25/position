@@ -2,7 +2,7 @@
  * @Description: 国际取位首页
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 17:10:51
- * @LastEditTime: 2020-11-23 10:51:59
+ * @LastEditTime: 2020-11-26 17:25:14
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -75,7 +75,7 @@ export default class interIndex extends Component {
 
       stopRuleModal: false, // 无需取位弹窗
       ruleModal: false, // 可取位弹窗
-      ruleKey: '', // 取位id
+      ruleKey: "", // 取位id
     };
   }
 
@@ -197,17 +197,6 @@ export default class interIndex extends Component {
     await this.getDataList();
   };
 
-  // 分页器样式
-  itemRender(current, type, originalElement) {
-    if (type === "prev") {
-      return <p>上一页</p>;
-    }
-    if (type === "next") {
-      return <p>下一页</p>;
-    }
-    return originalElement;
-  }
-
   // 打开详情弹窗
   jumpDetails = (val) => {
     this.setState({
@@ -294,16 +283,16 @@ export default class interIndex extends Component {
     if (!val) {
       return false;
     }
-    if(type === 4){
+    if (type === 4) {
       this.setState({
         stopRuleModal: true,
-        ruleKey: val
-      })
-    }else {
+        ruleKey: val,
+      });
+    } else {
       this.setState({
         ruleModal: true,
-        ruleKey: val
-      })
+        ruleKey: val,
+      });
     }
   };
 
@@ -675,13 +664,18 @@ export default class interIndex extends Component {
                 )}
               />
             </Table>
-            <Pagination
-              current={this.state.searchFrom.page_no}
-              pageSize={this.state.searchFrom.page_size}
-              total={this.state.searchFrom.total_count}
-              onChange={this.changePage}
-              itemRender={this.itemRender}
-            />
+            {/* 分页 */}
+            <div className="table_pagination">
+              <Pagination
+                current={Number(this.state.searchFrom.page_no)}
+                pageSize={Number(this.state.searchFrom.page_size)}
+                total={Number(this.state.searchFrom.total_count)}
+                onChange={this.changePage}
+              />
+              <div className="datas_total">
+                共 <span>{this.state.searchFrom.total_count}</span> 条记录
+              </div>
+            </div>
           </div>
         </div>
 

@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-11-24 16:27:50
+ * @LastEditTime: 2020-11-26 17:30:08
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -29,20 +29,10 @@ import "./rule.scss";
 // 时间处理
 import moment from "moment";
 
-import Calculator from "@/components/calculator"
+import Calculator from "@/components/calculator";
 
 const Option = Select.Option;
 
-// 分页  上一页  下一页
-function itemRender(current, type, originalElement) {
-  if (type === "prev") {
-    return <p>上一页</p>;
-  }
-  if (type === "next") {
-    return <p>下一页</p>;
-  }
-  return originalElement;
-}
 
 export default class Rule extends Component {
   constructor(props) {
@@ -190,6 +180,13 @@ export default class Rule extends Component {
                 {this.timeStamp(state)}
               </Tooltip>
             );
+          },
+        },
+        {
+          title: "航变差大于",
+          dataIndex: "cancel_of_change",
+          render: (state) => {
+            return state > 0 ?state + '分钟':'--';
           },
         },
         {
@@ -464,6 +461,14 @@ export default class Rule extends Component {
       modalData: data,
     });
   }
+  cancelChangeInput(e) {
+    let data = Object.assign({}, this.state.modalData, {
+      cancel_of_change: Number(e.target.value),
+    });
+    this.setState({
+      modalData: data,
+    });
+  }
   editRemarksInput(e) {
     let data = Object.assign({}, this.state.modalData, {
       remarks: e.target.value,
@@ -612,8 +617,6 @@ export default class Rule extends Component {
     this.getDataList();
   };
 
-  
-
   render() {
     const { selectedRowKeys } = this.state;
 
@@ -718,15 +721,20 @@ export default class Rule extends Component {
             pagination={false}
             bordered
           />
+
           {/* 分页 */}
-          <Pagination
-            current={Number(this.state.pageNumber)}
-            pageSize={Number(this.state.pageSize)}
-            total={Number(this.state.totalCount)}
-            itemRender={itemRender}
-            position={this.state.bottom}
-            onChange={this.changePage}
-          />
+          <div className="table_pagination">
+            <Pagination
+              current={Number(this.state.pageNumber)}
+              pageSize={Number(this.state.pageSize)}
+              total={Number(this.state.totalCount)}
+              position={this.state.bottom}
+              onChange={this.changePage}
+            />
+            <div className="datas_total">
+              共 <span>{this.state.totalCount}</span> 条记录
+            </div>
+          </div>
         </div>
 
         <Modal
@@ -846,6 +854,17 @@ export default class Rule extends Component {
               </div>
             </div>
             <div className="modal_list">
+              <div className="list_item">
+                <div className="list_title">航变差大于</div>
+                <div className="list_box">
+                  <Input
+                    allowClear
+                    placeholder="单位分钟"
+                    defaultValue={this.state.modalData.cancel_of_change}
+                    onChange={this.cancelChangeInput.bind(this)}
+                  />
+                </div>
+              </div>
               <div className="list_item">
                 <div className="list_title">生效时间</div>
                 <div className="list_box">

@@ -1,14 +1,143 @@
-@import '~antd/dist/antd.css';
+@import "~antd/dist/antd.css";
 body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    min-width: 960px;
-    background-color: RGBA(244, 246, 250, 1);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  min-width: 960px;
+  background-color: RGBA(244, 246, 250, 1);
 }
-#root{
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
+.ant-pagination {
+  .ant-pagination-item {
+    min-width: 24px;
+    height: 24px;
+    line-height: 24px;
+    // background: #0070e2;
+    border-radius: 2px;
+    border: 1px solid #dfdfdf;
+    a {
+      font-size: 12px;
+      font-weight: 400;
+      color: #333333;
+    }
+    &.ant-pagination-item-active {
+      background: #0070e2;
+      border-color: #0070e2;
+      a {
+        color: #fff;
+      }
+    }
+  }
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    height: 25px;
+    line-height: 25px;
+    .ant-pagination-item-link {
+      width: 55px;
+      min-width: 55px;
+      height: 25px;
+      border-radius: 2px;
+      line-height: 25px;
+      border: 1px solid #0070e2;
+      background: #0070e2;
+      font-size: 12px;
+      font-weight: 400;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      .anticon {
+        display: none;
+      }
+    }
+    &.ant-pagination-disabled {
+        .ant-pagination-item-link {
+        background: #fff;
+        border-color: #dfdfdf;
+        color: #333333;
+      }
+    }
+  }
+  .ant-pagination-prev {
+    .ant-pagination-item-link {
+      &::before {
+        content: "上一页";
+      }
+    }
+  }
+  .ant-pagination-next {
+    .ant-pagination-item-link {
+      &::before {
+        content: "下一页";
+      }
+    }
+  }
+  .ant-pagination-options {
+    .ant-select {
+      font-size: 12px;
+      .ant-select-selector {
+        height: 25px;
+        .ant-select-selection-item {
+          line-height: 25px;
+        }
+        .ant-select-selection-search-input {
+          height: 25px;
+        }
+      }
+    }
+  }
+}
+.table_pagination {
+    margin-top: 10px;
+    padding-right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    .datas_total {
+      font-size: 12px;
+      font-weight: 400;
+      color: #999999;
+      span {
+        color: #333333;
+      }
+    }
+  }
+// antdv 表格
+.ant-table-body {
+  table {
+    border-radius: 0 !important;
+    border-left: none !important;
+
+    font-size: 12px;
+    font-weight: 400;
+    color: #333333;
+    .ant-table-thead {
+      th {
+        border-radius: 0 !important;
+        background: #ebeff4;
+        padding: 5px 8px !important;
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+    .ant-table-tbody {
+      tr {
+        &:nth-child(even) {
+          background: #f5f7f9;
+        }
+        td {
+          padding: 7px 8px !important;
+          &:last-child {
+            border-right: none;
+          }
+        }
+      }
+    }
+  }
+}

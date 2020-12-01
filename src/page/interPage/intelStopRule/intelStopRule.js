@@ -2,7 +2,7 @@
  * @Description: 无需取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-11-18 17:19:52
- * @LastEditTime: 2020-11-23 10:47:01
+ * @LastEditTime: 2020-11-27 10:43:19
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -153,7 +153,7 @@ export default class intlStopRule extends Component {
   openAddModal() {
     let data = {
       data_type: "1",
-      refund_type: "0",
+      refund_type: "1",
       airline_code: "",
       cabin_code: "",
       is_change_pnr: "true",
@@ -243,17 +243,6 @@ export default class intlStopRule extends Component {
     };
     this.setStopRuleData(data);
   };
-
-  // 分页器样式
-  itemRender(current, type, originalElement) {
-    if (type === "prev") {
-      return <p>上一页</p>;
-    }
-    if (type === "next") {
-      return <p>下一页</p>;
-    }
-    return originalElement;
-  }
 
   // 表格分页器
   changePage = async (page, size) => {
@@ -454,13 +443,18 @@ export default class intlStopRule extends Component {
             <Column title="修改者" dataIndex="modifier" />
             <Column title="修改时间" dataIndex="modify_time" />
           </Table>
-          <Pagination
-            current={Number(this.state.searchFrom.page_no)}
-            pageSize={Number(this.state.searchFrom.page_size)}
-            total={Number(this.state.searchFrom.total_count)}
-            onChange={this.changePage}
-            itemRender={this.itemRender}
-          />
+          {/* 分页 */}
+          <div className="table_pagination">
+            <Pagination
+              current={Number(this.state.searchFrom.page_no)}
+              pageSize={Number(this.state.searchFrom.page_size)}
+              total={Number(this.state.searchFrom.total_count)}
+              onChange={this.changePage}
+            />
+            <div className="datas_total">
+              共 <span>{this.state.searchFrom.total_count}</span> 条记录
+            </div>
+          </div>
         </div>
 
         <Modal
@@ -509,7 +503,6 @@ export default class intlStopRule extends Component {
                     onChange={this.modalSelect.bind(this, "refund_type")}
                     value={{ value: String(this.state.modalFrom.refund_type) }}
                   >
-                    <Option value="0">不限</Option>
                     <Option value="1">自愿</Option>
                     <Option value="2">非自愿</Option>
                   </Select>

@@ -2,7 +2,7 @@
  * @Description:
  * @Author: wish.WuJunLong
  * @Date: 2020-11-24 16:23:26
- * @LastEditTime: 2020-11-24 16:27:27
+ * @LastEditTime: 2020-11-27 10:44:58
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -71,13 +71,14 @@ export default class calculator extends Component {
           overlayClassName="tool_input"
           placement="right"
           icon={false}
+          destroyTooltipOnHide={true}
           title={() => (
             <>
               <div className="tool_main">
                 <p>点击计算后将输入的天、时、分自动计算为分钟数(支持小数点)</p>
                 <p>
                   <Input
-                    placeholder="天"
+                    placeholder="例：1 或 0.5"
                     type="number"
                     onChange={this.toolInput.bind(this, "day")}
                   />
@@ -85,7 +86,7 @@ export default class calculator extends Component {
                 </p>
                 <p>
                   <Input
-                    placeholder="小时"
+                    placeholder="例：1 或 0.5"
                     type="number"
                     onChange={this.toolInput.bind(this, "hour")}
                   />
@@ -93,7 +94,7 @@ export default class calculator extends Component {
                 </p>
                 <p>
                   <Input
-                    placeholder="分"
+                    placeholder="分钟数"
                     type="number"
                     onChange={this.toolInput.bind(this, "minute")}
                   />
@@ -113,7 +114,7 @@ export default class calculator extends Component {
             </>
           )}
         >
-          <a href="#">取位时间计算器</a>
+          <Button type="link">取位时间计算器</Button>
         </Popconfirm>
       </div>
     );

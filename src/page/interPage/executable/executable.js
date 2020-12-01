@@ -2,7 +2,7 @@
  * @Description: 国际取位 - 可执行取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 17:10:12
- * @LastEditTime: 2020-11-24 16:28:34
+ * @LastEditTime: 2020-11-27 10:43:53
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -130,17 +130,6 @@ export default class executable extends Component {
     await this.getData();
   };
 
-  // 分页器样式
-  itemRender(current, type, originalElement) {
-    if (type === "prev") {
-      return <p>上一页</p>;
-    }
-    if (type === "next") {
-      return <p>下一页</p>;
-    }
-    return originalElement;
-  }
-
   // 表格数据禁用启用
   setTableData(type) {
     if (this.state.selectedRowKeys.length < 1) {
@@ -185,7 +174,7 @@ export default class executable extends Component {
   openAddModal() {
     let data = {
       data_type: "0",
-      refund_type: "0",
+      refund_type: "1",
       airline_code: "",
       cabin_code: "",
       departure_mode: "0",
@@ -602,13 +591,18 @@ export default class executable extends Component {
             <Column title="修改者" dataIndex="modifier" />
             <Column title="修改时间" dataIndex="modify_time" />
           </Table>
-          <Pagination
-            current={this.state.pageNumber}
-            pageSize={this.state.pageSize}
-            total={this.state.pageTotal}
-            onChange={this.changePage}
-            itemRender={this.itemRender}
-          />
+          {/* 分页 */}
+          <div className="table_pagination">
+            <Pagination
+              current={Number(this.state.pageNumber)}
+              pageSize={Number(this.state.pageSize)}
+              total={Number(this.state.pageTotal)}
+              onChange={this.changePage}
+            />
+            <div className="datas_total">
+              共 <span>{this.state.pageTotal}</span> 条记录
+            </div>
+          </div>
         </div>
 
         <Modal
@@ -675,7 +669,6 @@ export default class executable extends Component {
                     onChange={this.modalSelect.bind(this, "refund_type")}
                     value={{ value: String(this.state.modalFrom.refund_type) }}
                   >
-                    <Option value="0">不限</Option>
                     <Option value="1">自愿</Option>
                     <Option value="2">非自愿</Option>
                   </Select>

@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-11-24 15:38:05
+ * @LastEditTime: 2020-11-26 17:19:56
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -34,17 +34,6 @@ const RadioGroup = Radio.Group;
 const Option = Select.Option;
 
 const { TextArea } = Input;
-
-// 分页  上一页  下一页
-function itemRender(current, type, originalElement) {
-  if (type === "prev") {
-    return <p>上一页</p>;
-  }
-  if (type === "next") {
-    return <p>下一页</p>;
-  }
-  return originalElement;
-}
 
 export default class App extends Component {
   constructor(props) {
@@ -172,7 +161,9 @@ export default class App extends Component {
                         color: "rgba(255, 255, 255, .8)",
                         minWidth: "200px",
                         marginBottom: "5px",
+                        cursor: 'pointer'
                       }}
+                      onClick={() =>this.changeExecMsg(record.exec_msg)}
                     >
                       {record.exec_msg}
                     </p>
@@ -221,6 +212,13 @@ export default class App extends Component {
                 </div>
               </Tooltip>
             );
+          },
+        },
+        {
+          title: "是否航变",
+          dataIndex: "is_flight_changes",
+          render: (text) => {
+            return text ? "已航变" : "未航变";
           },
         },
         {
@@ -282,7 +280,6 @@ export default class App extends Component {
                     {this.$moment(record.exec_time).format("YYYY-MM-DD HH:mm")}
                   </span>
                 </Tooltip>
-                
               </>
             );
           },
@@ -314,6 +311,10 @@ export default class App extends Component {
 
       pnr_code: "",
       ticket_no: "",
+
+      is_flight_changes: null, // 是否航变
+
+      exec_msg: '', // 航变执行信息
     };
   }
 
@@ -340,6 +341,13 @@ export default class App extends Component {
       exec_state: Number(this.state.headerStatus) ?? null,
       pnr_code: this.state.pnr_code,
       ticket_no: this.state.ticket_no,
+      is_flight_changes:
+        this.state.is_flight_changes === "1"
+          ? true
+          : this.state.is_flight_changes === "2"
+          ? false
+          : null, // 是否航变
+      exec_msg: this.state.exec_msg,
     };
     axios.post("/api/pnr/getdata", data).then((res) => {
       if (res.data.status === 0) {
@@ -378,6 +386,14 @@ export default class App extends Component {
     this.setState({
       // headerStatus: Number(val),
       headerStatus: val,
+    });
+  };
+
+  // 是否航变
+  ticketChange = (val) => {
+    console.log(val);
+    this.setState({
+      is_flight_changes: val,
     });
   };
 
@@ -468,7 +484,20 @@ export default class App extends Component {
         pnr_code: e.target.value,
       });
     }
+    if(label === 'exec_msg'){
+      this.setState({
+        exec_msg: e.target.value,
+      });
+    }
   };
+
+  // 点击执行信息提交筛选框
+  changeExecMsg (e){
+    console.log(e)
+    this.setState({
+      exec_msg: e,
+    });
+  }
 
   // 搜索提交
   submitSeach = () => {
@@ -663,6 +692,21 @@ export default class App extends Component {
         {/* 表格 */}
         <div className="table">
           <div className="table_type">
+            {/* 是否航变 */}
+            <div className="type_name">
+              <div>是否航变</div>
+              <div className="radio">
+                <Select
+                  style={{ width: 200 }}
+                  defaultValue="null"
+                  onChange={this.ticketChange}
+                >
+                  <Option value="null">全部</Option>
+                  <Option value="1">已航变</Option>
+                  <Option value="2">未航变</Option>
+                </Select>
+              </div>
+            </div>
             {/* 票证类型 */}
             <div className="type_name">
               <div>票证类型</div>
@@ -763,6 +807,7 @@ export default class App extends Component {
                 />
               </div>
             </div>
+            
             {/* 票号 */}
             <div className="type_name">
               <div>票号</div>
@@ -770,6 +815,18 @@ export default class App extends Component {
                 <Input
                   allowClear
                   onChange={this.changeInput.bind(this, "ticket_no")}
+                  placeholder="请输入"
+                />
+              </div>
+            </div>
+            {/* 执行信息 */}
+            <div className="type_name">
+              <div>执行信息</div>
+              <div className="radio">
+                <Input
+                  allowClear
+                  value={this.state.exec_msg}
+                  onChange={this.changeInput.bind(this, "exec_msg")}
                   placeholder="请输入"
                 />
               </div>
@@ -802,14 +859,18 @@ export default class App extends Component {
             </div>
 
             {/* 分页 */}
-            <Pagination
-              current={Number(this.state.pageNumber)}
-              pageSize={Number(this.state.pageSize)}
-              total={Number(this.state.totalCount)}
-              itemRender={itemRender}
-              position={this.state.bottom}
-              onChange={this.changePage}
-            />
+            <div className="table_pagination">
+              <Pagination
+                current={Number(this.state.pageNumber)}
+                pageSize={Number(this.state.pageSize)}
+                total={Number(this.state.totalCount)}
+                position={this.state.bottom}
+                onChange={this.changePage}
+              />
+              <div className="datas_total">
+                共 <span>{ this.state.totalCount }</span> 条记录
+              </div>
+            </div>
           </div>
         </div>
 
