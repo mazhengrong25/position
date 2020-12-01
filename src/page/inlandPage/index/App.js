@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-11-26 17:19:56
+ * @LastEditTime: 2020-12-01 11:34:00
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -312,7 +312,7 @@ export default class App extends Component {
       pnr_code: "",
       ticket_no: "",
 
-      is_flight_changes: null, // 是否航变
+      is_flight_changes: 'null', // 是否航变
 
       exec_msg: '', // 航变执行信息
     };
@@ -338,7 +338,7 @@ export default class App extends Component {
       query_value: this.state.itemValue, // 类型：String  可有字段  备注：搜索关键字，取决于query_type的搜索类型
       begin_date: this.state.start, // 开始日期
       end_date: this.state.end, // 结束日期
-      exec_state: Number(this.state.headerStatus) ?? null,
+      exec_state: this.state.headerStatus !== '2' ?Number(this.state.headerStatus) ?? null : null,
       pnr_code: this.state.pnr_code,
       ticket_no: this.state.ticket_no,
       is_flight_changes:
@@ -549,6 +549,15 @@ export default class App extends Component {
 
   // 统计 点击
   changeHeaderBtn = async (e) => {
+    console.log(e)
+    if(e.target.value === '2'){
+      await this.setState({
+        is_flight_changes: '1',
+        headerStatus: e.target.value,
+      });
+      await this.getDataList();
+      return;
+    }
     await this.setState({
       headerStatus: e.target.value,
     });
@@ -698,7 +707,7 @@ export default class App extends Component {
               <div className="radio">
                 <Select
                   style={{ width: 200 }}
-                  defaultValue="null"
+                  value={this.state.is_flight_changes}
                   onChange={this.ticketChange}
                 >
                   <Option value="null">全部</Option>

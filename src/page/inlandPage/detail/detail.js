@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-15 11:40:14
- * @LastEditTime: 2020-11-24 15:28:40
+ * @LastEditTime: 2020-12-01 14:27:31
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -171,6 +171,14 @@ export default class Detail extends Component {
           <div className="name">采购部门:</div>
           <div className="number">
             {this.state.detailsData.buy_channels_name}
+          </div>
+          <div className="name">渠道名称:</div>
+          <div className="number">
+            {this.state.detailsData.sales_channels_name}
+          </div>
+          <div className="name">渠道代码:</div>
+          <div className="number">
+            {this.state.detailsData.sales_channels_code}
           </div>
         </div>
         <div className="nav">
