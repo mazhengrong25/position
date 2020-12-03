@@ -1,8 +1,8 @@
 /*
- * @Description:
+ * @Description: 取位国内列表
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-12-01 11:34:00
+ * @LastEditTime: 2020-12-02 15:19:39
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -24,6 +24,8 @@ import {
 import axios from "@/api/api";
 
 import "./App.scss";
+
+import HeaderTitle from "@/components/headerTitle"
 
 import Detail from "@/page/inlandPage/detail/detail";
 
@@ -315,6 +317,8 @@ export default class App extends Component {
       is_flight_changes: 'null', // 是否航变
 
       exec_msg: '', // 航变执行信息
+
+      depCode: '', // 退票部门code
     };
   }
 
@@ -348,6 +352,7 @@ export default class App extends Component {
           ? false
           : null, // 是否航变
       exec_msg: this.state.exec_msg,
+      refund_dept_code: this.state.depCode, // 退票部门code
     };
     axios.post("/api/pnr/getdata", data).then((res) => {
       if (res.data.status === 0) {
@@ -537,7 +542,7 @@ export default class App extends Component {
   // 统计
   getStatistic() {
     let data = {
-      intl_flag: false,
+      refund_dept_code: this.state.depCode, // 退票部门code
     };
     axios.post("/api/pnr/statistics", data).then((res) => {
       let statisticsTotal = res.data.statistics;
@@ -627,6 +632,16 @@ export default class App extends Component {
     });
   }
 
+  // 头部信息  退票部门返回值
+   headerSelect = async(e) => {
+     await this.setState({
+       depCode: e
+      })
+      console.log(e)
+    await this.getDataList()
+    await this.getStatistic()
+  }
+
   render() {
     return (
       <div className="centent">
@@ -698,6 +713,9 @@ export default class App extends Component {
             </RadioButton>
           </RadioGroup>
         </div>
+
+        {/* 标题和退票部门 */}
+        <HeaderTitle titleName="国内取位列表" headerSelect={this.headerSelect}></HeaderTitle>
         {/* 表格 */}
         <div className="table">
           <div className="table_type">

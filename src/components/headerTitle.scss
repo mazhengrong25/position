@@ -1,0 +1,19 @@
+.header_title{
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    border-bottom: 1px solid #eaeaea;
+    background-color: #fff;
+    margin: 0 16px;
+    flex-shrink: 0;
+    .title_message{
+      font-size: 16px;
+      font-weight: bold;
+      color: #333333;
+    }
+    .title_dept{
+      width: 180px;
+    }
+}
