@@ -2,8 +2,8 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-11-19 09:44:47
- * @LastEditors: wish.WuJunLong
+ * @LastEditTime: 2020-12-15 16:06:52
+ * @LastEditors: Please set LastEditors
  */
 import React from "react";
 import ReactDOM from "react-dom";
@@ -19,6 +19,8 @@ import Detail from "./page/inlandPage/detail/detail";  // 取位详情
 import interList from "./page/interPage/interIndex/interIndex"; // 国际取位
 import Executable from "./page/interPage/executable/executable"; // 国际取位可执行规则
 import IntelStopRule from "./page/interPage/intelStopRule/intelStopRule";  // 国际无需取位规则
+// 新增
+import NewStopRule from "./page/interPage/newStopRule/newStopRule"; // 无需取位规则
 
 import "./index.scss";
 
@@ -60,6 +62,8 @@ ReactDOM.render(
       <Route path="/interList" component={interList}></Route>
       <Route path="/intelNeedRule" component={Executable}></Route>
       <Route path="/intelStopRule" component={IntelStopRule}></Route>
+      {/* 新增 */}
+      <Route path="/newStopRule" component={NewStopRule}></Route>
     </Router>
   </ConfigProvider>,
 

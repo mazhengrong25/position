@@ -2,8 +2,8 @@
  * @Description:
  * @Author: wish.WuJunLong
  * @Date: 2020-10-22 09:26:28
- * @LastEditTime: 2020-12-01 10:05:06
- * @LastEditors: wish.WuJunLong
+ * @LastEditTime: 2020-12-15 18:01:47
+ * @LastEditors: Please set LastEditors
  */
 import axios from "axios";
 
@@ -11,8 +11,8 @@ import { message } from "antd";
 
 let baseUrl = "";
 if (process.env.NODE_ENV === "development") {
-  // baseUrl = 'http://192.168.0.31:7996';
-  baseUrl = "http://192.168.0.69:7996";
+  baseUrl = 'http://192.168.0.31:7996';
+  // baseUrl = "http://192.168.0.69:7996";
 } else if (process.env.NODE_ENV === "production") {
   baseUrl = "http://192.168.0.69:7996";
 }
