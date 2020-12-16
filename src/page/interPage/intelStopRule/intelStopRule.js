@@ -2,7 +2,7 @@
  * @Description: 无需取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-11-18 17:19:52
- * @LastEditTime: 2020-12-15 15:46:00
+ * @LastEditTime: 2020-12-16 10:52:51
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from "react";
@@ -580,7 +580,7 @@ export default class intelStopRule extends Component {
             </div>
           </div>
         </Modal>
-      </div>
+    </div>
     );
   }
 }

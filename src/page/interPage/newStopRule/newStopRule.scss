@@ -71,4 +71,98 @@
         padding-right: 24px;
       }
     }
+}
+
+.executable_modal {
+  .modal_type {
+    
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 19px;
+    color: #333333;
+    display: flex;
+    margin-bottom: 23px;
+    .modal_add {
+      
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 19px;
+      color: #999999;
+      margin-left: 8px;
+    }
   }
+  .modal_box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    &:not(:last-child) {
+      margin-bottom: 22px;
+    }
+    .modal_list {
+      display: inline-flex;
+      align-items: center;
+      &.input_remark{
+        width: 100%;
+        .list_input{
+          width: 100%;
+          textarea {
+            resize: none;
+          }
+        }
+      }
+      .list_title {
+        min-width: 65px;
+        text-align: right;
+        margin-right: 8px;
+        .ant-select{
+          width: 100%;
+          .ant-select-selector{
+            border: none;
+            box-shadow: none;
+            padding-left: 0;
+          }
+        }
+      }
+      .list_input {
+        &.refund_fee_input{
+          display: inline-flex;
+          align-items: center;
+          p{
+            margin: 0 5px;
+          }
+        }
+        width: 160px;
+        .ant-select {
+          width: 100%;
+        }
+      }
+    }
+    &.input_air_address {
+      justify-content: flex-end;
+      position: relative;
+      .address_input {
+        width: 236px;
+        height: 96px;
+        position: absolute;
+        top: 0;
+        &.dep_address{
+          right: 281px;
+        }
+        &:last-child {
+          margin-left: 45px;
+        }
+        textarea {
+          resize: none;
+          background: #f1f3f5;
+          border: 1px solid #dfdfdf;
+          border-radius: 2px;
+        }
+      }
+    }
+  }
+  .modal_line {
+    
+      border-bottom: 1px solid #DFDFDF;
+      margin:23px;
+  }
+}
