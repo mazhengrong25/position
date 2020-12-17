@@ -1,0 +1,176 @@
+.wait_rule {
+  margin: 16px;
+  background: #fff;
+  height: 100%;
+  padding: 24px 0;
+
+  .search_box {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0 16px;
+    .box_list {
+      &:not(:last-child) {
+        margin-right: 40px;
+      }
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 22px;
+      .list_title {
+        min-width: 60px;
+        text-align: right;
+        margin-right: 8px;
+      }
+      .list_item {
+        width: 160px;
+        .ant-select {
+          width: 100%;
+        }
+      }
+      .search_btn {
+        width: 80px;
+        height: 34px;
+        background: #0070e2;
+        border-radius: 2px;
+      }
+    }
+  }
+
+  .tool_box {
+    padding: 0 16px 16px;
+    .ant-btn {
+      &:not(:last-child) {
+        margin-right: 8px;
+      }
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 26px;
+      line-height: 26px;
+      border: 1px solid #0070e2;
+      border-radius: 2px;
+      font-size: 12px;
+      font-weight: 400;
+      color: #0070e2;
+    }
+  }
+
+  .table_main {
+    .table_edit_btn {
+      padding: 2px 5px;
+      background: #0070e2;
+      border-radius: 2px;
+      font-size: 12px;
+      font-weight: 400;
+      color: #ffffff;
+      text-align: center;
+      cursor: pointer;
+      display: inline-flex;
+    }
+    .ant-table-thead > tr > th {
+      background: rgba(230, 242, 254, 1);
+      color: #333333;
+      font-weight: 400;
+      line-height: 16px;
+    }
+    .ant-table-tbody > tr:hover > td {
+      background: #e4eaf2 !important;
+    }
+
+    .ant-table-tbody > tr:nth-child(even) {
+      background: #f2f6fc;
+    }
+    .ant-pagination {
+      padding-right: 24px;
+    }
+  }
+}
+
+.wait_rule_modal {
+  .wait_rule_list {
+    &:not(:last-child) {
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #dfdfdf;
+    }
+    .modal_title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333333;
+      margin-bottom: 20px;
+    }
+    .modal_box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      &:not(:last-child) {
+        margin-bottom: 22px;
+      }
+      .modal_list {
+        display: inline-flex;
+        align-items: center;
+        &.input_remark {
+          width: 100%;
+          .list_input {
+            width: 100%;
+            textarea {
+              resize: none;
+            }
+          }
+        }
+        .list_title {
+          min-width: 70px;
+          text-align: right;
+          margin-right: 8px;
+          .ant-select {
+            width: 100%;
+            .ant-select-selector {
+              border: none;
+              box-shadow: none;
+              padding-left: 0;
+            }
+          }
+          &.long_title {
+            width: 160px;
+          }
+        }
+        .list_input {
+          &.refund_fee_input {
+            display: inline-flex;
+            align-items: center;
+            p {
+              margin: 0 5px;
+            }
+          }
+          width: 160px;
+          .ant-select {
+            width: 100%;
+          }
+        }
+      }
+      &.input_air_address {
+        justify-content: flex-end;
+        position: relative;
+        .address_input {
+          width: 236px;
+          height: 96px;
+          position: absolute;
+          top: 0;
+          &.dep_address {
+            right: 281px;
+          }
+          &:last-child {
+            margin-left: 45px;
+          }
+          textarea {
+            resize: none;
+            background: #f1f3f5;
+            border: 1px solid #dfdfdf;
+            border-radius: 2px;
+          }
+        }
+      }
+    }
+  }
+}

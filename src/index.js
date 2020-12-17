@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-11-19 09:44:47
+ * @LastEditTime: 2020-12-17 11:13:28
  * @LastEditors: wish.WuJunLong
  */
 import React from "react";
@@ -19,6 +19,8 @@ import Detail from "./page/inlandPage/detail/detail";  // 取位详情
 import interList from "./page/interPage/interIndex/interIndex"; // 国际取位
 import Executable from "./page/interPage/executable/executable"; // 国际取位可执行规则
 import IntelStopRule from "./page/interPage/intelStopRule/intelStopRule";  // 国际无需取位规则
+import WaitRule from "./page/interPage/waitRule/waitRule"; // 国际等待取位规则
+import StatusRule from "./page/interPage/statusRule/statusRule"; // 自愿转非自愿规则
 
 import "./index.scss";
 
@@ -60,6 +62,8 @@ ReactDOM.render(
       <Route path="/interList" component={interList}></Route>
       <Route path="/intelNeedRule" component={Executable}></Route>
       <Route path="/intelStopRule" component={IntelStopRule}></Route>
+      <Route path="/waitRule" component={WaitRule}></Route>
+      <Route path="/statusRule" component={StatusRule}></Route>
     </Router>
   </ConfigProvider>,
 

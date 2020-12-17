@@ -2,7 +2,7 @@
  * @Description: 国际取位首页
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 17:10:51
- * @LastEditTime: 2020-11-26 17:25:14
+ * @LastEditTime: 2020-12-17 10:43:06
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -155,6 +155,8 @@ export default class interIndex extends Component {
         this.setState({
           ticketTypeList: res.data.ticket_types,
         });
+      }else {
+        message.warning(res.data.message)
       }
     });
   }
