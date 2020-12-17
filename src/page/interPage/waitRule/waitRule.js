@@ -2,7 +2,7 @@
  * @Description: 国际等待取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-15 15:58:19
- * @LastEditTime: 2020-12-17 17:23:19
+ * @LastEditTime: 2020-12-17 18:09:19
  * @LastEditors: wish.WuJunLong
  */
 
@@ -88,6 +88,8 @@ export default class intlStopRule extends Component {
           dataList: res.data.data.datas,
           searchFrom: newData,
         });
+      }else {
+        message.warning(res.data.message)
       }
     });
   }

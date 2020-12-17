@@ -2,7 +2,7 @@
  * @Description: 自愿非自愿规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-17 10:26:48
- * @LastEditTime: 2020-12-17 15:53:53
+ * @LastEditTime: 2020-12-17 18:12:10
  * @LastEditors: wish.WuJunLong
  */
 
@@ -11,7 +11,17 @@ import React, { Component } from "react";
 import "./statusRule.scss";
 import axios from "@/api/api";
 
-import { Select, Button, Input, Table, message, Modal, Switch, Pagination } from "antd";
+import {
+  Select,
+  Button,
+  Input,
+  Table,
+  message,
+  Modal,
+  Switch,
+  Pagination,
+  Tooltip,
+} from "antd";
 
 const { Column } = Table;
 
@@ -27,12 +37,10 @@ export default class intlStopRule extends Component {
         page_no: 1,
         page_size: 10,
         total_count: 0,
+        rules_type: null,
         airline_code: "",
-        cabin_code: "",
-        ticket_type: "",
-        is_voluntary: null,
-        is_change_pnr: null,
-        involuntary_switching: null,
+        flight_change_type: "",
+        applicable_rules: null,
         rule_state: 0,
       },
       dataList: [],
@@ -43,7 +51,7 @@ export default class intlStopRule extends Component {
       modalType: "新增", // 弹窗状态
       modalFrom: {}, // 弹窗数据
 
-      ticketTypeList: [], // 票证类型
+      ticketChangesType: [], // 航变类型
     };
   }
 
@@ -54,7 +62,7 @@ export default class intlStopRule extends Component {
       searchFrom: data,
     });
     await this.getData();
-    // this.getTicketType()
+    this.getChangesType()
   }
 
   // 选择器返回值
@@ -76,7 +84,7 @@ export default class intlStopRule extends Component {
     });
   };
 
-  // 获取待取位规则列表
+  // 获取规则列表
   getData() {
     axios.post("api/DomcVTIRules/GetPage", this.state.searchFrom).then((res) => {
       console.log(res);
@@ -88,21 +96,27 @@ export default class intlStopRule extends Component {
           dataList: res.data.data.datas,
           searchFrom: newData,
         });
-      }
-    });
-  }
- 
-  // 获取票证类型
-  getTicketType() {
-    axios.get("api/IntlPnrData/getTicketTypes").then((res) => {
-      if (res.data.status === 0) {
-        this.setState({
-          ticketTypeList: res.data.ticket_types,
-        });
       }else {
         message.warning(res.data.message)
       }
     });
+  }
+
+  // 获取航变类型
+  getChangesType() {
+    axios.get("api/pnr/GetFlightChangesType").then((res) => {
+      if (res.data.status === 0) {
+        this.setState({
+          ticketChangesType: res.data.data,
+        });
+      } else {
+        message.warning(res.data.message);
+      }
+    });
+
+    setTimeout(() =>{
+      console.log(this.state.ticketChangesType)
+    },1000)
   }
 
   // 表格多选
@@ -150,22 +164,14 @@ export default class intlStopRule extends Component {
       });
     } else {
       let data = {
+        rules_type: 1,
         airline_code: "",
-        cabin_codes: "",
-        ticket_type: "",
-        is_voluntary: true,
-        is_change_pnr: false,
-        include_refund_type: 0,
-        begin_refund_fee: "",
-        end_refund_fee: "",
-        involuntary_switching: true,
-        cancel_mode: 1,
-        earliest_limit: 0,
-        execute_limit: 0,
-        latest_limit: 0,
-        suspend_type: 0,
-        submit_refund_mode: 1,
-        submit_waiting_time: 0,
+        applicable_rules: null,
+        flight_change_type: "",
+        flight_change_child_type: null,
+        flight_change_diff: null,
+        is_pnr_remarks: true,
+        is_generate_attachment: true,
         rule_state: 2,
         remarks: "",
       };
@@ -192,25 +198,26 @@ export default class intlStopRule extends Component {
   // 弹窗提交按钮
   submitBtn = () => {
     this.setState({
-      submitLoading: true
-    })
+      submitLoading: true,
+    });
     console.log(this.state.modalFrom);
-    let type = this.state.modalType === '编辑'?'update':"add"
-    let newData = JSON.parse(JSON.stringify(this.state.modalFrom))
-    newData['begin_refund_fee'] = newData.begin_refund_fee? Number(newData.begin_refund_fee): 0
-    newData['end_refund_fee'] = newData.end_refund_fee? Number(newData.end_refund_fee): 0
+    let type = this.state.modalType === "编辑" ? "update" : "add";
+    let newData = JSON.parse(JSON.stringify(this.state.modalFrom));
+    newData["flight_change_diff"] = newData.flight_change_diff
+      ? Number(newData.flight_change_diff)
+      : 0;
     let data = {
       action_code: type,
       rules: [newData],
     };
-    axios.post("api/DomcWaitRules/Set", data).then((res) => {
+    axios.post("api/DomcVTIRules/Set", data).then((res) => {
       this.setState({
-        submitLoading: false
-      })
+        submitLoading: false,
+      });
       if (res.data.status === 0) {
         this.setState({
-          waitRuleModal: false
-        })
+          waitRuleModal: false,
+        });
         message.success(res.data.message);
         this.getData();
       } else {
@@ -234,7 +241,7 @@ export default class intlStopRule extends Component {
       action_code: type,
       rules: dataList,
     };
-    axios.post("api/DomcWaitRules/Set", data).then((res) => {
+    axios.post("api/DomcVTIRules/Set", data).then((res) => {
       if (res.data.status === 0) {
         message.success(res.data.message);
         this.getData();
@@ -260,14 +267,12 @@ export default class intlStopRule extends Component {
             <div className="list_title">规则类型</div>
             <div className="list_item">
               <Select
-                allowClear
                 placeholder="所有"
                 labelInValue
-                onChange={this.headSelect.bind(this, "is_voluntary")}
+                onChange={this.headSelect.bind(this, "rules_type")}
+                defaultValue={{ value: 1 }}
               >
-                <Option value={null}>所有</Option>
-                <Option value={true}>自愿</Option>
-                <Option value={false}>非自愿</Option>
+                <Option value={1}>航变规则</Option>
               </Select>
             </div>
           </div>
@@ -283,7 +288,6 @@ export default class intlStopRule extends Component {
             </div>
           </div>
 
-
           <div className="box_list">
             <div className="list_title">航变类型</div>
             <div className="list_item">
@@ -291,27 +295,23 @@ export default class intlStopRule extends Component {
                 allowClear
                 placeholder="所有"
                 labelInValue
-                onChange={this.headSelect.bind(this, "is_change_pnr")}
+                onChange={this.headSelect.bind(this, "flight_change_type")}
               >
-                <Option value={null}>所有</Option>
-                <Option value={true}>已换编</Option>
-                <Option value={false}>未换编</Option>
+                {this.state.ticketChangesType.map(item => <Option value={item.code} key={item.code}>{item.name}</Option>)}
               </Select>
             </div>
           </div>
 
           <div className="box_list">
-            <div className="list_title">使用规则</div>
+            <div className="list_title">适用规则</div>
             <div className="list_item">
               <Select
-                allowClear
                 placeholder="所有"
                 labelInValue
                 onChange={this.headSelect.bind(this, "involuntary_switching")}
               >
-                <Option value={null}>所有</Option>
-                <Option value={true}>可转非自愿</Option>
-                <Option value={false}>不可转非自愿</Option>
+                <Option value={1}>等待取位规则</Option>
+                <Option value={2}>无需取位规则</Option>
               </Select>
             </div>
           </div>
@@ -350,16 +350,79 @@ export default class intlStopRule extends Component {
             <Column
               title="规则类型"
               dataIndex="rules_type"
-              render={(text) => <>{text === 1? "航变规则" : text}</>}
+              render={(text) => <>{text === 1 ? "航变规则" : text}</>}
             />
             <Column title="航空公司" dataIndex="airline_code" />
-            <Column title="适用规则" dataIndex="applicable_rules" 
-            render={(text) => <>{text === 1? "等待取位规则" : text === 2? "无需取位规则" : text}</>}/>
-            <Column title="判断规则" dataIndex="flight_change_type" />
+            <Column
+              title="适用规则"
+              dataIndex="applicable_rules"
+              render={(text) => (
+                <>{text === 1 ? "等待取位规则" : text === 2 ? "无需取位规则" : text}</>
+              )}
+            />
+            <Column
+              title="判断规则"
+              dataIndex="check_rules"
+              render={(text) => (
+                <Tooltip
+                  title={() => (
+                    <>
+                      {text.tips.map((item, index) => (
+                        <p
+                          key={index}
+                          style={{
+                            fontSize: "12px",
+                            color: "rgba(255, 255, 255, .8)",
+                            minWidth: "200px",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          {item}
+                        </p>
+                      ))}
+                    </>
+                  )}
+                >
+                  <span
+                    style={{
+                      display: "block",
+                      maxWidth: '400px',
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {text.text}
+                  </span>
+                </Tooltip>
+              )}
+            />
             <Column
               title="执行规则"
-              dataIndex="is_change_pnr"
-              render={(text) => <>{text ? "已换编" : "未换编"}</>}
+              dataIndex="execute_rules"
+              render={(text) => (
+                <Tooltip
+                  title={() => (
+                    <>
+                      {text.tips.map((item, index) => (
+                        <p
+                          key={index}
+                          style={{
+                            fontSize: "12px",
+                            color: "rgba(255, 255, 255, .8)",
+                            minWidth: "200px",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          {item}
+                        </p>
+                      ))}
+                    </>
+                  )}
+                >
+                  <span>{text.text}</span>
+                </Tooltip>
+              )}
             />
 
             <Column
@@ -423,11 +486,10 @@ export default class intlStopRule extends Component {
                   <div className="list_input">
                     <Select
                       labelInValue
-                      onChange={this.modalSelect.bind(this, "is_voluntary")}
-                      value={{ value: this.state.modalFrom.is_voluntary }}
+                      onChange={this.modalSelect.bind(this, "rules_type")}
+                      value={{ value: this.state.modalFrom.rules_type }}
                     >
-                      <Option value={true}>自愿</Option>
-                      <Option value={false}>非自愿</Option>
+                      <Option value={1}>航变规则</Option>
                     </Select>
                   </div>
                 </div>
@@ -448,11 +510,10 @@ export default class intlStopRule extends Component {
                   <div className="list_input">
                     <Select
                       labelInValue
-                      onChange={this.modalSelect.bind(this, "is_voluntary")}
-                      value={{ value: this.state.modalFrom.is_voluntary }}
+                      onChange={this.modalSelect.bind(this, "flight_change_type")}
+                      value={{ value: this.state.modalFrom.flight_change_type }}
                     >
-                      <Option value={true}>自愿</Option>
-                      <Option value={false}>非自愿</Option>
+                      {this.state.ticketChangesType.map(item => <Option value={item.code} key={item.code}>{item.name}</Option>)}
                     </Select>
                   </div>
                 </div>
@@ -465,32 +526,40 @@ export default class intlStopRule extends Component {
                     <Input
                       placeholder="请输入"
                       allowClear
-                      onChange={this.modalInput.bind(this, "ticket_type")}
-                      value={this.state.modalFrom.ticket_type}
+                      onChange={this.modalInput.bind(this, "flight_change_diff")}
+                      value={this.state.modalFrom.flight_change_diff}
                     />
-                    <span style={{flexShrink: 0,marginLeft: '5px'}}>分钟</span>
+                    <span style={{ flexShrink: 0, marginLeft: "5px" }}>分钟</span>
                   </div>
                 </div>
                 <div className="modal_list">
-                  <div className="list_title">使用规则</div>
+                  <div className="list_title">适用规则</div>
                   <div className="list_input">
                     <Select
                       labelInValue
-                      onChange={this.modalSelect.bind(this, "is_change_pnr")}
+                      onChange={this.modalSelect.bind(this, "applicable_rules")}
                       value={{
-                        value: this.state.modalFrom.is_change_pnr,
+                        value: this.state.modalFrom.applicable_rules,
                       }}
                     >
-                      <Option value={true}>已换编</Option>
-                      <Option value={false}>未换编</Option>
+                      <Option value={1}>等待取位规则</Option>
+                      <Option value={2}>无需取位规则</Option>
                     </Select>
                   </div>
                 </div>
                 <div className="modal_list">
-                  <div className="list_title"></div>
-                  <div className="list_input"></div>
+                  <div className="list_title">航变子类型</div>
+                  <div className="list_input">
+                    <Select
+                      labelInValue
+                      onChange={this.modalSelect.bind(this, "flight_change_child_type")}
+                      value={{ value: this.state.modalFrom.flight_change_child_type }}
+                    >
+                      <Option value={0}>所有子类型</Option>
+                      <Option value={1}>航班起飞时间提前</Option>
+                    </Select>
+                  </div>
                 </div>
-
               </div>
             </div>
 
@@ -503,13 +572,13 @@ export default class intlStopRule extends Component {
                   <div className="list_input">
                     <Select
                       labelInValue
-                      onChange={this.modalSelect.bind(this, "involuntary_switching")}
+                      onChange={this.modalSelect.bind(this, "is_pnr_remarks")}
                       value={{
-                        value: this.state.modalFrom.involuntary_switching,
+                        value: this.state.modalFrom.is_pnr_remarks,
                       }}
                     >
-                      <Option value={true}>可转非自愿</Option>
-                      <Option value={false}>不可转非自愿</Option>
+                      <Option value={true}>需要备注</Option>
+                      <Option value={false}>无需备注</Option>
                     </Select>
                   </div>
                 </div>
@@ -518,14 +587,13 @@ export default class intlStopRule extends Component {
                   <div className="list_input">
                     <Select
                       labelInValue
-                      onChange={this.modalSelect.bind(this, "suspend_type")}
+                      onChange={this.modalSelect.bind(this, "is_generate_attachment")}
                       value={{
-                        value: this.state.modalFrom.suspend_type,
+                        value: this.state.modalFrom.is_generate_attachment,
                       }}
                     >
-                      <Option value={0}>不挂起</Option>
-                      <Option value={1}>取位前挂起</Option>
-                      <Option value={2}>取位后挂起</Option>
+                      <Option value={true}>生成</Option>
+                      <Option value={false}>不生成</Option>
                     </Select>
                   </div>
                 </div>
@@ -533,7 +601,6 @@ export default class intlStopRule extends Component {
                   <div className="list_title"></div>
                   <div className="list_input"></div>
                 </div>
-
               </div>
 
               <div className="modal_box">
