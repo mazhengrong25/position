@@ -2,8 +2,8 @@
  * @Description: 无需取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-11-18 17:19:52
- * @LastEditTime: 2020-11-27 10:43:19
- * @LastEditors: wish.WuJunLong
+ * @LastEditTime: 2020-12-16 10:52:51
+ * @LastEditors: Please set LastEditors
  */
 import React, { Component } from "react";
 
@@ -27,7 +27,7 @@ const { Option } = Select;
 
 const { TextArea } = Input;
 
-export default class intlStopRule extends Component {
+export default class intelStopRule extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -580,7 +580,7 @@ export default class intlStopRule extends Component {
             </div>
           </div>
         </Modal>
-      </div>
+    </div>
     );
   }
 }

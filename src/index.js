@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-12-17 11:13:28
+ * @LastEditTime: 2020-12-17 17:25:52
  * @LastEditors: wish.WuJunLong
  */
 import React from "react";
@@ -21,6 +21,8 @@ import Executable from "./page/interPage/executable/executable"; // 国际取位
 import IntelStopRule from "./page/interPage/intelStopRule/intelStopRule";  // 国际无需取位规则
 import WaitRule from "./page/interPage/waitRule/waitRule"; // 国际等待取位规则
 import StatusRule from "./page/interPage/statusRule/statusRule"; // 自愿转非自愿规则
+// 新增
+import NewStopRule from "./page/interPage/newStopRule/newStopRule"; // 无需取位规则
 
 import "./index.scss";
 
@@ -64,6 +66,8 @@ ReactDOM.render(
       <Route path="/intelStopRule" component={IntelStopRule}></Route>
       <Route path="/waitRule" component={WaitRule}></Route>
       <Route path="/statusRule" component={StatusRule}></Route>
+      {/* 新增 */}
+      <Route path="/newStopRule" component={NewStopRule}></Route> 
     </Router>
   </ConfigProvider>,
 
