@@ -423,9 +423,6 @@ export default class App extends Component {
     this.setState({
       timeValue: Number(val.value),
     });
-    setTimeout(() => {
-      console.log("日期类型", this.state.timeValue);
-    }, 300);
   };
 
   // 订单类型
@@ -442,9 +439,6 @@ export default class App extends Component {
     this.setState({
       itemType: Number(val.value),
     });
-    setTimeout(() => {
-      console.log("搜索类型", this.state.itemType, this.state.itemValue);
-    }, 300);
   };
 
   // 搜素类型 内容

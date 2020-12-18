@@ -591,9 +591,6 @@ export default class Rule extends Component {
     this.setState({
       executeType: val,
     });
-    setTimeout(() => {
-      console.log("执行模式", this.state.executeType);
-    }, 300);
   };
 
   // 航空公司

@@ -313,9 +313,6 @@ export default class newStopRule extends Component {
         this.setState({
           ticketTypeList: res.data.data,
         });
-        setTimeout(() => {
-          console.log(this.state.ticketTypeList);
-        });
       } else {
         message.warning(res.data.message);
       }

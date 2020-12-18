@@ -115,18 +115,11 @@ export default class intlStopRule extends Component {
         message.warning(res.data.message);
       }
     });
-
-    setTimeout(() => {
-      console.log(this.state.ticketChangesType);
-    }, 1000);
   }
 
   // 表格多选
   onSelectChange = (selectedRowKeys) => {
     this.setState({ selectedRowKeys });
-    setTimeout(() => {
-      console.log(this.state.selectedRowKeys);
-    }, 100);
   };
 
   // 弹窗选择器数据回调

@@ -2,7 +2,7 @@
  * @Description: 国际等待取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-15 15:58:19
- * @LastEditTime: 2020-12-18 14:57:56
+ * @LastEditTime: 2020-12-18 16:35:34
  * @LastEditors: wish.WuJunLong
  */
 
@@ -129,9 +129,6 @@ export default class intlStopRule extends Component {
         this.setState({
           ticketTypeList: res.data.data,
         });
-        setTimeout(() => {
-          console.log(this.state.ticketTypeList);
-        });
       } else {
         message.warning(res.data.message);
       }
@@ -141,9 +138,6 @@ export default class intlStopRule extends Component {
   // 表格多选
   onSelectChange = (selectedRowKeys) => {
     this.setState({ selectedRowKeys });
-    setTimeout(() => {
-      console.log(this.state.selectedRowKeys);
-    }, 100);
   };
 
   // 弹窗选择器数据回调
