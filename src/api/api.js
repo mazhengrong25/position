@@ -2,13 +2,8 @@
  * @Description:
  * @Author: wish.WuJunLong
  * @Date: 2020-10-22 09:26:28
-<<<<<<< HEAD
- * @LastEditTime: 2020-12-16 15:20:10
+ * @LastEditTime: 2020-12-18 11:13:27
  * @LastEditors: wish.WuJunLong
-=======
- * @LastEditTime: 2020-12-16 17:13:51
- * @LastEditors: Please set LastEditors
->>>>>>> 6d81ad2d9d18777f5a88b910c253357a20217b03
  */
 import axios from "axios";
 

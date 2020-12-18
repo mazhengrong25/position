@@ -2,7 +2,7 @@
  * @Description: 国际等待取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-15 15:58:19
- * @LastEditTime: 2020-12-17 18:09:19
+ * @LastEditTime: 2020-12-18 14:57:56
  * @LastEditors: wish.WuJunLong
  */
 
@@ -11,7 +11,17 @@ import React, { Component } from "react";
 import "./waitRule.scss";
 import axios from "@/api/api";
 
-import { Select, Button, Input, Table, message, Modal, Switch, Pagination } from "antd";
+import {
+  Select,
+  Button,
+  Input,
+  Table,
+  message,
+  Modal,
+  Switch,
+  Pagination,
+  Tooltip,
+} from "antd";
 
 const { Column } = Table;
 
@@ -76,6 +86,24 @@ export default class intlStopRule extends Component {
     });
   };
 
+  // 分钟转换
+  timeStamp(StatusMinute) {
+    let day = parseInt(StatusMinute / 60 / 24);
+    let hour = parseInt((StatusMinute / 60) % 24);
+    let min = parseInt(StatusMinute % 60);
+    StatusMinute = StatusMinute > 0 ? "" : "0";
+    if (day > 0) {
+      StatusMinute = day + "天";
+    }
+    if (hour > 0) {
+      StatusMinute += hour + "小时";
+    }
+    if (min > 0) {
+      StatusMinute += parseFloat(min) + "分";
+    }
+    return StatusMinute;
+  }
+
   // 获取待取位规则列表
   getData() {
     axios.post("api/DomcWaitRules/GetPage", this.state.searchFrom).then((res) => {
@@ -88,8 +116,8 @@ export default class intlStopRule extends Component {
           dataList: res.data.data.datas,
           searchFrom: newData,
         });
-      }else {
-        message.warning(res.data.message)
+      } else {
+        message.warning(res.data.message);
       }
     });
   }
@@ -101,9 +129,9 @@ export default class intlStopRule extends Component {
         this.setState({
           ticketTypeList: res.data.data,
         });
-        setTimeout(() =>{
-          console.log(this.state.ticketTypeList)
-        })
+        setTimeout(() => {
+          console.log(this.state.ticketTypeList);
+        });
       } else {
         message.warning(res.data.message);
       }
@@ -120,7 +148,7 @@ export default class intlStopRule extends Component {
 
   // 弹窗选择器数据回调
   modalSelect = (label, val) => {
-    console.log(label, val)
+    console.log(label, val);
     let data = this.state.modalFrom;
     data[label] = val ? val.value : null;
     this.setState({
@@ -129,18 +157,18 @@ export default class intlStopRule extends Component {
   };
 
   // 弹窗多选框数据回调
-  modalMultiple =(val) =>{
-    console.log(val)
+  modalMultiple = (val) => {
+    console.log(val);
     // let data = []
     // val.forEach(item =>{
     //   data.push(item.value)
     // })
     let newData = this.state.modalFrom;
-    newData['ticket_type'] = val;
+    newData["ticket_type"] = val;
     this.setState({
       modalFrom: newData,
     });
-  }
+  };
 
   // 弹窗输入框数据回调
   modalInput = (label, val) => {
@@ -163,9 +191,12 @@ export default class intlStopRule extends Component {
 
   // 新增/编辑弹窗
   async openModal(val) {
-     if (val)  {
-      let data = JSON.parse(JSON.stringify(val))
-       data['ticket_type'] = data.ticket_type && data.ticket_type.length> 0? [...new Set(data.ticket_type.split('/'))].filter(d=>d): []
+    if (val) {
+      let data = JSON.parse(JSON.stringify(val));
+      data["ticket_type"] =
+        data.ticket_type && data.ticket_type.length > 0
+          ? [...new Set(data.ticket_type.split("/"))].filter((d) => d)
+          : [];
       await this.setState({
         modalFrom: data,
       });
@@ -181,12 +212,12 @@ export default class intlStopRule extends Component {
         end_refund_fee: "",
         involuntary_switching: true,
         cancel_mode: 1,
-        earliest_limit: 0,
-        execute_limit: 0,
-        latest_limit: 0,
+        earliest_limit: null,
+        execute_limit: null,
+        latest_limit: null,
         suspend_type: 0,
         submit_refund_mode: 1,
-        submit_waiting_time: 0,
+        submit_waiting_time: null,
         rule_state: 2,
         remarks: "",
       };
@@ -195,12 +226,11 @@ export default class intlStopRule extends Component {
       });
     }
 
-    console.log(this.state.modalFrom)
+    console.log(this.state.modalFrom);
     await this.setState({
       modalType: val ? "编辑" : "新增",
       waitRuleModal: true,
     });
-
   }
 
   // 弹窗开关数据回调
@@ -227,8 +257,21 @@ export default class intlStopRule extends Component {
     newData["end_refund_fee"] = newData.end_refund_fee
       ? Number(newData.end_refund_fee)
       : 0;
-      newData['ticket_type'] = newData.ticket_type && newData.ticket_type.length > 1? String(newData.ticket_type).replace(/,/g,"/") : String(newData.ticket_type)
-      console.log( newData['ticket_type'])
+    newData["ticket_type"] =
+      newData.ticket_type && newData.ticket_type.length > 1
+        ? String(newData.ticket_type).replace(/,/g, "/")
+        : String(newData.ticket_type);
+    newData["earliest_limit"] = newData["earliest_limit"]
+      ? Number(newData.earliest_limit)
+      : 0;
+    newData["execute_limit"] = newData["execute_limit"]
+      ? Number(newData.execute_limit)
+      : 0;
+    newData["latest_limit"] = newData["latest_limit"] ? Number(newData.latest_limit) : 0;
+    newData["submit_waiting_time"] = newData["submit_waiting_time"]
+      ? Number(newData.submit_waiting_time)
+      : 0;
+    console.log(newData["ticket_type"]);
     let data = {
       action_code: type,
       rules: [newData],
@@ -331,7 +374,7 @@ export default class intlStopRule extends Component {
               />
             </div>
           </div>
-          
+
           <div className="box_list">
             <div className="list_title">票证类型</div>
             <div className="list_item">
@@ -342,7 +385,11 @@ export default class intlStopRule extends Component {
                 onChange={this.headSelect.bind(this, "ticket_type")}
                 defaultValue={{ value: null }}
               >
-                {this.state.ticketTypeList.map(item =><Option value={item} key={item}>{item}</Option>)}
+                {this.state.ticketTypeList.map((item) => (
+                  <Option value={item} key={item}>
+                    {item}
+                  </Option>
+                ))}
               </Select>
             </div>
           </div>
@@ -416,15 +463,51 @@ export default class intlStopRule extends Component {
               render={(text) => <>{text ? "自愿" : "非自愿"}</>}
             />
             <Column title="航空公司" dataIndex="airline_code" />
-            <Column title="舱位代码" dataIndex="cabin_codes" />
-            <Column title="票证类型" dataIndex="ticket_type" />
+            <Column
+              title="舱位代码"
+              dataIndex="cabin_codes"
+              render={(text) => (
+                <Tooltip title={() => <>{text}</>}>
+                  <span
+                    style={{
+                      display: "block",
+                      maxWidth: "100px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {text}
+                  </span>
+                </Tooltip>
+              )}
+            />
+            <Column
+              title="票证类型"
+              dataIndex="ticket_type"
+              render={(text) => (
+                <Tooltip title={() => <>{text}</>}>
+                  <span
+                    style={{
+                      display: "block",
+                      maxWidth: "100px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {text}
+                  </span>
+                </Tooltip>
+              )}
+            />
             <Column
               title="是否换编"
               dataIndex="is_change_pnr"
               render={(text) => <>{text ? "已换编" : "未换编"}</>}
             />
             <Column
-              title="退票费判断设置"
+              title="退票费判断"
               dataIndex="include_refund_type"
               render={(text) => (
                 <>
@@ -445,9 +528,69 @@ export default class intlStopRule extends Component {
             />
             <Column
               title="取位模式"
-              dataIndex="cancel_mode"
-              render={(text) => (
-                <>{text === 1 ? "直接取消" : text === 2 ? "按时限取消" : text}</>
+              render={(text, record) => (
+                <div>
+                  <div style={{ display: record.cancel_mode === 2 ? "block" : "none" }}>
+                    <Tooltip
+                      title={() => (
+                        <>
+                          <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                            最早取位时限
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "12px",
+                              color: "rgba(255, 255, 255, .8)",
+                              minWidth: "200px",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            {this.timeStamp(record.earliest_limit)}
+                          </p>
+                          <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                            实际取位时限
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "12px",
+                              color: "rgba(255, 255, 255, .8)",
+                              minWidth: "200px",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            {this.timeStamp(record.execute_limit)}
+                          </p>
+                          <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                            最晚取位时限
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "12px",
+                              color: "rgba(255, 255, 255, .8)",
+                              minWidth: "200px",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            {this.timeStamp(record.latest_limit)}
+                          </p>
+                        </>
+                      )}
+                    >
+                      {record.cancel_mode === 1
+                        ? "直接取消"
+                        : record.cancel_mode === 2
+                        ? "按时限取消"
+                        : record.cancel_mode}
+                    </Tooltip>
+                  </div>
+                  <div style={{ display: record.cancel_mode === 1 ? "block" : "none" }}>
+                    {record.cancel_mode === 1
+                      ? "直接取消"
+                      : record.cancel_mode === 2
+                      ? "按时限取消"
+                      : record.cancel_mode}
+                  </div>
+                </div>
               )}
             />
             <Column
@@ -511,7 +654,7 @@ export default class intlStopRule extends Component {
         </div>
 
         <Modal
-          title={this.state.modalType + "规则"}
+          title={this.state.modalType + " - 等待取位规则"}
           visible={this.state.waitRuleModal}
           onOk={this.submitBtn}
           onCancel={() => this.setState({ waitRuleModal: false })}
@@ -579,15 +722,19 @@ export default class intlStopRule extends Component {
                 <div className="modal_list">
                   <div className="list_title">票证类型</div>
                   <div className="list_input">
-                  <Select
-                    placeholder="请选择"
-                    mode="multiple"
-                    allowClear
-                    onChange={this.modalMultiple}
-                    value={this.state.modalFrom.ticket_type}
-                  >
-                    {this.state.ticketTypeList.map(item =><Option value={item} key={item}>{item}</Option>)}
-                  </Select>
+                    <Select
+                      placeholder="请选择"
+                      mode="multiple"
+                      allowClear
+                      onChange={this.modalMultiple}
+                      value={this.state.modalFrom.ticket_type}
+                    >
+                      {this.state.ticketTypeList.map((item) => (
+                        <Option value={item} key={item}>
+                          {item}
+                        </Option>
+                      ))}
+                    </Select>
                   </div>
                 </div>
                 <div className="modal_list">
@@ -705,20 +852,72 @@ export default class intlStopRule extends Component {
                   </div>
                 </div>
               </div>
+              <div
+                className="modal_box"
+                style={{
+                  display: this.state.modalFrom.cancel_mode === 2 ? "flex" : "none",
+                }}
+              >
+                <div className="modal_list">
+                  <div className="list_title">最早取位时限</div>
+                  <div className="list_input">
+                    <Input
+                      allowClear
+                      placeholder="单位：分钟"
+                      onChange={this.modalInput.bind(this, "earliest_limit")}
+                      value={this.state.modalFrom.earliest_limit}
+                    />
+                  </div>
+                </div>
 
+                <div className="modal_list">
+                  <div className="list_title">实际取位时限</div>
+                  <div className="list_input">
+                    <Input
+                      allowClear
+                      placeholder="单位：分钟"
+                      onChange={this.modalInput.bind(this, "execute_limit")}
+                      value={this.state.modalFrom.execute_limit}
+                    />
+                  </div>
+                </div>
+
+                <div className="modal_list">
+                  <div className="list_title">最晚取位时限</div>
+                  <div className="list_input">
+                    <Input
+                      allowClear
+                      placeholder="单位：分钟"
+                      onChange={this.modalInput.bind(this, "latest_limit")}
+                      value={this.state.modalFrom.latest_limit}
+                    />
+                  </div>
+                </div>
+              </div>
               <div className="modal_box">
                 <div className="modal_list">
                   <div className="list_title">提交模式</div>
-                  <div className="list_input">
+                  <div
+                    className="list_input"
+                    style={{ display: "flex", alignItems: "center", width: "auto" }}
+                  >
                     <Select
+                      style={{ width: "90px" }}
                       labelInValue
                       onChange={this.modalSelect.bind(this, "submit_refund_mode")}
                       value={{ value: this.state.modalFrom.submit_refund_mode }}
                     >
-                      <Option value={1}>取位后提交</Option>
-                      <Option value={2}>起飞前提交</Option>
-                      <Option value={3}>起飞后提交</Option>
+                      <Option value={1}>取位后</Option>
+                      <Option value={2}>起飞前</Option>
+                      <Option value={3}>起飞后</Option>
                     </Select>
+                    <Input
+                      allowClear
+                      style={{ width: "80px", marginLeft: "5px" }}
+                      onChange={this.modalInput.bind(this, "submit_waiting_time")}
+                      value={this.state.modalFrom.submit_waiting_time}
+                    />
+                    <span style={{ flexShrink: 0, marginLeft: "5px" }}>分钟提交</span>
                   </div>
                 </div>
               </div>

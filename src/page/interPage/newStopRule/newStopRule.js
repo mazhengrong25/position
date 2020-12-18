@@ -1,7 +1,7 @@
 /*
  * @Author: mzr
  * @Date: 2020-12-15 15:55:42
- * @LastEditTime: 2020-12-18 10:49:09
+ * @LastEditTime: 2020-12-18 15:19:47
  * @LastEditors: wish.WuJunLong
  * @Description: 新增  无需取位规则
  * @FilePath: \position\src\page\interPage\newStopRule\newStopRule.js
@@ -21,6 +21,7 @@ import {
   Pagination,
   message,
   Checkbox,
+  Tooltip
 } from "antd";
 
 const { Column } = Table;
@@ -498,8 +499,44 @@ export default class newStopRule extends Component {
               render={(text) => <>{text ? "自愿" : "非自愿 "}</>}
             />
             <Column title="航空公司" dataIndex="airline_code" />
-            <Column title="舱位代码" dataIndex="cabin_codes" />
-            <Column title="票证类型" dataIndex="ticket_type" />
+            <Column
+              title="舱位代码"
+              dataIndex="cabin_codes"
+              render={(text) => (
+                <Tooltip title={() => <>{text}</>}>
+                  <span
+                    style={{
+                      display: "block",
+                      maxWidth: "100px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {text}
+                  </span>
+                </Tooltip>
+              )}
+            />
+            <Column
+              title="票证类型"
+              dataIndex="ticket_type"
+              render={(text) => (
+                <Tooltip title={() => <>{text}</>}>
+                  <span
+                    style={{
+                      display: "block",
+                      maxWidth: "100px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {text}
+                  </span>
+                </Tooltip>
+              )}
+            />
             <Column
               title="是否换编"
               dataIndex="is_change_pnr"
@@ -563,7 +600,7 @@ export default class newStopRule extends Component {
         </div>
 
         <Modal
-          title={this.state.modalType + "规则"}
+          title={this.state.modalType + " - 无需取位规则"}
           visible={this.state.stopRuleModal}
           onOk={this.submitBtn}
           onCancel={() => this.setState({ stopRuleModal: false })}

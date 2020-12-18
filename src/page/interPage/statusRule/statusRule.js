@@ -2,7 +2,7 @@
  * @Description: 自愿非自愿规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-17 10:26:48
- * @LastEditTime: 2020-12-18 10:37:51
+ * @LastEditTime: 2020-12-18 15:01:40
  * @LastEditors: wish.WuJunLong
  */
 
@@ -64,7 +64,7 @@ export default class intlStopRule extends Component {
       searchFrom: data,
     });
     await this.getData();
-    this.getChangesType()
+    this.getChangesType();
   }
 
   // 选择器返回值
@@ -98,8 +98,8 @@ export default class intlStopRule extends Component {
           dataList: res.data.data.datas,
           searchFrom: newData,
         });
-      }else {
-        message.warning(res.data.message)
+      } else {
+        message.warning(res.data.message);
       }
     });
   }
@@ -116,9 +116,9 @@ export default class intlStopRule extends Component {
       }
     });
 
-    setTimeout(() =>{
-      console.log(this.state.ticketChangesType)
-    },1000)
+    setTimeout(() => {
+      console.log(this.state.ticketChangesType);
+    }, 1000);
   }
 
   // 表格多选
@@ -131,19 +131,18 @@ export default class intlStopRule extends Component {
 
   // 弹窗选择器数据回调
   modalSelect = (label, val) => {
-    console.log(label,val,'changesChildType')
-    if(label === 'flight_change_type'){
-      let changeType = []
-      this.state.ticketChangesType.forEach(item =>{
-        if(item.code === val.value){
-          changeType = item.child_typs
+    console.log(label, val, "changesChildType");
+    if (label === "flight_change_type") {
+      let changeType = [];
+      this.state.ticketChangesType.forEach((item) => {
+        if (item.code === val.value) {
+          changeType = item.child_typs;
         }
-      })
+      });
       this.setState({
-        changesChildType: changeType
-      })
+        changesChildType: changeType,
+      });
     }
-
 
     let data = this.state.modalFrom;
     data[label] = val ? val.value : null;
@@ -175,19 +174,18 @@ export default class intlStopRule extends Component {
   openModal(val) {
     console.log(val);
     if (val) {
-      let changeType = []
-      this.state.ticketChangesType.forEach(item =>{
-        if(item.code === val.flight_change_type){
-          changeType = item.child_typs
+      let changeType = [];
+      this.state.ticketChangesType.forEach((item) => {
+        if (item.code === val.flight_change_type) {
+          changeType = item.child_typs;
         }
-      })
+      });
       this.setState({
-        changesChildType: changeType
-      })
+        changesChildType: changeType,
+      });
       this.setState({
         modalFrom: JSON.parse(JSON.stringify(val)),
       });
-
     } else {
       let data = {
         rules_type: 1,
@@ -196,7 +194,7 @@ export default class intlStopRule extends Component {
         flight_change_type: "",
         flight_change_child_type: null,
         flight_change_diff: null,
-        is_pnr_remarks: true,
+        pnr_remarks_ins: "",
         is_generate_attachment: true,
         rule_state: 2,
         remarks: "",
@@ -278,7 +276,15 @@ export default class intlStopRule extends Component {
   }
 
   // 分页器切换
-  changePage(e) {}
+  changePage = async (page, size) => {
+    let data = JSON.parse(JSON.stringify(this.state.searchFrom));
+    data.page_no = page;
+    data.page_size = size;
+    await this.setState({
+      searchFrom: data,
+    });
+    await this.getData();
+  };
 
   render() {
     const { selectedRowKeys } = this.state;
@@ -323,7 +329,11 @@ export default class intlStopRule extends Component {
                 labelInValue
                 onChange={this.headSelect.bind(this, "flight_change_type")}
               >
-                {this.state.ticketChangesType.map(item => <Option value={item.code} key={item.code}>{item.name}</Option>)}
+                {this.state.ticketChangesType.map((item) => (
+                  <Option value={item.code} key={item.code}>
+                    {item.name}
+                  </Option>
+                ))}
               </Select>
             </div>
           </div>
@@ -412,7 +422,7 @@ export default class intlStopRule extends Component {
                   <span
                     style={{
                       display: "block",
-                      maxWidth: '400px',
+                      maxWidth: "400px",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
@@ -481,7 +491,7 @@ export default class intlStopRule extends Component {
         </div>
 
         <Modal
-          title={this.state.modalType + "规则"}
+          title={this.state.modalType + " - 非自愿规则"}
           visible={this.state.waitRuleModal}
           onOk={this.submitBtn}
           onCancel={() => this.setState({ waitRuleModal: false })}
@@ -535,12 +545,16 @@ export default class intlStopRule extends Component {
                   <div className="list_title">航变类型</div>
                   <div className="list_input">
                     <Select
-                      placeholder="请选择" 
+                      placeholder="请选择"
                       labelInValue
                       onChange={this.modalSelect.bind(this, "flight_change_type")}
                       value={{ value: this.state.modalFrom.flight_change_type }}
                     >
-                      {this.state.ticketChangesType.map(item => <Option value={item.code} key={item.code}>{item.name}</Option>)}
+                      {this.state.ticketChangesType.map((item) => (
+                        <Option value={item.code} key={item.code}>
+                          {item.name}
+                        </Option>
+                      ))}
                     </Select>
                   </div>
                 </div>
@@ -585,7 +599,11 @@ export default class intlStopRule extends Component {
                       onChange={this.modalSelect.bind(this, "flight_change_child_type")}
                       value={{ value: this.state.modalFrom.flight_change_child_type }}
                     >
-                      {this.state.changesChildType.map(item => <Option value={item.code} key={item.code}>{item.name}</Option>)}
+                      {this.state.changesChildType.map((item) => (
+                        <Option value={item.code} key={item.code}>
+                          {item.name}
+                        </Option>
+                      ))}
                     </Select>
                   </div>
                 </div>
@@ -596,21 +614,6 @@ export default class intlStopRule extends Component {
               <div className="modal_title">执行规则</div>
 
               <div className="modal_box">
-                <div className="modal_list">
-                  <div className="list_title">PNR备注</div>
-                  <div className="list_input">
-                    <Select
-                      labelInValue
-                      onChange={this.modalSelect.bind(this, "is_pnr_remarks")}
-                      value={{
-                        value: this.state.modalFrom.is_pnr_remarks,
-                      }}
-                    >
-                      <Option value={true}>需要备注</Option>
-                      <Option value={false}>无需备注</Option>
-                    </Select>
-                  </div>
-                </div>
                 <div className="modal_list">
                   <div className="list_title">生成附表</div>
                   <div className="list_input">
@@ -629,6 +632,21 @@ export default class intlStopRule extends Component {
                 <div className="modal_list">
                   <div className="list_title"></div>
                   <div className="list_input"></div>
+                </div>
+              </div>
+
+              <div className="modal_box">
+                <div className="modal_list input_remark">
+                  <div className="list_title">PNR备注</div>
+                  <div className="list_input">
+                    <TextArea
+                      rows={2}
+                      placeholder="请输入"
+                      allowClear
+                      onChange={this.modalInput.bind(this, "pnr_remarks_ins")}
+                      value={this.state.modalFrom.pnr_remarks_ins}
+                    />
+                  </div>
                 </div>
               </div>
 
