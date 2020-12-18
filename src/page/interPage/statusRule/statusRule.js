@@ -2,7 +2,7 @@
  * @Description: 自愿非自愿规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-17 10:26:48
- * @LastEditTime: 2020-12-17 18:12:10
+ * @LastEditTime: 2020-12-18 10:37:51
  * @LastEditors: wish.WuJunLong
  */
 
@@ -52,6 +52,8 @@ export default class intlStopRule extends Component {
       modalFrom: {}, // 弹窗数据
 
       ticketChangesType: [], // 航变类型
+
+      changesChildType: [], // 航变子类型
     };
   }
 
@@ -129,6 +131,20 @@ export default class intlStopRule extends Component {
 
   // 弹窗选择器数据回调
   modalSelect = (label, val) => {
+    console.log(label,val,'changesChildType')
+    if(label === 'flight_change_type'){
+      let changeType = []
+      this.state.ticketChangesType.forEach(item =>{
+        if(item.code === val.value){
+          changeType = item.child_typs
+        }
+      })
+      this.setState({
+        changesChildType: changeType
+      })
+    }
+
+
     let data = this.state.modalFrom;
     data[label] = val ? val.value : null;
     this.setState({
@@ -159,9 +175,19 @@ export default class intlStopRule extends Component {
   openModal(val) {
     console.log(val);
     if (val) {
+      let changeType = []
+      this.state.ticketChangesType.forEach(item =>{
+        if(item.code === val.flight_change_type){
+          changeType = item.child_typs
+        }
+      })
+      this.setState({
+        changesChildType: changeType
+      })
       this.setState({
         modalFrom: JSON.parse(JSON.stringify(val)),
       });
+
     } else {
       let data = {
         rules_type: 1,
@@ -509,6 +535,7 @@ export default class intlStopRule extends Component {
                   <div className="list_title">航变类型</div>
                   <div className="list_input">
                     <Select
+                      placeholder="请选择" 
                       labelInValue
                       onChange={this.modalSelect.bind(this, "flight_change_type")}
                       value={{ value: this.state.modalFrom.flight_change_type }}
@@ -536,6 +563,7 @@ export default class intlStopRule extends Component {
                   <div className="list_title">适用规则</div>
                   <div className="list_input">
                     <Select
+                      placeholder="请选择"
                       labelInValue
                       onChange={this.modalSelect.bind(this, "applicable_rules")}
                       value={{
@@ -551,12 +579,13 @@ export default class intlStopRule extends Component {
                   <div className="list_title">航变子类型</div>
                   <div className="list_input">
                     <Select
+                      placeholder="请选择"
                       labelInValue
+                      disabled={!this.state.modalFrom.flight_change_type}
                       onChange={this.modalSelect.bind(this, "flight_change_child_type")}
                       value={{ value: this.state.modalFrom.flight_change_child_type }}
                     >
-                      <Option value={0}>所有子类型</Option>
-                      <Option value={1}>航班起飞时间提前</Option>
+                      {this.state.changesChildType.map(item => <Option value={item.code} key={item.code}>{item.name}</Option>)}
                     </Select>
                   </div>
                 </div>
