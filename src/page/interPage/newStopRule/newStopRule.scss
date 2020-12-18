@@ -54,6 +54,17 @@
       }
     }
     .executable_table{
+      .table_edit_btn {
+        padding: 2px 5px;
+        background: #0070e2;
+        border-radius: 2px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #ffffff;
+        text-align: center;
+        cursor: pointer;
+        display: inline-flex;
+      }
       .ant-table-thead > tr > th {
         background: rgba(230, 242, 254, 1);
         color: #333333;
@@ -78,7 +89,6 @@
     
     font-size: 14px;
     font-weight: bold;
-    line-height: 19px;
     color: #333333;
     display: flex;
     margin-bottom: 23px;
@@ -86,7 +96,6 @@
       
       font-size: 14px;
       font-weight: 400;
-      line-height: 19px;
       color: #999999;
       margin-left: 8px;
     }
@@ -101,6 +110,78 @@
     .modal_list {
       display: inline-flex;
       align-items: center;
+      &.input_remark{
+        width: 100%;
+        .list_input{
+          width: 100%;
+          textarea {
+            resize: none;
+          }
+        }
+      }
+      .list_title {
+        min-width: 56px;
+        text-align: right;
+        margin-right: 8px;
+        .ant-select{
+          width: 100%;
+          .ant-select-selector{
+            border: none;
+            box-shadow: none;
+            padding-left: 0;
+          }
+        }
+        &.long_title {
+          width: 160px;
+        }
+      }
+      .list_input {
+        &.refund_fee_input{
+          display: inline-flex;
+          align-items: center;
+          p{
+            margin: 0 5px;
+          }
+        }
+        width: 160px;
+        .ant-select {
+          width: 100%;
+        }
+      }
+    }
+    &.input_air_address {
+      justify-content: flex-end;
+      position: relative;
+      .address_input {
+        width: 236px;
+        height: 96px;
+        position: absolute;
+        top: 0;
+        &.dep_address{
+          right: 281px;
+        }
+        &:last-child {
+          margin-left: 45px;
+        }
+        textarea {
+          resize: none;
+          background: #f1f3f5;
+          border: 1px solid #dfdfdf;
+          border-radius: 2px;
+        }
+      }
+    }
+  }
+  .modal_content {
+    display: flex;
+    align-items: center;
+    &:not(:last-child) {
+      margin-bottom: 22px;
+    }
+    .modal_list {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 20px;
       &.input_remark{
         width: 100%;
         .list_input{
