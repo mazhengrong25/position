@@ -2,8 +2,8 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-15 11:40:14
- * @LastEditTime: 2020-12-01 14:27:31
- * @LastEditors: wish.WuJunLong
+ * @LastEditTime: 2020-12-23 13:59:22
+ * @LastEditors: Please set LastEditors
  */
 import React, { Component } from "react";
 
@@ -48,14 +48,14 @@ export default class Detail extends Component {
     };
   }
 
-  componentWillMount() {}
+  
 
-  componentDidMount() {
-    console.log(this.props.details);
-    this.setState({
+  async componentDidMount() {
+    await this.setState({
       detailsData: this.props.details,
     });
-    this.getDataList(this.props.details);
+    
+    await this.getDataList(this.props.details);
   }
 
   // 获取操作日志列表
@@ -156,6 +156,12 @@ export default class Detail extends Component {
           <div className="number">{this.state.detailsData.flight_no}</div>
           <div className="name">舱位:</div>
           <div className="number">{this.state.detailsData.cabin_code}</div>
+          <div className="name">乘客类型:</div>
+          <div className="number" style={this.state.blue}>{this.state.detailsData.passenger_type === "ADT" ? "成人票"
+                                    :this.state.detailsData.passenger_type === "CHD" ? "儿童票"
+                                    :this.state.detailsData.passenger_type === "INF" ? "婴儿票" : ""}</div>
+          <div className="name">乘客姓名:</div>
+          <div className="number">{this.state.detailsData.passenger_name}</div>
         </div>
         <div className="nav">
           <div className="tags"></div>
@@ -233,8 +239,8 @@ export default class Detail extends Component {
           <div className="number">{this.state.detailsData.exec_time}</div>
           <div className="name">预订下次执行时间:</div>
           <div className="number">{this.state.detailsData.next_exec_time}</div>
-          {/* <div className="name">延误消息:</div>
-                        <div className="number">这里是消息内容</div> */}
+          <div className="name">审核时间:</div>
+          <div className="number">{this.state.detailsData.audit_time}</div>
         </div>
         <div className="nav">
           <div className="tags"></div>

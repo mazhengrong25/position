@@ -2,8 +2,8 @@
  * @Description: 取位国内列表
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-12-02 15:19:39
- * @LastEditors: wish.WuJunLong
+ * @LastEditTime: 2020-12-23 15:08:43
+ * @LastEditors: Please set LastEditors
  */
 import React, { Component } from "react";
 // 单选框
@@ -269,9 +269,15 @@ export default class App extends Component {
                           "YYYY-MM-DD HH:mm"
                         )}
                       </p>
-                      <p style={{ width: "240px", marginBottom: "0" }}>
+                      <p style={{ width: "240px" }}>
                         预计下次执行时间：
                         {this.$moment(record.next_exec_time).format(
+                          "YYYY-MM-DD HH:mm"
+                        )}
+                      </p>
+                      <p style={{ width: "240px", marginBottom: "0" }}>
+                        审核时间：
+                        {this.$moment(record.audit_time).format(
                           "YYYY-MM-DD HH:mm"
                         )}
                       </p>
@@ -337,11 +343,12 @@ export default class App extends Component {
       intl_flag: false, // 订单类型
       ticket_type: this.state.type === "all" ? "" : this.state.type, // 票证类型
       date_type: Number(this.state.timeValue), // 日期类型  0:导入时间 1：起飞时间 2：执行时间
-      refund_type: Number(this.state.volun), // 退票类型 0：所有 1：自愿 2：非自愿
-      query_type: Number(this.state.itemType), // 搜索类型 1:PNR编码 2:票号 3:订单号 4:乘客姓名
+      refund_type: Number(this.state.volun) === "0"?"":Number(this.state.volun), // 退票类型 0：所有 1：自愿 2：非自愿 3：自愿转非自愿
+      query_type: Number(this.state.itemType), // 搜索类型1:退票单号 2:订单号 3:乘客姓名
       query_value: this.state.itemValue, // 类型：String  可有字段  备注：搜索关键字，取决于query_type的搜索类型
       begin_date: this.state.start, // 开始日期
       end_date: this.state.end, // 结束日期
+      // 类型：Mixed  可有字段  备注：执行状态，不传或传null查询所有。0：待取位 1：已取位 2：已航变 3:已退票 4：无需取位 -1:取消失败 -2:无效编码 -3:操作失败 -4:非法操作
       exec_state: this.state.headerStatus !== '2' ?Number(this.state.headerStatus) ?? null : null,
       pnr_code: this.state.pnr_code,
       ticket_no: this.state.ticket_no,
@@ -350,23 +357,23 @@ export default class App extends Component {
           ? true
           : this.state.is_flight_changes === "2"
           ? false
-          : null, // 是否航变
+          : null, // 是否航变   
       exec_msg: this.state.exec_msg,
       refund_dept_code: this.state.depCode, // 退票部门code
     };
-    axios.post("/api/pnr/getdata", data).then((res) => {
+    axios.post("/api/DomcPnrData/GetPage", data).then((res) => {
       if (res.data.status === 0) {
-        let newData = res.data.datas || [];
+        let newData = res.data.data.datas || [];
         this.setState({
           data: newData,
-          totalCount: res.data.total_count,
-          pageNumber: res.data.page_no,
+          totalCount: res.data.data.total_count,
+          pageNumber: res.data.data.page_no,
         });
       } else {
         this.setState({
           data: [],
-          totalCount: res.data.total_count,
-          pageNumber: res.data.page_no,
+          totalCount: res.data.data.total_count,
+          pageNumber: res.data.data.page_no,
         });
         message.warning(res.data.message);
       }
@@ -538,8 +545,8 @@ export default class App extends Component {
     let data = {
       refund_dept_code: this.state.depCode, // 退票部门code
     };
-    axios.post("/api/pnr/statistics", data).then((res) => {
-      let statisticsTotal = res.data.statistics;
+    axios.post("api/DomcPnrData/Statistics", data).then((res) => {
+      let statisticsTotal = res.data.data;
       this.setState({
         statistics: statisticsTotal,
       });
@@ -719,6 +726,8 @@ export default class App extends Component {
               <div className="radio">
                 <Select
                   style={{ width: 200 }}
+                  allowClear
+                  placeholder="全部"
                   value={this.state.is_flight_changes}
                   onChange={this.ticketChange}
                 >
@@ -786,28 +795,28 @@ export default class App extends Component {
                 <Select
                   allowClear
                   style={{ width: 200 }}
-                  placeholder="请选择"
-                  optionFilterProp="children"
-                  notFoundContent="无法找到"
+                  placeholder="所有"
                   onChange={this.handleVolun}
                 >
                   <Option value="0">所有</Option>
                   <Option value="1">自愿</Option>
                   <Option value="2">非自愿</Option>
+                  <Option value="3">自愿转非自愿</Option>
                 </Select>
               </div>
             </div>
-            {/* 乘客姓名 */}
+            {/* 乘客姓名 退票单号  乘客姓名 搜索类型*/}
             <div className="type_name">
               <Select
-                defaultValue={{ value: "4" }}
+                defaultValue={{ value: "1" }}
                 labelInValue
                 style={{ width: 100 }}
                 bordered={false}
                 onChange={this.handleChange}
               >
-                <Option value="4">乘客姓名</Option>
-                <Option value="3">订单号</Option>
+                <Option value="1">退票单号</Option>
+                <Option value="2">订单号</Option>
+                <Option value="3">乘客姓名</Option>
               </Select>
               <div className="radio">
                 <Input
@@ -934,6 +943,7 @@ export default class App extends Component {
           centered
           footer={null}
           title="详情信息"
+          destroyOnClose
           width={1200}
           visible={this.state.detailModal}
           onCancel={() => this.setState({ detailModal: false })}
