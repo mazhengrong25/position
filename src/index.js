@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-12-17 17:25:52
+ * @LastEditTime: 2020-12-25 17:49:29
  * @LastEditors: wish.WuJunLong
  */
 import React from "react";
@@ -15,14 +15,14 @@ import Index from "./page/index";
 import App from "./page/inlandPage/index/App";  // 国内取位中心列表
 import Rule from "./page/inlandPage/rule/rule";  // 取位规则
 import Detail from "./page/inlandPage/detail/detail";  // 取位详情
+// 新增
+import NewStopRule from "./page/inlandPage/newStopRule/newStopRule"; // 无需取位规则
+import WaitRule from "./page/inlandPage/waitRule/waitRule"; // 等待取位规则
+import StatusRule from "./page/inlandPage/statusRule/statusRule"; // 自愿转非自愿规则
 // 国际取位
 import interList from "./page/interPage/interIndex/interIndex"; // 国际取位
 import Executable from "./page/interPage/executable/executable"; // 国际取位可执行规则
 import IntelStopRule from "./page/interPage/intelStopRule/intelStopRule";  // 国际无需取位规则
-import WaitRule from "./page/interPage/waitRule/waitRule"; // 国际等待取位规则
-import StatusRule from "./page/interPage/statusRule/statusRule"; // 自愿转非自愿规则
-// 新增
-import NewStopRule from "./page/interPage/newStopRule/newStopRule"; // 无需取位规则
 
 import "./index.scss";
 

@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-11-26 17:30:08
+ * @LastEditTime: 2020-12-25 17:50:07
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -614,6 +614,12 @@ export default class Rule extends Component {
     this.getDataList();
   };
 
+  // 跳转国内新页面
+  jumpNewAddress(url){
+    console.log(url)
+    this.props.history.push('/'+url);
+  }
+
   render() {
     const { selectedRowKeys } = this.state;
 
@@ -707,6 +713,9 @@ export default class Rule extends Component {
             <Button onClick={() => this.moreListEdit("启用")}>批量启用</Button>
             <Button onClick={() => this.moreListEdit("停用")}>批量停用</Button>
             <Button onClick={() => this.moreListEdit("删除")}>批量删除</Button>
+            <Button type="link" onClick={() => this.jumpNewAddress("newStopRule")}>无需取位规则</Button>
+            <Button type="link" onClick={() => this.jumpNewAddress("waitRule")}>等待取位规则</Button>
+            <Button type="link" onClick={() => this.jumpNewAddress("statusRule")}>自愿转非自愿规则</Button>
           </Space>
           <Table
             size="small"
