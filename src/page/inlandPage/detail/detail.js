@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-15 11:40:14
- * @LastEditTime: 2020-12-23 13:59:22
+ * @LastEditTime: 2020-12-23 15:25:24
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from "react";
@@ -36,8 +36,8 @@ export default class Detail extends Component {
     super(props);
 
     this.state = {
-      logsData: [],
-      detailsData: {},
+      logsData: [], //详情中的表格
+      detailsData: {}, 
       style: {
         background: "rgba(243, 218, 188, .8)",
         color: "#FB9826",
@@ -142,16 +142,6 @@ export default class Detail extends Component {
               </div>
             </div>
           </div>
-          {/* <div className="logo">
-                            <img src={require("../static/direction.png")} alt=""/>
-                        </div>
-                        <div className="segment">
-                            <div className="segment_time">
-                                <div className="time_small">09:40</div>
-                                <div className="time_big">(2020-06-28)</div>
-                            </div>
-                            <div className="time_middle">{this.state.detailsData.to_airport}</div>
-                        </div> */}
           <div className="name">航班号:</div>
           <div className="number">{this.state.detailsData.flight_no}</div>
           <div className="name">舱位:</div>

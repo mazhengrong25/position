@@ -2,7 +2,7 @@
  * @Description: 取位国内列表
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-12-23 15:08:43
+ * @LastEditTime: 2020-12-24 15:33:15
  * @LastEditors: Please set LastEditors
  */
 import React, { Component } from "react";
@@ -29,11 +29,11 @@ import HeaderTitle from "@/components/headerTitle"
 
 import Detail from "@/page/inlandPage/detail/detail";
 
-import RulePage from "@/page/inlandPage/rule/rule";
-
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
+
+const { Column } = Table;
 
 const { TextArea } = Input;
 
@@ -41,269 +41,36 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
-      itemType: 1, //搜索类型
-      itemValue: "", //搜索关键字
+      newData: [],
+      returnData: {
 
-      timeValue: 2, //日期类型
+        page_no: 1,
+        page_size: 10, // 当前页条数
+        total_count:0,
+        airline_code: "", // 航空公司二字代码
+        ticket_type: "", // 票证类型
+        date_type: 0, // 日期类型  0:导入时间 1：起飞时间 2：执行时间
+        refund_type: 0, // 退票类型 0：所有 1：自愿 2：非自愿 3：自愿转非自愿
+        query_type: 1, // 搜索类型1:退票单号 2:订单号 3:乘客姓名
+        query_value: "", // 类型：String  可有字段  备注：搜索关键字，取决于query_type的搜索类型
+        begin_date: "", // 开始日期
+        end_date: "", // 结束日期
+        // 类型：Mixed  可有字段  备注：执行状态，不传或传null查询所有。0：待取位 1：已取位 2：已航变 3:已退票 4：无需取位 -1:取消失败 -2:无效编码 -3:操作失败 -4:非法操作
+        exec_state: null,
+        pnr_code: "",
+        ticket_no: "",
+        is_flight_changes:null,
+        exec_msg: "",
+        refund_dept_code: "", // 退票部门code
 
-      status: null, //执行状态
+      },
       ticketTypeList: [], // 票证类型数组
-      type: "", //票证类型
-      time: null, //执行时间
-      air: "", //航空公司
-      volun: 0, //是否自愿
-      orderType: "国内", //订单类型
-      start: "", //开始日期
-      end: "", // 结束日期
 
-      columns: [
-        {
-          title: "编号",
-          render: (text, record, index) => `${index + 1}`,
-        },
-        {
-          title: "操作",
-          coldiv: 2,
-          render: (text, row) => {
-            return (
-              <div>
-                <Tag color="#5AB957" onClick={() => this.jumpDetails(row)}>
-                  详
-                </Tag>
-
-                <Tag color="#0070E2" onClick={() => this.openActionModal(row)}>
-                  处理
-                </Tag>
-              </div>
-            );
-          },
-        },
-        {
-          title: "PNR",
-          render: (text, record) => (
-            <>
-              <Tooltip
-                title={() => (
-                  <>
-                    <p style={{ fontSize: "14px", marginBottom: "5px" }}>
-                      PNR状态
-                    </p>
-                    <p
-                      style={{
-                        fontSize: "12px",
-                        color: "rgba(255, 255, 255, .8)",
-                        minWidth: "200px",
-                        marginBottom: "5px",
-                      }}
-                    >
-                      {record.pnr_state || ""}
-                    </p>
-                  </>
-                )}
-              >
-                <div>{record.pnr_code}</div>
-              </Tooltip>
-            </>
-          ),
-        },
-        {
-          title: "票号",
-          dataIndex: "ticket_no",
-        },
-        {
-          title: "GDS系统标识",
-          dataIndex: "gds_type",
-        },
-        {
-          title: "票证类型",
-          dataIndex: "ticket_type",
-        },
-        {
-          title: "航司代码",
-          dataIndex: "airline_code",
-        },
-        {
-          title: "舱位",
-          dataIndex: "cabin_code",
-        },
-        {
-          title: "起飞时间",
-          dataIndex: "fly_time",
-          render: (state) => {
-            return this.$moment(state).format("YYYY-MM-DD HH:mm");
-          },
-        },
-        {
-          title: "乘客姓名",
-          dataIndex: "passenger_name",
-        },
-        {
-          title: "航程类型",
-          dataIndex: "route_type",
-          render: (text) => {
-            let newType = text === "OW" ? "单程" : "";
-            return newType;
-          },
-        },
-        {
-          title: "执行状态",
-          dataIndex: "exec_state",
-          render: (text, record) => {
-            return (
-              <Tooltip
-                title={() => (
-                  <>
-                    <p style={{ fontSize: "14px", marginBottom: "5px" }}>
-                      执行信息
-                    </p>
-                    <p
-                      style={{
-                        fontSize: "12px",
-                        color: "rgba(255, 255, 255, .8)",
-                        minWidth: "200px",
-                        marginBottom: "5px",
-                        cursor: 'pointer'
-                      }}
-                      onClick={() =>this.changeExecMsg(record.exec_msg)}
-                    >
-                      {record.exec_msg}
-                    </p>
-                  </>
-                )}
-              >
-                <div
-                  style={{
-                    color:
-                      record.exec_state === 0
-                        ? "#0070E2"
-                        : record.exec_state === 1
-                        ? "#5AB957"
-                        : record.exec_state === 3
-                        ? "#5AB957"
-                        : record.exec_state === 4
-                        ? "#999999"
-                        : record.exec_state === -1
-                        ? "#FF0000"
-                        : record.exec_state === -2
-                        ? "#FF0000"
-                        : record.exec_state === -3
-                        ? "#FF0000"
-                        : record.exec_state === -4
-                        ? "#FF0000"
-                        : "",
-                  }}
-                >
-                  {record.exec_state === 0
-                    ? "待取位"
-                    : record.exec_state === 1
-                    ? "已取位"
-                    : record.exec_state === 3
-                    ? "已退票"
-                    : record.exec_state === 4
-                    ? "无需取位"
-                    : record.exec_state === -1
-                    ? "取位失败"
-                    : record.exec_state === -2
-                    ? "无效编码"
-                    : record.exec_state === -3
-                    ? "操作失败"
-                    : record.exec_state === -4
-                    ? "非法操作"
-                    : record.exec_state}
-                </div>
-              </Tooltip>
-            );
-          },
-        },
-        {
-          title: "是否航变",
-          dataIndex: "is_flight_changes",
-          render: (text) => {
-            return text ? "已航变" : "未航变";
-          },
-        },
-        {
-          title: "规则匹配",
-          dataIndex: "config_id",
-          render: (state) => {
-            let color;
-            let text;
-            let style;
-            if (state !== "0") {
-              color = "#5AB957";
-              text = "已关联";
-            } else if (state === "0") {
-              color = "#AFB9C4";
-              text = "未关联";
-              style = {
-                cursor: "not-allowed",
-              };
-            }
-
-            return (
-              <div>
-                <Tag
-                  style={style}
-                  onClick={() => this.jumpRule(state)}
-                  color={color}
-                >
-                  {text}
-                </Tag>
-              </div>
-            );
-          },
-        },
-        {
-          title: "已执行时间",
-          render: (state, record) => {
-            return (
-              <>
-                <Tooltip
-                  placement="bottomLeft"
-                  title={() => (
-                    <>
-                      <p style={{ width: "240px" }}>
-                        已执行时间：
-                        {this.$moment(record.exec_time).format(
-                          "YYYY-MM-DD HH:mm"
-                        )}
-                      </p>
-                      <p style={{ width: "240px" }}>
-                        预计下次执行时间：
-                        {this.$moment(record.next_exec_time).format(
-                          "YYYY-MM-DD HH:mm"
-                        )}
-                      </p>
-                      <p style={{ width: "240px", marginBottom: "0" }}>
-                        审核时间：
-                        {this.$moment(record.audit_time).format(
-                          "YYYY-MM-DD HH:mm"
-                        )}
-                      </p>
-                    </>
-                  )}
-                >
-                  <span>
-                    {this.$moment(record.exec_time).format("YYYY-MM-DD HH:mm")}
-                  </span>
-                </Tooltip>
-              </>
-            );
-          },
-        },
-      ],
-
-      headerStatus: "all", // 头部状态
+      headerStatus: 'all', // 头部状态
 
       statistics: {},
 
-      pageNumber: 1, // 分页-当前页数
-      pageCount: 1, // 分页-总页码
-      totalCount: 0, // 总条数
-      pageSize: 10, // 分页-页面条数
-
-      config_time: "",
+      config_time: "", // 待取位
       configStyle: "none",
 
       actionModal: false, // 处理弹窗
@@ -312,74 +79,40 @@ export default class App extends Component {
       actionKey: "",
 
       detailModal: false, // 取位详情弹窗
-      details: {}, // 详情
-
-      ruleModal: false,
-      ruleKey: "", // 规则key
-
-      pnr_code: "",
-      ticket_no: "",
-
-      is_flight_changes: 'null', // 是否航变
-
-      exec_msg: '', // 航变执行信息
-
-      depCode: '', // 退票部门code
+      details: {}, // 详情 
     };
   }
 
-  componentDidMount() {
-    this.getDataList();
-    this.getStatistic();
+  async componentDidMount() {
+    let data = JSON.parse(JSON.stringify(this.state.returnData));
+    await this.setState({
+      returnData:data,
+    })
+    await this.getDataList();
+    await this.getStatistic();
     this.getTicketType();
   }
 
   // 获取取位列表
-  getDataList(page, size) {
-    let data = {
-      page_no: page || this.state.pageNumber,
-      page_size: size || this.state.pageSize, // 当前页条数
-      airline_code: this.state.air, // 航空公司二字代码
-      intl_flag: false, // 订单类型
-      ticket_type: this.state.type === "all" ? "" : this.state.type, // 票证类型
-      date_type: Number(this.state.timeValue), // 日期类型  0:导入时间 1：起飞时间 2：执行时间
-      refund_type: Number(this.state.volun) === "0"?"":Number(this.state.volun), // 退票类型 0：所有 1：自愿 2：非自愿 3：自愿转非自愿
-      query_type: Number(this.state.itemType), // 搜索类型1:退票单号 2:订单号 3:乘客姓名
-      query_value: this.state.itemValue, // 类型：String  可有字段  备注：搜索关键字，取决于query_type的搜索类型
-      begin_date: this.state.start, // 开始日期
-      end_date: this.state.end, // 结束日期
-      // 类型：Mixed  可有字段  备注：执行状态，不传或传null查询所有。0：待取位 1：已取位 2：已航变 3:已退票 4：无需取位 -1:取消失败 -2:无效编码 -3:操作失败 -4:非法操作
-      exec_state: this.state.headerStatus !== '2' ?Number(this.state.headerStatus) ?? null : null,
-      pnr_code: this.state.pnr_code,
-      ticket_no: this.state.ticket_no,
-      is_flight_changes:
-        this.state.is_flight_changes === "1"
-          ? true
-          : this.state.is_flight_changes === "2"
-          ? false
-          : null, // 是否航变   
-      exec_msg: this.state.exec_msg,
-      refund_dept_code: this.state.depCode, // 退票部门code
-    };
+  getDataList() {
+    let data = JSON.parse(JSON.stringify(this.state.returnData));
     axios.post("/api/DomcPnrData/GetPage", data).then((res) => {
-      if (res.data.status === 0) {
-        let newData = res.data.data.datas || [];
+
+        if(res.data.status !== 0){
+          message.warning(res.data.message);
+        }
+        data.total_count = res.data.data.total_count;
+        data.page_no = res.data.data.page_no;
+
         this.setState({
-          data: newData,
-          totalCount: res.data.data.total_count,
-          pageNumber: res.data.data.page_no,
+          newData: res.data.data.datas,
+          returnData: data
         });
-      } else {
-        this.setState({
-          data: [],
-          totalCount: res.data.data.total_count,
-          pageNumber: res.data.data.page_no,
-        });
-        message.warning(res.data.message);
-      }
+      
     });
   }
 
+  // 获取票证类型
   getTicketType() {
     axios.get("api/DomcPnrData/getTicketTypes").then((res) => {
       if (res.data.status === 0) {
@@ -391,111 +124,6 @@ export default class App extends Component {
       }
     });
   }
-
-  // 执行状态
-  handleStatus = (val) => {
-    console.log(val);
-    this.setState({
-      // headerStatus: Number(val),
-      headerStatus: val,
-    });
-  };
-
-  // 是否航变
-  ticketChange = (val) => {
-    console.log(val);
-    this.setState({
-      is_flight_changes: val,
-    });
-  };
-
-  // 票证类型
-  handleType = (val) => {
-    console.log(val);
-    this.setState({
-      type: val,
-    });
-  };
-
-  // 是否自愿
-  handleVolun = (val) => {
-    console.log(val);
-    this.setState({
-      volun: val,
-    });
-  };
-
-  // 日期类型
-  handleTime = (val) => {
-    this.setState({
-      timeValue: Number(val.value),
-    });
-  };
-
-  // 订单类型
-  handleOrder = (val) => {
-    console.log("订单类型", val.target.value);
-    this.setState({
-      orderType: val.target.value,
-    });
-  };
-
-  // 搜索类型 点击事件
-  handleChange = (val) => {
-    console.log(val.label);
-    this.setState({
-      itemType: Number(val.value),
-    });
-  };
-
-  // 搜素类型 内容
-  changeModalInpit(val) {
-    this.setState({
-      itemValue: val.target.value,
-    });
-  }
-
-  // 日期选择  开始时间
-  startChange = (date, dateString) => {
-    console.log("开始时间", dateString);
-    this.setState({
-      start: dateString,
-    });
-  };
-
-  // 日期选择  结束时间
-  endChange = (date, dateString) => {
-    console.log("结束时间", dateString);
-    this.setState({
-      end: dateString,
-    });
-  };
-
-  // 航空公司
-  handleAir = (val) => {
-    console.log("航空公司", val.target.value);
-    this.setState({
-      air: val.target.value,
-    });
-  };
-
-  changeInput = (label, e) => {
-    if (label === "ticket_no") {
-      this.setState({
-        ticket_no: e.target.value,
-      });
-    }
-    if (label === "pnr_code") {
-      this.setState({
-        pnr_code: e.target.value,
-      });
-    }
-    if(label === 'exec_msg'){
-      this.setState({
-        exec_msg: e.target.value,
-      });
-    }
-  };
 
   // 点击执行信息提交筛选框
   changeExecMsg (e){
@@ -528,22 +156,10 @@ export default class App extends Component {
     });
   };
 
-  // 跳转规则页面
-  jumpRule(val) {
-    if (val === "0") {
-      return false;
-    }
-
-    this.setState({
-      ruleModal: true,
-      ruleKey: val,
-    });
-  }
-
   // 统计
   getStatistic() {
     let data = {
-      refund_dept_code: this.state.depCode, // 退票部门code
+      refund_dept_code: this.state.returnData.refund_dept_code, // 退票部门code
     };
     axios.post("api/DomcPnrData/Statistics", data).then((res) => {
       let statisticsTotal = res.data.data;
@@ -556,45 +172,24 @@ export default class App extends Component {
   // 统计 点击
   changeHeaderBtn = async (e) => {
     console.log(e)
-    if(e.target.value === '2'){
-      await this.setState({
-        is_flight_changes: '1',
-        headerStatus: e.target.value,
-      });
-      await this.getDataList();
-      return;
-    }
+    let newData = JSON.parse(JSON.stringify(this.state.returnData))
+    newData.exec_state = e.target.value !== "all"?e.target.value: null
+    // if(e.target.value === 2){
+    //   newData.is_flight_changes = true
+    //   await this.setState({
+    //     headerStatus: e.target.value,
+    //     returnData:newData
+    //   });
+    //   await this.getDataList();
+    //   return;
+    // }
     await this.setState({
       headerStatus: e.target.value,
+      returnData:newData
     });
     await this.getDataList();
   };
 
-  // 取位执行时间弹窗
-  hoverMotion(val) {
-    console.log(val);
-    if (val.exec_state !== 0) {
-      return false;
-    }
-    this.setState({
-      config_time: val.next_exec_time,
-      configStyle: "block",
-    });
-    setTimeout(() => {
-      this.setState({
-        configStyle: "none",
-      });
-    }, 2000);
-  }
-
-  // 分页
-  changePage = (page, size) => {
-    this.setState({
-      pageNumber: page,
-      pageSize: size,
-    });
-    this.getDataList(page, size);
-  };
 
   // 处理弹窗提交
   submitChangeAction = () => {
@@ -633,6 +228,26 @@ export default class App extends Component {
     });
   }
 
+  // 选择器返回值
+  openSelect = (label,val) => {
+    console.log(label,val)
+    let data = JSON.parse(JSON.stringify(this.state.returnData))
+    data[label] = val;
+    this.setState({
+      returnData:data
+    })
+  };
+
+  // 输入框返回值
+  openInput = (label,val) => {
+    console.log(label,val)
+    let data = JSON.parse(JSON.stringify(this.state.returnData))
+    data[label] = val.target.value;
+    this.setState({
+      returnData:data
+    })
+  }
+
   // 头部信息  退票部门返回值
    headerSelect = async(e) => {
      await this.setState({
@@ -654,59 +269,59 @@ export default class App extends Component {
             value={this.state.headerStatus}
             optionType="button"
           >
-            <RadioButton value="all">
+            <RadioButton value={'all'}>
               全部{" "}
               <div className="count_tag">{this.state.statistics.total}</div>
             </RadioButton>
-            <RadioButton value="0">
+            <RadioButton value={0}>
               待取位{" "}
               <div className="count_tag">
                 {this.state.statistics.notcancelled_total}
               </div>
             </RadioButton>
-            <RadioButton value="1">
+            <RadioButton value={1}>
               已取位{" "}
               <div className="count_tag">
                 {this.state.statistics.cancelled_total}
               </div>
             </RadioButton>
-            <RadioButton value="2">
+            <RadioButton value={2}>
               已航变{" "}
               <div className="count_tag">
                 {this.state.statistics.flightchanges_total}
               </div>
             </RadioButton>
-            <RadioButton value="3">
+            <RadioButton value={3}>
               已退票{" "}
               <div className="count_tag">
                 {this.state.statistics.refunded_total}
               </div>
             </RadioButton>
-            <RadioButton value="4">
+            <RadioButton value={4}>
               无需取位{" "}
               <div className="count_tag">
                 {this.state.statistics.noneed_cancel_total}
               </div>
             </RadioButton>
-            <RadioButton value="-1">
+            <RadioButton value={-1}>
               取消失败{" "}
               <div className="count_tag">
                 {this.state.statistics.cancel_failed_total}
               </div>
             </RadioButton>
-            <RadioButton value="-2">
+            <RadioButton value={-2}>
               无效编码{" "}
               <div className="count_tag">
                 {this.state.statistics.invalid_pnr_total}
               </div>
             </RadioButton>
-            <RadioButton value="-3">
+            <RadioButton value={-3}>
               操作失败{" "}
               <div className="count_tag">
                 {this.state.statistics.oper_failed_total}
               </div>
             </RadioButton>
-            <RadioButton value="-4">
+            <RadioButton value={-4}>
               非法操作{" "}
               <div className="count_tag">
                 {this.state.statistics.illegal_oper_total}
@@ -726,14 +341,13 @@ export default class App extends Component {
               <div className="radio">
                 <Select
                   style={{ width: 200 }}
-                  allowClear
                   placeholder="全部"
-                  value={this.state.is_flight_changes}
-                  onChange={this.ticketChange}
+                  onChange={this.openSelect.bind(this,"is_flight_changes")}
+                  value={this.state.returnData.is_flight_changes}
                 >
-                  <Option value="null">全部</Option>
-                  <Option value="1">已航变</Option>
-                  <Option value="2">未航变</Option>
+                  <Option value={null}>全部</Option>
+                  <Option value={true}>已航变</Option>
+                  <Option value={false}>未航变</Option>
                 </Select>
               </div>
             </div>
@@ -745,7 +359,7 @@ export default class App extends Component {
                   allowClear
                   style={{ width: 200 }}
                   placeholder="所有"
-                  onChange={this.handleType}
+                  onChange={this.openSelect.bind(this,"ticket_type")}
                 >
                   {this.state.ticketTypeList.map((item) => (
                     <Option value={item} key={item}>
@@ -755,26 +369,25 @@ export default class App extends Component {
                 </Select>
               </div>
             </div>
-            {/* 执行时间 */}
+            {/* 执行时间 起飞时间  导入时间*/}
             <div className="type_name">
               <Select
-                defaultValue={{ value: "2" }}
-                labelInValue
+                defaultValue={2}
                 style={{ width: 100 }}
                 bordered={false}
-                onChange={this.handleTime}
+                onChange={this.openSelect.bind(this,"date_type")}
               >
-                <Option value="2">执行时间</Option>
-                <Option value="1">起飞时间</Option>
-                <Option value="0">导入时间</Option>
+                <Option value={2}>执行时间</Option>
+                <Option value={1}>起飞时间</Option>
+                <Option value={0}>导入时间</Option>
               </Select>
               <div className="radio">
                 <DatePicker
                   placeholder="选择时间"
-                  onChange={this.startChange}
+                  onChange={this.openSelect.bind(this, "begin_date")}
                 />
                 -
-                <DatePicker placeholder="选择时间" onChange={this.endChange} />
+                <DatePicker placeholder="选择时间" onChange={this.openSelect.bind(this,"end_date")} />
               </div>
             </div>
             {/* 航空公司 */}
@@ -784,7 +397,7 @@ export default class App extends Component {
                 <Input
                   allowClear
                   placeholder="请填写"
-                  onChange={this.handleAir.bind(this)}
+                  onChange={this.openInput.bind(this,"airline_code")}
                 />
               </div>
             </div>
@@ -796,32 +409,31 @@ export default class App extends Component {
                   allowClear
                   style={{ width: 200 }}
                   placeholder="所有"
-                  onChange={this.handleVolun}
+                  onChange={this.openSelect.bind(this,"refund_type")}
                 >
-                  <Option value="0">所有</Option>
-                  <Option value="1">自愿</Option>
-                  <Option value="2">非自愿</Option>
-                  <Option value="3">自愿转非自愿</Option>
+                  <Option value={0}>所有</Option>
+                  <Option value={1}>自愿</Option>
+                  <Option value={2}>非自愿</Option>
+                  <Option value={3}>自愿转非自愿</Option>
                 </Select>
               </div>
             </div>
             {/* 乘客姓名 退票单号  乘客姓名 搜索类型*/}
             <div className="type_name">
               <Select
-                defaultValue={{ value: "1" }}
-                labelInValue
+                defaultValue={1}
                 style={{ width: 100 }}
                 bordered={false}
-                onChange={this.handleChange}
+                onChange={this.openSelect.bind(this,"query_type")}
               >
-                <Option value="1">退票单号</Option>
-                <Option value="2">订单号</Option>
-                <Option value="3">乘客姓名</Option>
+                <Option value={1}>退票单号</Option>
+                <Option value={2}>订单号</Option>
+                <Option value={3}>乘客姓名</Option>
               </Select>
               <div className="radio">
                 <Input
                   allowClear
-                  onChange={this.changeModalInpit.bind(this)}
+                  onChange={this.openInput.bind(this,"query_value")}
                   placeholder="请输入"
                 />
               </div>
@@ -832,7 +444,7 @@ export default class App extends Component {
               <div className="radio">
                 <Input
                   allowClear
-                  onChange={this.changeInput.bind(this, "pnr_code")}
+                  onChange={this.openInput.bind(this, "pnr_code")}
                   placeholder="请输入"
                 />
               </div>
@@ -844,7 +456,7 @@ export default class App extends Component {
               <div className="radio">
                 <Input
                   allowClear
-                  onChange={this.changeInput.bind(this, "ticket_no")}
+                  onChange={this.openInput.bind(this, "ticket_no")}
                   placeholder="请输入"
                 />
               </div>
@@ -856,7 +468,7 @@ export default class App extends Component {
                 <Input
                   allowClear
                   value={this.state.exec_msg}
-                  onChange={this.changeInput.bind(this, "exec_msg")}
+                  onChange={this.openInput.bind(this, "exec_msg")}
                   placeholder="请输入"
                 />
               </div>
@@ -872,12 +484,177 @@ export default class App extends Component {
           <div className="table_main">
             <Table
               size="small"
-              columns={this.state.columns}
-              dataSource={this.state.data}
+              dataSource={this.state.newData}
               pagination={false}
               bordered
               rowKey="key_id"
-            />
+            >
+              <Column
+                title="编号"
+                render= {(text,record,index) => (<div>{index + 1}</div>)}
+              />
+              <Column
+                title="操作"
+                render={(text,record) => (
+                  
+                  <div>
+                    <Tag color="#5AB957" onClick={() => this.jumpDetails(record)}>
+                      详
+                    </Tag>
+    
+                    <Tag color="#0070E2" onClick={() => this.openActionModal(record)}>
+                      处理
+                    </Tag>
+                  </div>
+                )}   
+              />
+              <Column
+                title="PNR"
+                dataIndex="pnr_code"
+                render={(text) => (
+                
+                    <Tooltip title={() => (
+                      <>
+                        <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                          PNR状态
+                        </p>
+                        <p
+                          style={{
+                            fontSize: "12px",
+                            color: "rgba(255, 255, 255, .8)",
+                            minWidth: "200px",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          {text}
+                        </p>
+                      </>
+                    )}>{text}
+                    </Tooltip>
+                )}   
+              />
+              <Column title="票号" dataIndex="ticket_no"/>
+              <Column title="GDS系统标识" dataIndex="gds_type"/>
+              <Column title="票证类型" dataIndex="ticket_type"/>
+              <Column title="航司代码" dataIndex="airline_code"/>
+              <Column title="舱位" dataIndex="cabin_code"/>
+              <Column title="起飞时间" dataIndex="fly_time"/>
+              <Column title="乘客姓名" dataIndex="passenger_name"/>
+              <Column
+                title="航程类型"
+                dataIndex="route_type"
+                render={(text) => <>{text === "OW" ? "单程" : ""}</>}
+              />
+              <Column
+                title="执行状态" 
+                dataIndex="exec_state"
+                render={(text,record) =>(
+                  <Tooltip
+                    title={() => (
+                      <>
+                        <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                          执行信息
+                        </p>
+                        <p
+                          style={{
+                            fontSize: "12px",
+                            color: "rgba(255, 255, 255, .8)",
+                            minWidth: "200px",
+                            marginBottom: "5px",
+                            cursor: 'pointer'
+                          }}
+                          onClick={() =>this.changeExecMsg(record.exec_msg)}
+                        >
+                          {record.exec_msg}
+                        </p>
+                      </>
+                    )}
+                  >
+                    <div
+                      style={{
+                        color:
+                          record.exec_state === 0
+                            ? "#0070E2"
+                            : record.exec_state === 1
+                            ? "#5AB957"
+                            : record.exec_state === 3
+                            ? "#5AB957"
+                            : record.exec_state === 4
+                            ? "#999999"
+                            : record.exec_state === -1
+                            ? "#FF0000"
+                            : record.exec_state === -2
+                            ? "#FF0000"
+                            : record.exec_state === -3
+                            ? "#FF0000"
+                            : record.exec_state === -4
+                            ? "#FF0000"
+                            : "",
+                      }}
+                    >
+                      {record.exec_state === 0
+                        ? "待取位"
+                        : record.exec_state === 1
+                        ? "已取位"
+                        : record.exec_state === 3
+                        ? "已退票"
+                        : record.exec_state === 4
+                        ? "无需取位"
+                        : record.exec_state === -1
+                        ? "取位失败"
+                        : record.exec_state === -2
+                        ? "无效编码"
+                        : record.exec_state === -3
+                        ? "操作失败"
+                        : record.exec_state === -4
+                        ? "非法操作"
+                        : record.exec_state}
+                    </div>
+                </Tooltip>
+                
+                )}
+              />
+              <Column
+                title="是否航变"
+                dataIndex="is_flight_changes"
+                render={(text) => <>{text ? "已航变" : "未航变"}</>}
+              />
+              <Column
+                title="已执行时间"
+                render={(text,record) => (
+                  <Tooltip
+                      placement="bottomLeft"
+                      title={() => (
+                        <>
+                          <p style={{ width: "240px" }}>
+                            已执行时间：
+                            {this.$moment(record.exec_time).format(
+                              "YYYY-MM-DD HH:mm"
+                            )}
+                          </p>
+                          <p style={{ width: "240px" }}>
+                            预计下次执行时间：
+                            {this.$moment(record.next_exec_time).format(
+                              "YYYY-MM-DD HH:mm"
+                            )}
+                          </p>
+                          <p style={{ width: "240px", marginBottom: "0" }}>
+                            审核时间：
+                            {this.$moment(record.audit_time).format(
+                              "YYYY-MM-DD HH:mm"
+                            )}
+                          </p>
+                        </>
+                      )}
+                    >
+                      <span>
+                        {this.$moment(record.exec_time).format("YYYY-MM-DD HH:mm")}
+                      </span>
+                    </Tooltip>
+                
+                )}
+              />
+            </Table>
             <div
               style={{ display: this.state.configStyle }}
               className="config_modal"
@@ -891,14 +668,14 @@ export default class App extends Component {
             {/* 分页 */}
             <div className="table_pagination">
               <Pagination
-                current={Number(this.state.pageNumber)}
-                pageSize={Number(this.state.pageSize)}
-                total={Number(this.state.totalCount)}
+                current={Number(this.state.returnData.page_no)}
+                pageSize={Number(this.state.returnData.page_size)}
+                total={Number(this.state.returnData.total_count)}
                 position={this.state.bottom}
                 onChange={this.changePage}
               />
               <div className="datas_total">
-                共 <span>{ this.state.totalCount }</span> 条记录
+                共 <span>{ this.state.returnData.total_count }</span> 条记录
               </div>
             </div>
           </div>
@@ -949,19 +726,7 @@ export default class App extends Component {
           onCancel={() => this.setState({ detailModal: false })}
         >
           <Detail details={this.state.details}></Detail>
-        </Modal>
-
-        {/* 取位规则弹窗 */}
-        <Modal
-          centered
-          footer={null}
-          title="取位规则"
-          width={1200}
-          visible={this.state.ruleModal}
-          onCancel={() => this.setState({ ruleModal: false })}
-        >
-          <RulePage keyId={this.state.ruleKey}></RulePage>
-        </Modal>
+        </Modal>     
       </div>
     );
   }
