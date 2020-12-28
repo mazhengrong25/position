@@ -1,7 +1,7 @@
 /*
  * @Author: mzr
  * @Date: 2020-12-15 15:55:42
- * @LastEditTime: 2020-12-18 15:19:47
+ * @LastEditTime: 2020-12-28 15:02:15
  * @LastEditors: wish.WuJunLong
  * @Description: 新增  无需取位规则
  * @FilePath: \position\src\page\interPage\newStopRule\newStopRule.js
@@ -142,7 +142,7 @@ export default class newStopRule extends Component {
       earliest_limit: 0, //类型：Number  必有字段  备注：最早提交时限 (单位：分钟)
       execute_limit: 0, //类型：Number  必有字段  备注：实际提交时限 (单位：分钟)
       latest_limit: 0, //类型：Number  必有字段  备注：最晚提交时限 (单位：分钟)
-      after_waiting_time: 20, //类型：Number  必有字段  备注：飞后等待分钟数
+      after_waiting_time: 0, //类型：Number  必有字段  备注：飞后等待分钟数
       rule_state: 2, //类型：Number  必有字段  备注：规则状态 1：不可用 2：可用
       remarks: "", //类型：String  必有字段  备注：备注
     };
@@ -260,6 +260,11 @@ export default class newStopRule extends Component {
       newData.ticket_type && newData.ticket_type.length > 1
         ? String(newData.ticket_type).replace(/,/g, "/")
         : String(newData.ticket_type);
+
+    newData['after_waiting_time'] = Number(newData.after_waiting_time) || 0
+    newData['earliest_limit'] = Number(newData.earliest_limit) || 0
+    newData['execute_limit'] = Number(newData.execute_limit) || 0
+    newData['latest_limit'] = Number(newData.latest_limit) || 0
     let data = {
       action_code: this.state.modalType === "新增" ? "add" : "update",
       rules: [newData],
@@ -777,8 +782,8 @@ export default class newStopRule extends Component {
               </div>
             </div>
             <div className="modal_line"></div>
-            <div className="modal_type">执行规则</div>
-            <div className="modal_content">
+            <div className="modal_type">执行规则(飞前)</div>
+            <div className="modal_box">
               <div className="modal_list">
                 <div className="list_title">可转非自愿</div>
                 <div className="list_input">
@@ -805,9 +810,15 @@ export default class newStopRule extends Component {
                   </Select>
                 </div>
               </div>
+              <div className="modal_list">
+                <div className="list_title"></div>
+                <div className="list_input">
+                  
+                </div>
+              </div>
             </div>
 
-            <div className="modal_box">
+            <div className="modal_box" style={{display: this.state.modalFrom.submit_refund_mode === 1? 'none': 'flex'}}>
               <div className="modal_list">
                 <div className="list_title">最早提交</div>
                 <div className="list_input">
@@ -842,13 +853,29 @@ export default class newStopRule extends Component {
                 </div>
               </div>
             </div>
-
+            <div className="modal_line"></div>
+            <div className="modal_type">执行规则(飞后)</div>
+            <div className="modal_box">
+              <div className="modal_list">
+                <div className="list_title">飞后等待</div>
+                <div className="list_input">
+                  <Input
+                    placeholder="分钟"
+                    allowClear
+                    onChange={this.modalInput.bind(this, "after_waiting_time")}
+                    value={this.state.modalFrom.after_waiting_time}
+                  />
+                </div>
+                 &nbsp;分钟提交
+              </div>
+            </div>
+            <div className="modal_line"></div>
             <div className="modal_box">
               <div className="modal_list input_remark">
                 <div className="list_title">备注</div>
                 <div className="list_input">
                   <TextArea
-                    rows={4}
+                    rows={2}
                     placeholder="添加备注"
                     allowClear
                     onChange={this.modalInput.bind(this, "remarks")}
