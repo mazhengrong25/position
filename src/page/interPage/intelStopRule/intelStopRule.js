@@ -2,8 +2,8 @@
  * @Description: 无需取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-11-18 17:19:52
- * @LastEditTime: 2020-12-16 10:52:51
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2020-12-25 18:18:18
+ * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
 

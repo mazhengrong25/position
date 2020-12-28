@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 15:41:17
- * @LastEditTime: 2020-12-01 10:02:47
+ * @LastEditTime: 2020-12-25 18:15:27
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from 'react';
@@ -11,7 +11,7 @@ import { message, Spin } from 'antd';
 
 import '../index/index.scss';
 
-import axios from '../../api/api';
+import axios from '@/api/api';
 
 export default class Rule extends Component {
   constructor(props) {

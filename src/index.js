@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-12-25 17:49:29
+ * @LastEditTime: 2020-12-25 18:18:53
  * @LastEditors: wish.WuJunLong
  */
 import React from "react";
@@ -10,12 +10,13 @@ import ReactDOM from "react-dom";
 
 // import Header from "./components/header";
 // 登录页
-import Index from "./page/index";
+import App from "./page/index";
 // 国内取位
-import App from "./page/inlandPage/index/App";  // 国内取位中心列表
+import Index from "./page/inlandPage/index/index";  // 国内取位中心列表
 import Rule from "./page/inlandPage/rule/rule";  // 取位规则
 import Detail from "./page/inlandPage/detail/detail";  // 取位详情
 // 新增
+import NewIndex from "./page/inlandPage/newIndex/newIndex";  // 国内取位中心列表
 import NewStopRule from "./page/inlandPage/newStopRule/newStopRule"; // 无需取位规则
 import WaitRule from "./page/inlandPage/waitRule/waitRule"; // 等待取位规则
 import StatusRule from "./page/inlandPage/statusRule/statusRule"; // 自愿转非自愿规则
@@ -55,9 +56,10 @@ ReactDOM.render(
     <Router>
       {/* <Header></Header> */}
       {/* 登录页 */}
-      <Route exact path="/" component={Index}></Route>
+      <Route exact path="/" component={App}></Route>
       {/* 国内取位 */}
-      <Route path="/list" component={App}></Route>
+      <Route path="/list" component={Index}></Route>
+      <Route path="/newList" component={NewIndex}></Route>
       <Route path="/rule" component={Rule}></Route>
       <Route path="/detail" component={Detail}></Route>
       {/* 国际取位 */}

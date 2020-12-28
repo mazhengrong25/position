@@ -2,7 +2,7 @@
  * @Description: 取位国内列表
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-12-25 17:49:55
+ * @LastEditTime: 2020-12-25 18:21:13
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -23,7 +23,7 @@ import {
 
 import axios from "@/api/api";
 
-import "./App.scss";
+import "./newIndex.scss";
 
 import HeaderTitle from "@/components/headerTitle"
 
@@ -331,7 +331,7 @@ export default class App extends Component {
         </div>
 
         {/* 标题和退票部门 */}
-        <HeaderTitle titleName="国内取位列表" headerSelect={this.headerSelect}></HeaderTitle>
+        <HeaderTitle titleName="国内取位列表(新版)" headerSelect={this.headerSelect}></HeaderTitle>
         {/* 表格 */}
         <div className="table">
           <div className="table_type">
