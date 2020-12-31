@@ -2,7 +2,7 @@
  * @Description: 国际等待取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-15 15:58:19
- * @LastEditTime: 2020-12-31 15:45:15
+ * @LastEditTime: 2020-12-31 15:48:14
  * @LastEditors: wish.WuJunLong
  */
 
@@ -209,7 +209,7 @@ export default class intlStopRule extends Component {
         involuntary_switching: true,
         cancel_mode: 1,
         setting_text: '',
-        handler_time: '',
+        handler_time: null,
         suspend_type: 0,
         submit_refund_mode: 1,
         submit_waiting_time: null,
@@ -258,7 +258,7 @@ export default class intlStopRule extends Component {
         : String(newData.ticket_type);
       newData["limit_set"] = {
         setting_text: newData.setting_text,
-        handler_time: newData.handler_time
+        handler_time: Number(newData.handler_time) || null
       }
       delete newData.setting_text
       delete newData.handler_time
@@ -601,7 +601,7 @@ export default class intlStopRule extends Component {
                               marginBottom: "5px",
                             }}
                           >
-                            {record.limit_settings ? JSON.parse(record.limit_settings).handler_time: "暂无数据"}
+                            {record.limit_settings ? JSON.parse(record.limit_settings).handler_time + '分钟': "暂无数据"}
                           </p>
                         </>
                       
