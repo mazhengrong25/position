@@ -2,7 +2,7 @@
  * @Description: 国际等待取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-15 15:58:19
- * @LastEditTime: 2020-12-25 18:16:18
+ * @LastEditTime: 2020-12-31 15:45:15
  * @LastEditors: wish.WuJunLong
  */
 
@@ -187,6 +187,8 @@ export default class intlStopRule extends Component {
   async openModal(val) {
     if (val) {
       let data = JSON.parse(JSON.stringify(val));
+      data["setting_text"] = data.limit_settings? JSON.parse(data.limit_settings).setting_text : ''
+      data["handler_time"] = data.limit_settings? JSON.parse(data.limit_settings).handler_time : ''
       data["ticket_type"] =
         data.ticket_type && data.ticket_type.length > 0
           ? [...new Set(data.ticket_type.split("/"))].filter((d) => d)
@@ -206,9 +208,8 @@ export default class intlStopRule extends Component {
         end_refund_fee: "",
         involuntary_switching: true,
         cancel_mode: 1,
-        earliest_limit: null,
-        execute_limit: null,
-        latest_limit: null,
+        setting_text: '',
+        handler_time: '',
         suspend_type: 0,
         submit_refund_mode: 1,
         submit_waiting_time: null,
@@ -255,13 +256,19 @@ export default class intlStopRule extends Component {
       newData.ticket_type && newData.ticket_type.length > 1
         ? String(newData.ticket_type).replace(/,/g, "/")
         : String(newData.ticket_type);
-    newData["earliest_limit"] = newData["earliest_limit"]
-      ? Number(newData.earliest_limit)
-      : 0;
-    newData["execute_limit"] = newData["execute_limit"]
-      ? Number(newData.execute_limit)
-      : 0;
-    newData["latest_limit"] = newData["latest_limit"] ? Number(newData.latest_limit) : 0;
+      newData["limit_set"] = {
+        setting_text: newData.setting_text,
+        handler_time: newData.handler_time
+      }
+      delete newData.setting_text
+      delete newData.handler_time
+    // newData["earliest_limit"] = newData["earliest_limit"]
+    //   ? Number(newData.earliest_limit)
+    //   : 0;
+    // newData["execute_limit"] = newData["execute_limit"]
+    //   ? Number(newData.execute_limit)
+    //   : 0;
+    // newData["latest_limit"] = newData["latest_limit"] ? Number(newData.latest_limit) : 0;
     newData["submit_waiting_time"] = newData["submit_waiting_time"]
       ? Number(newData.submit_waiting_time)
       : 0;
@@ -527,9 +534,51 @@ export default class intlStopRule extends Component {
                   <div style={{ display: record.cancel_mode === 2 ? "block" : "none" }}>
                     <Tooltip
                       title={() => (
+                        // <>
+                        //   <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                        //     最早取位时限
+                        //   </p>
+                        //   <p
+                        //     style={{
+                        //       fontSize: "12px",
+                        //       color: "rgba(255, 255, 255, .8)",
+                        //       minWidth: "200px",
+                        //       marginBottom: "5px",
+                        //     }}
+                        //   >
+                        //     {this.timeStamp(record.earliest_limit)}
+                        //   </p>
+                        //   <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                        //     实际取位时限
+                        //   </p>
+                        //   <p
+                        //     style={{
+                        //       fontSize: "12px",
+                        //       color: "rgba(255, 255, 255, .8)",
+                        //       minWidth: "200px",
+                        //       marginBottom: "5px",
+                        //     }}
+                        //   >
+                        //     {this.timeStamp(record.execute_limit)}
+                        //   </p>
+                        //   <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                        //     最晚取位时限
+                        //   </p>
+                        //   <p
+                        //     style={{
+                        //       fontSize: "12px",
+                        //       color: "rgba(255, 255, 255, .8)",
+                        //       minWidth: "200px",
+                        //       marginBottom: "5px",
+                        //     }}
+                        //   >
+                        //     {this.timeStamp(record.latest_limit)}
+                        //   </p>
+                        // </>
+                      
                         <>
-                          <p style={{ fontSize: "14px", marginBottom: "5px" }}>
-                            最早取位时限
+                        <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                        时限代码设置
                           </p>
                           <p
                             style={{
@@ -539,10 +588,10 @@ export default class intlStopRule extends Component {
                               marginBottom: "5px",
                             }}
                           >
-                            {this.timeStamp(record.earliest_limit)}
+                            {record.limit_settings ? JSON.parse(record.limit_settings).setting_text: "暂无数据"}
                           </p>
                           <p style={{ fontSize: "14px", marginBottom: "5px" }}>
-                            实际取位时限
+                          处理提前时间
                           </p>
                           <p
                             style={{
@@ -552,22 +601,10 @@ export default class intlStopRule extends Component {
                               marginBottom: "5px",
                             }}
                           >
-                            {this.timeStamp(record.execute_limit)}
-                          </p>
-                          <p style={{ fontSize: "14px", marginBottom: "5px" }}>
-                            最晚取位时限
-                          </p>
-                          <p
-                            style={{
-                              fontSize: "12px",
-                              color: "rgba(255, 255, 255, .8)",
-                              minWidth: "200px",
-                              marginBottom: "5px",
-                            }}
-                          >
-                            {this.timeStamp(record.latest_limit)}
+                            {record.limit_settings ? JSON.parse(record.limit_settings).handler_time: "暂无数据"}
                           </p>
                         </>
+                      
                       )}
                     >
                       {record.cancel_mode === 1
@@ -652,7 +689,7 @@ export default class intlStopRule extends Component {
           visible={this.state.waitRuleModal}
           onOk={this.submitBtn}
           onCancel={() => this.setState({ waitRuleModal: false })}
-          width="880px"
+          width="950px"
           confirmLoading={this.state.submitLoading}
           maskClosable={false}
         >
@@ -852,41 +889,30 @@ export default class intlStopRule extends Component {
                   display: this.state.modalFrom.cancel_mode === 2 ? "flex" : "none",
                 }}
               >
-                <div className="modal_list">
-                  <div className="list_title">最早取位时限</div>
-                  <div className="list_input">
+                <div className="modal_list" style={{flex: 1}}>
+                  <div className="list_title">时限代码设置</div>
+                  <div className="list_input" style={{flex: 1, marginRight: '20px'}}>
                     <Input
                       allowClear
-                      placeholder="单位：分钟"
-                      onChange={this.modalInput.bind(this, "earliest_limit")}
-                      value={this.state.modalFrom.earliest_limit}
+                      placeholder="14D-72H;36H-3H D表示天,H表示小时,-表示时间节点连续,;或空格表示中断"
+                      onChange={this.modalInput.bind(this, "setting_text")}
+                      value={this.state.modalFrom.setting_text}
                     />
                   </div>
                 </div>
 
                 <div className="modal_list">
-                  <div className="list_title">实际取位时限</div>
+                  <div className="list_title">处理提前时间</div>
                   <div className="list_input">
                     <Input
                       allowClear
                       placeholder="单位：分钟"
-                      onChange={this.modalInput.bind(this, "execute_limit")}
-                      value={this.state.modalFrom.execute_limit}
+                      onChange={this.modalInput.bind(this, "handler_time")}
+                      value={this.state.modalFrom.handler_time}
                     />
                   </div>
                 </div>
 
-                <div className="modal_list">
-                  <div className="list_title">最晚取位时限</div>
-                  <div className="list_input">
-                    <Input
-                      allowClear
-                      placeholder="单位：分钟"
-                      onChange={this.modalInput.bind(this, "latest_limit")}
-                      value={this.state.modalFrom.latest_limit}
-                    />
-                  </div>
-                </div>
               </div>
               <div className="modal_box">
                 <div className="modal_list">
