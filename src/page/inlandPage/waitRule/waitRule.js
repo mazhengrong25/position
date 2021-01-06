@@ -2,7 +2,7 @@
  * @Description: 国际等待取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-15 15:58:19
- * @LastEditTime: 2020-12-31 15:48:14
+ * @LastEditTime: 2021-01-06 16:10:47
  * @LastEditors: wish.WuJunLong
  */
 
@@ -202,7 +202,7 @@ export default class intlStopRule extends Component {
         cabin_codes: "",
         ticket_type: [],
         is_voluntary: true,
-        is_change_pnr: false,
+        is_change_pnr: 0,
         include_refund_type: 0,
         begin_refund_fee: "",
         end_refund_fee: "",
@@ -239,12 +239,12 @@ export default class intlStopRule extends Component {
   };
 
   // 弹窗提交按钮
-  submitBtn = () => {
+  submitBtn = (val) => {
+    console.log(val)
     this.setState({
       submitLoading: true,
     });
     console.log(this.state.modalFrom);
-    let type = this.state.modalType === "编辑" ? "update" : "add";
     let newData = JSON.parse(JSON.stringify(this.state.modalFrom));
     newData["begin_refund_fee"] = newData.begin_refund_fee
       ? Number(newData.begin_refund_fee)
@@ -273,6 +273,15 @@ export default class intlStopRule extends Component {
       ? Number(newData.submit_waiting_time)
       : 0;
     console.log(newData["ticket_type"]);
+
+    let type
+    if(val){
+      type = "add"
+      delete newData['key_id']
+    }else{
+      type = this.state.modalType === "编辑" ? "update" : "add";
+    }
+
     let data = {
       action_code: type,
       rules: [newData],
@@ -405,8 +414,8 @@ export default class intlStopRule extends Component {
                 defaultValue={{ value: null }}
               >
                 <Option value={null}>所有</Option>
-                <Option value={true}>已换编</Option>
-                <Option value={false}>未换编</Option>
+                <Option value={1}>已换编</Option>
+                <Option value={0}>未换编</Option>
               </Select>
             </div>
           </div>
@@ -505,7 +514,7 @@ export default class intlStopRule extends Component {
             <Column
               title="是否换编"
               dataIndex="is_change_pnr"
-              render={(text) => <>{text ? "已换编" : "未换编"}</>}
+              render={(text) => <>{text === 2?'所有': text === 1 ? "已换编" : "未换编"}</>}
             />
             <Column
               title="退票费判断"
@@ -692,6 +701,7 @@ export default class intlStopRule extends Component {
           width="950px"
           confirmLoading={this.state.submitLoading}
           maskClosable={false}
+          footer={null}
         >
           <div className="wait_rule_modal">
             <div className="wait_rule_list">
@@ -778,8 +788,9 @@ export default class intlStopRule extends Component {
                         value: this.state.modalFrom.is_change_pnr,
                       }}
                     >
-                      <Option value={true}>已换编</Option>
-                      <Option value={false}>未换编</Option>
+                      <Option value={2}>所有</Option>
+                      <Option value={1}>已换编</Option>
+                      <Option value={0}>未换编</Option>
                     </Select>
                   </div>
                 </div>
@@ -958,6 +969,13 @@ export default class intlStopRule extends Component {
               </div>
             </div>
           </div>
+        
+          <div className="modal_footer">
+              <Button type="primary" className="repeat_btn" onClick={() => this.submitBtn('repeat')}>新增</Button>
+              <Button type="default" onClick={() => this.setState({ waitRuleModal: false })}>取消</Button>
+              <Button type="primary" onClick={() => this.submitBtn()}>确定</Button>
+          </div>
+        
         </Modal>
       </div>
     );

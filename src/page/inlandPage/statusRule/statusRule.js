@@ -2,7 +2,7 @@
  * @Description: 自愿非自愿规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-17 10:26:48
- * @LastEditTime: 2020-12-25 17:45:48
+ * @LastEditTime: 2021-01-06 16:14:47
  * @LastEditors: wish.WuJunLong
  */
 
@@ -125,6 +125,10 @@ export default class intlStopRule extends Component {
   // 弹窗选择器数据回调
   modalSelect = (label, val) => {
     console.log(label, val, "changesChildType");
+
+    let data = this.state.modalFrom;
+    data[label] = val ? val.value : null;
+
     if (label === "flight_change_type") {
       let changeType = [];
       this.state.ticketChangesType.forEach((item) => {
@@ -135,10 +139,21 @@ export default class intlStopRule extends Component {
       this.setState({
         changesChildType: changeType,
       });
+      
+      data['flight_change_child_type'] = []
     }
 
+    
+    this.setState({
+      modalFrom: data,
+    });
+  };
+
+  // 弹窗选择器多选
+  modalMultiple = (val) => {
+    console.log(val);
     let data = this.state.modalFrom;
-    data[label] = val ? val.value : null;
+    data["flight_change_child_type"] = val ? val : [];
     this.setState({
       modalFrom: data,
     });
@@ -164,8 +179,7 @@ export default class intlStopRule extends Component {
   };
 
   // 新增/编辑弹窗
-  openModal(val) {
-    console.log(val);
+  async openModal(val) {
     if (val) {
       let changeType = [];
       this.state.ticketChangesType.forEach((item) => {
@@ -173,19 +187,29 @@ export default class intlStopRule extends Component {
           changeType = item.child_typs;
         }
       });
-      this.setState({
+      await this.setState({
         changesChildType: changeType,
       });
-      this.setState({
-        modalFrom: JSON.parse(JSON.stringify(val)),
+      let data = JSON.parse(JSON.stringify(val));
+      data["flight_change_child_type"] = data.flight_change_child_type
+        ? data.flight_change_child_type.split("/").filter(function(e){ return e.replace(/(\r\n|\n|\r)/gm,"")})
+        : [];
+
+      console.log(data);
+      await this.setState({
+        modalFrom: data,
       });
+
+
+      
+
     } else {
       let data = {
         rules_type: 1,
         airline_code: "",
         applicable_rules: null,
         flight_change_type: "",
-        flight_change_child_type: null,
+        flight_change_child_type: [],
         flight_change_diff: null,
         pnr_remarks_ins: "",
         is_generate_attachment: true,
@@ -196,7 +220,8 @@ export default class intlStopRule extends Component {
         modalFrom: data,
       });
     }
-    this.setState({
+    console.log(this.state.changesChildType)
+    await this.setState({
       modalType: val ? "编辑" : "新增",
       waitRuleModal: true,
     });
@@ -213,16 +238,25 @@ export default class intlStopRule extends Component {
   };
 
   // 弹窗提交按钮
-  submitBtn = () => {
+  submitBtn = (val) => {
     this.setState({
       submitLoading: true,
     });
     console.log(this.state.modalFrom);
-    let type = this.state.modalType === "编辑" ? "update" : "add";
     let newData = JSON.parse(JSON.stringify(this.state.modalFrom));
     newData["flight_change_diff"] = newData.flight_change_diff
       ? Number(newData.flight_change_diff)
       : 0;
+    newData["flight_change_child_type"] = newData.flight_change_child_type
+      ? String(newData.flight_change_child_type).replace(/,/g, "/")
+      : "";
+    let type;
+    if (val) {
+      type = "add";
+      delete newData["key_id"];
+    } else {
+      type = this.state.modalType === "编辑" ? "update" : "add";
+    }
     let data = {
       action_code: type,
       rules: [newData],
@@ -486,8 +520,7 @@ export default class intlStopRule extends Component {
         <Modal
           title={this.state.modalType + " - 非自愿规则"}
           visible={this.state.waitRuleModal}
-          onOk={this.submitBtn}
-          onCancel={() => this.setState({ waitRuleModal: false })}
+          footer={null}
           width="880px"
           confirmLoading={this.state.submitLoading}
           maskClosable={false}
@@ -587,13 +620,13 @@ export default class intlStopRule extends Component {
                   <div className="list_input">
                     <Select
                       placeholder="请选择"
-                      labelInValue
+                      mode="multiple"
                       disabled={!this.state.modalFrom.flight_change_type}
-                      onChange={this.modalSelect.bind(this, "flight_change_child_type")}
-                      value={{ value: this.state.modalFrom.flight_change_child_type }}
+                      onChange={this.modalMultiple}
+                      value={this.state.modalFrom.flight_change_child_type}
                     >
                       {this.state.changesChildType.map((item) => (
-                        <Option value={item.code} key={item.code}>
+                        <Option value={String(item.code)} key={item.code}>
                           {item.name}
                         </Option>
                       ))}
@@ -658,6 +691,25 @@ export default class intlStopRule extends Component {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="modal_footer">
+            <Button
+              type="primary"
+              className="repeat_btn"
+              onClick={() => this.submitBtn("repeat")}
+            >
+              新增
+            </Button>
+            <Button
+              type="default"
+              onClick={() => this.setState({ waitRuleModal: false })}
+            >
+              取消
+            </Button>
+            <Button type="primary" onClick={() => this.submitBtn()}>
+              确定
+            </Button>
           </div>
         </Modal>
       </div>

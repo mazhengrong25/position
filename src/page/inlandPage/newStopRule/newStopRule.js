@@ -1,7 +1,7 @@
 /*
  * @Author: mzr
  * @Date: 2020-12-15 15:55:42
- * @LastEditTime: 2020-12-28 15:02:15
+ * @LastEditTime: 2021-01-06 15:49:54
  * @LastEditors: wish.WuJunLong
  * @Description: 新增  无需取位规则
  * @FilePath: \position\src\page\interPage\newStopRule\newStopRule.js
@@ -21,7 +21,7 @@ import {
   Pagination,
   message,
   Checkbox,
-  Tooltip
+  Tooltip,
 } from "antd";
 
 const { Column } = Table;
@@ -240,7 +240,7 @@ export default class newStopRule extends Component {
   }
 
   // 弹窗提交按钮
-  submitBtn = () => {
+  submitBtn = (val) => {
     this.setState({
       submitLoading: true,
     });
@@ -261,12 +261,19 @@ export default class newStopRule extends Component {
         ? String(newData.ticket_type).replace(/,/g, "/")
         : String(newData.ticket_type);
 
-    newData['after_waiting_time'] = Number(newData.after_waiting_time) || 0
-    newData['earliest_limit'] = Number(newData.earliest_limit) || 0
-    newData['execute_limit'] = Number(newData.execute_limit) || 0
-    newData['latest_limit'] = Number(newData.latest_limit) || 0
+    newData["after_waiting_time"] = Number(newData.after_waiting_time) || 0;
+    newData["earliest_limit"] = Number(newData.earliest_limit) || 0;
+    newData["execute_limit"] = Number(newData.execute_limit) || 0;
+    newData["latest_limit"] = Number(newData.latest_limit) || 0;
+    let type;
+    if (val) {
+      type = "add";
+      delete newData["key_id"];
+    } else {
+      type = this.state.modalType === "编辑" ? "update" : "add";
+    }
     let data = {
-      action_code: this.state.modalType === "新增" ? "add" : "update",
+      action_code: type,
       rules: [newData],
     };
     this.setStopRuleData(data);
@@ -542,7 +549,7 @@ export default class newStopRule extends Component {
             <Column
               title="是否换编"
               dataIndex="is_change_pnr"
-              render={(text) => <>{text ? "已换编" : "未换编"}</>}
+              render={(text) => <>{text === 2?'所有': text === 1 ? "已换编" : "未换编"}</>}
             />
             <Column
               title="退票费判断设置"
@@ -604,8 +611,7 @@ export default class newStopRule extends Component {
         <Modal
           title={this.state.modalType + " - 无需取位规则"}
           visible={this.state.stopRuleModal}
-          onOk={this.submitBtn}
-          onCancel={() => this.setState({ stopRuleModal: false })}
+          footer={null}
           width="880px"
           confirmLoading={this.state.submitLoading}
           maskClosable={false}
@@ -720,8 +726,9 @@ export default class newStopRule extends Component {
                     onChange={this.modalSelect.bind(this, "is_change_pnr")}
                     value={{ value: this.state.modalFrom.is_change_pnr }}
                   >
-                    <Option value={true}>已换编</Option>
-                    <Option value={false}>未换编</Option>
+                    <Option value={2}>所有</Option>
+                    <Option value={1}>已换编</Option>
+                    <Option value={0}>未换编</Option>
                   </Select>
                 </div>
               </div>
@@ -812,13 +819,16 @@ export default class newStopRule extends Component {
               </div>
               <div className="modal_list">
                 <div className="list_title"></div>
-                <div className="list_input">
-                  
-                </div>
+                <div className="list_input"></div>
               </div>
             </div>
 
-            <div className="modal_box" style={{display: this.state.modalFrom.submit_refund_mode === 1? 'none': 'flex'}}>
+            <div
+              className="modal_box"
+              style={{
+                display: this.state.modalFrom.submit_refund_mode === 1 ? "none" : "flex",
+              }}
+            >
               <div className="modal_list">
                 <div className="list_title">最早提交</div>
                 <div className="list_input">
@@ -866,7 +876,7 @@ export default class newStopRule extends Component {
                     value={this.state.modalFrom.after_waiting_time}
                   />
                 </div>
-                 &nbsp;分钟提交
+                &nbsp;分钟提交
               </div>
             </div>
             <div className="modal_line"></div>
@@ -884,6 +894,24 @@ export default class newStopRule extends Component {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="modal_footer">
+            <Button
+              type="primary"
+              className="repeat_btn"
+              onClick={() => this.submitBtn("repeat")}
+            >
+              新增
+            </Button>
+            <Button
+              type="default"
+              onClick={() => this.setState({ stopRuleModal: false })}
+            >
+              取消
+            </Button>
+            <Button type="primary" onClick={() => this.submitBtn()}>
+              确定
+            </Button>
           </div>
         </Modal>
       </div>

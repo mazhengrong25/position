@@ -175,3 +175,16 @@
     }
   }
 }
+.modal_footer{
+  margin-top: 20px;
+  text-align: center;
+  .ant-btn{
+    &:not(:last-child){
+      margin-right: 15px;
+    }
+    &.repeat_btn{
+      background-color: coral;
+      border-color: coral;
+    }
+  }
+}
