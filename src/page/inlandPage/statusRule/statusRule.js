@@ -2,7 +2,7 @@
  * @Description: 自愿非自愿规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-17 10:26:48
- * @LastEditTime: 2021-01-06 16:14:47
+ * @LastEditTime: 2021-01-06 16:19:28
  * @LastEditors: wish.WuJunLong
  */
 
@@ -524,6 +524,7 @@ export default class intlStopRule extends Component {
           width="880px"
           confirmLoading={this.state.submitLoading}
           maskClosable={false}
+          onCancel={() => this.setState({ waitRuleModal: false })}
         >
           <div className="wait_rule_modal">
             <div className="wait_rule_list">
@@ -621,6 +622,7 @@ export default class intlStopRule extends Component {
                     <Select
                       placeholder="请选择"
                       mode="multiple"
+                      allowClear
                       disabled={!this.state.modalFrom.flight_change_type}
                       onChange={this.modalMultiple}
                       value={this.state.modalFrom.flight_change_child_type}

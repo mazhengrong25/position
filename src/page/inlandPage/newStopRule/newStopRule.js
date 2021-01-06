@@ -615,6 +615,7 @@ export default class newStopRule extends Component {
           width="880px"
           confirmLoading={this.state.submitLoading}
           maskClosable={false}
+          onCancel={() => this.setState({ waitRuleModal: false })}
         >
           <div className="executable_modal">
             <div className="modal_type">
