@@ -2,7 +2,7 @@
  * @Description: 自愿非自愿规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-17 10:26:48
- * @LastEditTime: 2021-01-08 10:17:15
+ * @LastEditTime: 2021-01-08 11:11:44
  * @LastEditors: wish.WuJunLong
  */
 
@@ -615,6 +615,7 @@ export default class intlStopRule extends Component {
                     <Select
                       placeholder="请选择"
                       mode="multiple"
+                      allowClear
                       onChange={this.modalMultipleRule}
                       value={this.state.modalFrom.applicable_rules}
                     >
