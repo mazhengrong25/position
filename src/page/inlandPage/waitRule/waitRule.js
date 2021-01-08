@@ -2,7 +2,7 @@
  * @Description: 国际等待取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-15 15:58:19
- * @LastEditTime: 2021-01-06 16:10:47
+ * @LastEditTime: 2021-01-08 09:40:15
  * @LastEditors: wish.WuJunLong
  */
 
@@ -112,8 +112,16 @@ export default class intlStopRule extends Component {
         let newData = this.state.searchFrom;
         newData["page_no"] = res.data.data.page_no;
         newData["total_count"] = res.data.data.total_count;
+        let data = res.data.data.datas;
+        data.forEach((item) => {
+          item.limit_settings = item.limit_settings
+            ? JSON.parse(item.limit_settings)
+            : "";
+        });
+
+        console.log(data);
         this.setState({
-          dataList: res.data.data.datas,
+          dataList: data,
           searchFrom: newData,
         });
       } else {
@@ -187,8 +195,8 @@ export default class intlStopRule extends Component {
   async openModal(val) {
     if (val) {
       let data = JSON.parse(JSON.stringify(val));
-      data["setting_text"] = data.limit_settings? JSON.parse(data.limit_settings).setting_text : ''
-      data["handler_time"] = data.limit_settings? JSON.parse(data.limit_settings).handler_time : ''
+      data["setting_text"] = data.limit_settings ? data.limit_settings.setting_text : "";
+      data["handler_time"] = data.limit_settings ? data.limit_settings.handler_time : "";
       data["ticket_type"] =
         data.ticket_type && data.ticket_type.length > 0
           ? [...new Set(data.ticket_type.split("/"))].filter((d) => d)
@@ -208,7 +216,7 @@ export default class intlStopRule extends Component {
         end_refund_fee: "",
         involuntary_switching: true,
         cancel_mode: 1,
-        setting_text: '',
+        setting_text: "",
         handler_time: null,
         suspend_type: 0,
         submit_refund_mode: 1,
@@ -240,7 +248,7 @@ export default class intlStopRule extends Component {
 
   // 弹窗提交按钮
   submitBtn = (val) => {
-    console.log(val)
+    console.log(val);
     this.setState({
       submitLoading: true,
     });
@@ -256,12 +264,12 @@ export default class intlStopRule extends Component {
       newData.ticket_type && newData.ticket_type.length > 1
         ? String(newData.ticket_type).replace(/,/g, "/")
         : String(newData.ticket_type);
-      newData["limit_set"] = {
-        setting_text: newData.setting_text,
-        handler_time: Number(newData.handler_time) || null
-      }
-      delete newData.setting_text
-      delete newData.handler_time
+    newData["limit_set"] = {
+      setting_text: newData.setting_text,
+      handler_time: Number(newData.handler_time) || null,
+    };
+    delete newData.setting_text;
+    delete newData.handler_time;
     // newData["earliest_limit"] = newData["earliest_limit"]
     //   ? Number(newData.earliest_limit)
     //   : 0;
@@ -274,11 +282,11 @@ export default class intlStopRule extends Component {
       : 0;
     console.log(newData["ticket_type"]);
 
-    let type
-    if(val){
-      type = "add"
-      delete newData['key_id']
-    }else{
+    let type;
+    if (val) {
+      type = "add";
+      delete newData["key_id"];
+    } else {
       type = this.state.modalType === "编辑" ? "update" : "add";
     }
 
@@ -313,6 +321,10 @@ export default class intlStopRule extends Component {
         }
       });
     });
+    console.log(dataList)
+    dataList.forEach(item =>{
+      item.limit_settings = JSON.stringify(item.limit_settings)
+    })
     let data = {
       action_code: type,
       rules: dataList,
@@ -514,7 +526,9 @@ export default class intlStopRule extends Component {
             <Column
               title="是否换编"
               dataIndex="is_change_pnr"
-              render={(text) => <>{text === 2?'所有': text === 1 ? "已换编" : "未换编"}</>}
+              render={(text) => (
+                <>{text === 2 ? "所有" : text === 1 ? "已换编" : "未换编"}</>
+              )}
             />
             <Column
               title="退票费判断"
@@ -532,97 +546,57 @@ export default class intlStopRule extends Component {
               )}
             />
             <Column
-              title="可转非自愿"
+              title="匹配非自愿"
               dataIndex="involuntary_switching"
-              render={(text) => <>{text ? "可转非自愿" : "不可转非自愿"}</>}
+              render={(text) => <>{text ? "匹配" : "不匹配"}</>}
             />
             <Column
               title="取位模式"
               render={(text, record) => (
                 <div>
-                  <div style={{ display: record.cancel_mode === 2 ? "block" : "none" }}>
-                    <Tooltip
-                      title={() => (
-                        // <>
-                        //   <p style={{ fontSize: "14px", marginBottom: "5px" }}>
-                        //     最早取位时限
-                        //   </p>
-                        //   <p
-                        //     style={{
-                        //       fontSize: "12px",
-                        //       color: "rgba(255, 255, 255, .8)",
-                        //       minWidth: "200px",
-                        //       marginBottom: "5px",
-                        //     }}
-                        //   >
-                        //     {this.timeStamp(record.earliest_limit)}
-                        //   </p>
-                        //   <p style={{ fontSize: "14px", marginBottom: "5px" }}>
-                        //     实际取位时限
-                        //   </p>
-                        //   <p
-                        //     style={{
-                        //       fontSize: "12px",
-                        //       color: "rgba(255, 255, 255, .8)",
-                        //       minWidth: "200px",
-                        //       marginBottom: "5px",
-                        //     }}
-                        //   >
-                        //     {this.timeStamp(record.execute_limit)}
-                        //   </p>
-                        //   <p style={{ fontSize: "14px", marginBottom: "5px" }}>
-                        //     最晚取位时限
-                        //   </p>
-                        //   <p
-                        //     style={{
-                        //       fontSize: "12px",
-                        //       color: "rgba(255, 255, 255, .8)",
-                        //       minWidth: "200px",
-                        //       marginBottom: "5px",
-                        //     }}
-                        //   >
-                        //     {this.timeStamp(record.latest_limit)}
-                        //   </p>
-                        // </>
-                      
-                        <>
+                  <Tooltip
+                    style={{ display: record.cancel_mode === 2 ? "block" : "none" }}
+                    title={() => (
+                      <>
                         <p style={{ fontSize: "14px", marginBottom: "5px" }}>
-                        时限代码设置
-                          </p>
-                          <p
-                            style={{
-                              fontSize: "12px",
-                              color: "rgba(255, 255, 255, .8)",
-                              minWidth: "200px",
-                              marginBottom: "5px",
-                            }}
-                          >
-                            {record.limit_settings ? JSON.parse(record.limit_settings).setting_text: "暂无数据"}
-                          </p>
-                          <p style={{ fontSize: "14px", marginBottom: "5px" }}>
+                          时限代码设置
+                        </p>
+                        <p
+                          style={{
+                            fontSize: "12px",
+                            color: "rgba(255, 255, 255, .8)",
+                            minWidth: "200px",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          {record.limit_settings
+                            ? record.limit_settings.setting_text
+                            : "暂无数据"}
+                        </p>
+                        <p style={{ fontSize: "14px", marginBottom: "5px" }}>
                           处理提前时间
-                          </p>
-                          <p
-                            style={{
-                              fontSize: "12px",
-                              color: "rgba(255, 255, 255, .8)",
-                              minWidth: "200px",
-                              marginBottom: "5px",
-                            }}
-                          >
-                            {record.limit_settings ? JSON.parse(record.limit_settings).handler_time + '分钟': "暂无数据"}
-                          </p>
-                        </>
-                      
-                      )}
-                    >
-                      {record.cancel_mode === 1
-                        ? "直接取消"
-                        : record.cancel_mode === 2
-                        ? "按时限取消"
-                        : record.cancel_mode}
-                    </Tooltip>
-                  </div>
+                        </p>
+                        <p
+                          style={{
+                            fontSize: "12px",
+                            color: "rgba(255, 255, 255, .8)",
+                            minWidth: "200px",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          {record.limit_settings
+                            ? record.limit_settings.handler_time + "分钟"
+                            : "暂无数据"}
+                        </p>
+                      </>
+                    )}
+                  >
+                    {record.cancel_mode === 1
+                      ? "直接取消"
+                      : record.cancel_mode === 2
+                      ? "按时限取消"
+                      : record.cancel_mode}
+                  </Tooltip>
                   <div style={{ display: record.cancel_mode === 1 ? "block" : "none" }}>
                     {record.cancel_mode === 1
                       ? "直接取消"
@@ -849,7 +823,7 @@ export default class intlStopRule extends Component {
 
               <div className="modal_box">
                 <div className="modal_list">
-                  <div className="list_title">可否非自愿</div>
+                  <div className="list_title">匹配非自愿</div>
                   <div className="list_input">
                     <Select
                       labelInValue
@@ -858,8 +832,8 @@ export default class intlStopRule extends Component {
                         value: this.state.modalFrom.involuntary_switching,
                       }}
                     >
-                      <Option value={true}>可转非自愿</Option>
-                      <Option value={false}>不可转非自愿</Option>
+                      <Option value={true}>匹配</Option>
+                      <Option value={false}>不匹配</Option>
                     </Select>
                   </div>
                 </div>
@@ -900,9 +874,9 @@ export default class intlStopRule extends Component {
                   display: this.state.modalFrom.cancel_mode === 2 ? "flex" : "none",
                 }}
               >
-                <div className="modal_list" style={{flex: 1}}>
+                <div className="modal_list" style={{ flex: 1 }}>
                   <div className="list_title">时限代码设置</div>
-                  <div className="list_input" style={{flex: 1, marginRight: '20px'}}>
+                  <div className="list_input" style={{ flex: 1, marginRight: "20px" }}>
                     <Input
                       allowClear
                       placeholder="14D-72H;36H-3H D表示天,H表示小时,-表示时间节点连续,;或空格表示中断"
@@ -923,7 +897,6 @@ export default class intlStopRule extends Component {
                     />
                   </div>
                 </div>
-
               </div>
               <div className="modal_box">
                 <div className="modal_list">
@@ -969,13 +942,25 @@ export default class intlStopRule extends Component {
               </div>
             </div>
           </div>
-        
+
           <div className="modal_footer">
-              <Button type="primary" className="repeat_btn" onClick={() => this.submitBtn('repeat')}>新增</Button>
-              <Button type="default" onClick={() => this.setState({ waitRuleModal: false })}>取消</Button>
-              <Button type="primary" onClick={() => this.submitBtn()}>确定</Button>
+            <Button
+              type="primary"
+              className="repeat_btn"
+              onClick={() => this.submitBtn("repeat")}
+            >
+              新增
+            </Button>
+            <Button
+              type="default"
+              onClick={() => this.setState({ waitRuleModal: false })}
+            >
+              取消
+            </Button>
+            <Button type="primary" onClick={() => this.submitBtn()}>
+              确定
+            </Button>
           </div>
-        
         </Modal>
       </div>
     );

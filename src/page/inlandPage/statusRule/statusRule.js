@@ -2,7 +2,7 @@
  * @Description: 自愿非自愿规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-17 10:26:48
- * @LastEditTime: 2021-01-06 16:19:28
+ * @LastEditTime: 2021-01-08 10:17:15
  * @LastEditors: wish.WuJunLong
  */
 
@@ -139,11 +139,10 @@ export default class intlStopRule extends Component {
       this.setState({
         changesChildType: changeType,
       });
-      
-      data['flight_change_child_type'] = []
+
+      data["flight_change_child_type"] = [];
     }
 
-    
     this.setState({
       modalFrom: data,
     });
@@ -154,6 +153,15 @@ export default class intlStopRule extends Component {
     console.log(val);
     let data = this.state.modalFrom;
     data["flight_change_child_type"] = val ? val : [];
+    this.setState({
+      modalFrom: data,
+    });
+  };
+
+  modalMultipleRule = (val) => {
+    console.log(val);
+    let data = this.state.modalFrom;
+    data["applicable_rules"] = val ? val : [];
     this.setState({
       modalFrom: data,
     });
@@ -192,22 +200,26 @@ export default class intlStopRule extends Component {
       });
       let data = JSON.parse(JSON.stringify(val));
       data["flight_change_child_type"] = data.flight_change_child_type
-        ? data.flight_change_child_type.split("/").filter(function(e){ return e.replace(/(\r\n|\n|\r)/gm,"")})
+        ? data.flight_change_child_type.split("/").filter(function (e) {
+            return e.replace(/(\r\n|\n|\r)/gm, "");
+          })
+        : [];
+
+      data["applicable_rules"] = data.applicable_rules
+        ? data.applicable_rules.split("/").filter(function (e) {
+            return e.replace(/(\r\n|\n|\r)/gm, "");
+          })
         : [];
 
       console.log(data);
       await this.setState({
         modalFrom: data,
       });
-
-
-      
-
     } else {
       let data = {
         rules_type: 1,
         airline_code: "",
-        applicable_rules: null,
+        applicable_rules: [],
         flight_change_type: "",
         flight_change_child_type: [],
         flight_change_diff: null,
@@ -220,7 +232,7 @@ export default class intlStopRule extends Component {
         modalFrom: data,
       });
     }
-    console.log(this.state.changesChildType)
+    console.log(this.state.changesChildType);
     await this.setState({
       modalType: val ? "编辑" : "新增",
       waitRuleModal: true,
@@ -249,6 +261,9 @@ export default class intlStopRule extends Component {
       : 0;
     newData["flight_change_child_type"] = newData.flight_change_child_type
       ? String(newData.flight_change_child_type).replace(/,/g, "/")
+      : "";
+    newData["applicable_rules"] = newData.applicable_rules
+      ? String(newData.applicable_rules).replace(/,/g, "/")
       : "";
     let type;
     if (val) {
@@ -416,13 +431,7 @@ export default class intlStopRule extends Component {
               render={(text) => <>{text === 1 ? "航变规则" : text}</>}
             />
             <Column title="航空公司" dataIndex="airline_code" />
-            <Column
-              title="适用规则"
-              dataIndex="applicable_rules"
-              render={(text) => (
-                <>{text === 1 ? "等待取位规则" : text === 2 ? "无需取位规则" : text}</>
-              )}
-            />
+            <Column title="适用规则" dataIndex="applicable_rules_text" />
             <Column
               title="判断规则"
               dataIndex="check_rules"
@@ -605,14 +614,12 @@ export default class intlStopRule extends Component {
                   <div className="list_input">
                     <Select
                       placeholder="请选择"
-                      labelInValue
-                      onChange={this.modalSelect.bind(this, "applicable_rules")}
-                      value={{
-                        value: this.state.modalFrom.applicable_rules,
-                      }}
+                      mode="multiple"
+                      onChange={this.modalMultipleRule}
+                      value={this.state.modalFrom.applicable_rules}
                     >
-                      <Option value={1}>等待取位规则</Option>
-                      <Option value={2}>无需取位规则</Option>
+                      <Option value={"1"}>等待取位规则</Option>
+                      <Option value={"2"}>无需取位规则</Option>
                     </Select>
                   </div>
                 </div>

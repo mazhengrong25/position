@@ -1,7 +1,7 @@
 /*
  * @Author: mzr
  * @Date: 2020-12-15 15:55:42
- * @LastEditTime: 2021-01-06 15:49:54
+ * @LastEditTime: 2021-01-07 16:57:07
  * @LastEditors: wish.WuJunLong
  * @Description: 新增  无需取位规则
  * @FilePath: \position\src\page\interPage\newStopRule\newStopRule.js
@@ -568,9 +568,9 @@ export default class newStopRule extends Component {
             />
             <Column title="Office号" dataIndex="stop_office_no" />
             <Column
-              title="可转非自愿"
+              title="匹配非自愿"
               dataIndex="involuntary_switching"
-              render={(text) => <>{text ? "可转非自愿 " : "不可转非自愿  "}</>}
+              render={(text) => <>{text ? "匹配 " : "不匹配  "}</>}
             />
             <Column
               title="提交模式"
@@ -615,7 +615,7 @@ export default class newStopRule extends Component {
           width="880px"
           confirmLoading={this.state.submitLoading}
           maskClosable={false}
-          onCancel={() => this.setState({ waitRuleModal: false })}
+          onCancel={() => this.setState({ stopRuleModal: false })}
         >
           <div className="executable_modal">
             <div className="modal_type">
@@ -793,15 +793,15 @@ export default class newStopRule extends Component {
             <div className="modal_type">执行规则(飞前)</div>
             <div className="modal_box">
               <div className="modal_list">
-                <div className="list_title">可转非自愿</div>
+                <div className="list_title">匹配非自愿</div>
                 <div className="list_input">
                   <Select
                     labelInValue
                     onChange={this.modalSelect.bind(this, "involuntary_switching")}
                     value={{ value: this.state.modalFrom.involuntary_switching }}
                   >
-                    <Option value={true}>可转非自愿</Option>
-                    <Option value={false}>不可转非自愿</Option>
+                    <Option value={true}>匹配</Option>
+                    <Option value={false}>不匹配</Option>
                   </Select>
                 </div>
               </div>
