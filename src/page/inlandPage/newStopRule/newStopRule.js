@@ -1,7 +1,7 @@
 /*
  * @Author: mzr
  * @Date: 2020-12-15 15:55:42
- * @LastEditTime: 2021-01-07 16:57:07
+ * @LastEditTime: 2021-01-08 13:53:11
  * @LastEditors: wish.WuJunLong
  * @Description: 新增  无需取位规则
  * @FilePath: \position\src\page\interPage\newStopRule\newStopRule.js
@@ -169,7 +169,7 @@ export default class newStopRule extends Component {
     this.setState({
       stopRuleModal: true,
       modalFrom: data,
-      modalType: "修改",
+      modalType: "编辑",
     });
   }
 
@@ -241,6 +241,8 @@ export default class newStopRule extends Component {
 
   // 弹窗提交按钮
   submitBtn = (val) => {
+
+    console.log(this.state.modalType)
     this.setState({
       submitLoading: true,
     });
