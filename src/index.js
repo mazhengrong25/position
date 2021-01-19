@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 10:59:32
- * @LastEditTime: 2020-12-25 18:18:53
+ * @LastEditTime: 2021-01-14 14:21:17
  * @LastEditors: wish.WuJunLong
  */
 import React from "react";
@@ -19,15 +19,15 @@ import Detail from "./page/inlandPage/detail/detail";  // 取位详情
 import NewIndex from "./page/inlandPage/newIndex/newIndex";  // 国内取位中心列表
 import NewStopRule from "./page/inlandPage/newStopRule/newStopRule"; // 无需取位规则
 import WaitRule from "./page/inlandPage/waitRule/waitRule"; // 等待取位规则
-import StatusRule from "./page/inlandPage/statusRule/statusRule"; // 自愿转非自愿规则
+import StatusRule from "./page/inlandPage/statusRule/statusRule"; // 非自愿规则
+
+import VolunteerRule from "./page/inlandPage/volunteerRule"; // 自愿规则
 // 国际取位
 import interList from "./page/interPage/interIndex/interIndex"; // 国际取位
 import Executable from "./page/interPage/executable/executable"; // 国际取位可执行规则
 import IntelStopRule from "./page/interPage/intelStopRule/intelStopRule";  // 国际无需取位规则
 
 import "./index.scss";
-
-import * as serviceWorker from "./serviceWorker";
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
@@ -66,14 +66,14 @@ ReactDOM.render(
       <Route path="/interList" component={interList}></Route>
       <Route path="/intelNeedRule" component={Executable}></Route>
       <Route path="/intelStopRule" component={IntelStopRule}></Route>
+      {/* 新增 */}
       <Route path="/waitRule" component={WaitRule}></Route>
       <Route path="/statusRule" component={StatusRule}></Route>
-      {/* 新增 */}
       <Route path="/newStopRule" component={NewStopRule}></Route> 
+      <Route path="/volunteerRule" component={VolunteerRule}></Route>
     </Router>
   </ConfigProvider>,
 
   document.getElementById("root")
 );
 
-serviceWorker.unregister();

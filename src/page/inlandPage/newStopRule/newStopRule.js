@@ -1,7 +1,7 @@
 /*
  * @Author: mzr
  * @Date: 2020-12-15 15:55:42
- * @LastEditTime: 2021-01-08 13:53:11
+ * @LastEditTime: 2021-01-12 09:39:49
  * @LastEditors: wish.WuJunLong
  * @Description: 新增  无需取位规则
  * @FilePath: \position\src\page\interPage\newStopRule\newStopRule.js
@@ -91,6 +91,16 @@ export default class newStopRule extends Component {
     });
     await this.getData();
     this.getTicketType();
+  }
+
+  // 搜索按钮
+  async searchBtn(){
+    let data = JSON.parse(JSON.stringify(this.state.searchFrom))
+    data.page_no = 1
+    await this.setState({
+      searchFrom: data,
+    });
+    await this.getData()
   }
 
   // 获取数据
@@ -474,7 +484,7 @@ export default class newStopRule extends Component {
           </div>
 
           <div className="search_list">
-            <Button className="search_btn" type="primary" onClick={() => this.getData()}>
+            <Button className="search_btn" type="primary" onClick={() => this.searchBtn()}>
               搜索
             </Button>
           </div>

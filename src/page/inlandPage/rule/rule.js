@@ -2,7 +2,7 @@
  * @Description:
  * @Author: mazhengrong
  * @Date: 2020-10-12 18:15:28
- * @LastEditTime: 2020-12-25 17:50:07
+ * @LastEditTime: 2021-01-19 17:36:16
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -713,9 +713,9 @@ export default class Rule extends Component {
             <Button onClick={() => this.moreListEdit("启用")}>批量启用</Button>
             <Button onClick={() => this.moreListEdit("停用")}>批量停用</Button>
             <Button onClick={() => this.moreListEdit("删除")}>批量删除</Button>
-            <Button type="link" onClick={() => this.jumpNewAddress("newStopRule")}>无需取位规则</Button>
-            <Button type="link" onClick={() => this.jumpNewAddress("waitRule")}>等待取位规则</Button>
-            <Button type="link" onClick={() => this.jumpNewAddress("statusRule")}>自愿转非自愿规则</Button>
+            <Button type="link" onClick={() => this.jumpNewAddress("volunteerRule")}>自愿规则</Button>
+            {/* <Button type="link" onClick={() => this.jumpNewAddress("waitRule")}>等待取位规则</Button> */}
+            <Button type="link" onClick={() => this.jumpNewAddress("statusRule")}>非自愿规则</Button>
           </Space>
           <Table
             size="small"

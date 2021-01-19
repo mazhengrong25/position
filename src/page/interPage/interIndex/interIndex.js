@@ -2,7 +2,7 @@
  * @Description: 国际取位首页
  * @Author: wish.WuJunLong
  * @Date: 2020-11-16 17:10:51
- * @LastEditTime: 2020-12-25 18:15:09
+ * @LastEditTime: 2021-01-14 09:18:12
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -155,8 +155,8 @@ export default class interIndex extends Component {
         this.setState({
           ticketTypeList: res.data.ticket_types,
         });
-      }else {
-        message.warning(res.data.message)
+      } else {
+        message.warning(res.data.message);
       }
     });
   }
@@ -309,9 +309,7 @@ export default class interIndex extends Component {
           >
             <Radio.Button value="null">
               全部
-              <span className="header_tag">
-                {this.state.staticNumberFrom.total}
-              </span>
+              <span className="header_tag">{this.state.staticNumberFrom.total}</span>
             </Radio.Button>
             <Radio.Button value="0">
               待取位
@@ -323,6 +321,12 @@ export default class interIndex extends Component {
               已取位
               <span className="header_tag">
                 {this.state.staticNumberFrom.cancelled_total}
+              </span>
+            </Radio.Button>
+            <Radio.Button value="2">
+              已航变
+              <span className="header_tag">
+                {this.state.staticNumberFrom.flightchanges_total}
               </span>
             </Radio.Button>
             <Radio.Button value="3">
@@ -338,9 +342,27 @@ export default class interIndex extends Component {
               </span>
             </Radio.Button>
             <Radio.Button value="-1">
-              取消失败
+              取位失败
               <span className="header_tag">
                 {this.state.staticNumberFrom.cancel_failed_total}
+              </span>
+            </Radio.Button>
+            <Radio.Button value="-2">
+              无效编码
+              <span className="header_tag">
+                {this.state.staticNumberFrom.invalid_pnr_total}
+              </span>
+            </Radio.Button>
+            <Radio.Button value="-3">
+              操作失败
+              <span className="header_tag">
+                {this.state.staticNumberFrom.oper_failed_total}
+              </span>
+            </Radio.Button>
+            <Radio.Button value="-4">
+              非法操作
+              <span className="header_tag">
+                {this.state.staticNumberFrom.illegal_oper_total}
               </span>
             </Radio.Button>
           </Radio.Group>
@@ -486,16 +508,10 @@ export default class interIndex extends Component {
                 title="操作"
                 render={(text, record) => (
                   <>
-                    <Tag
-                      color="#5AB957"
-                      onClick={() => this.jumpDetails(record)}
-                    >
+                    <Tag color="#5AB957" onClick={() => this.jumpDetails(record)}>
                       详
                     </Tag>
-                    <Tag
-                      color="#0070E2"
-                      onClick={() => this.openActionModal(record)}
-                    >
+                    <Tag color="#0070E2" onClick={() => this.openActionModal(record)}>
                       处理
                     </Tag>
                   </>
@@ -507,9 +523,7 @@ export default class interIndex extends Component {
               <Column
                 title="数据类型"
                 dataIndex="data_type"
-                render={(text) => (
-                  <>{text === 0 ? "取位" : text === 1 ? "退票" : text}</>
-                )}
+                render={(text) => <>{text === 0 ? "取位" : text === 1 ? "退票" : text}</>}
               />
               <Column
                 title="退票类型"
@@ -611,9 +625,7 @@ export default class interIndex extends Component {
                         </>
                       )}
                     >
-                      <span>
-                        {record.is_flight_changes ? "已航变" : "未航变"}
-                      </span>
+                      <span>{record.is_flight_changes ? "已航变" : "未航变"}</span>
                     </Tooltip>
                   </>
                 )}
@@ -623,9 +635,7 @@ export default class interIndex extends Component {
                 render={(text, record) => (
                   <>
                     <Tag
-                      onClick={() =>
-                        this.jumpRule(record.rule_id, record.exec_state)
-                      }
+                      onClick={() => this.jumpRule(record.rule_id, record.exec_state)}
                       color={record.rule_id ? "#5AB957" : "#AFB9C4"}
                     >
                       {record.rule_id ? "已匹配" : "未匹配"}
@@ -643,9 +653,7 @@ export default class interIndex extends Component {
                         <>
                           <p style={{ width: "240px" }}>
                             已执行时间：
-                            {this.$moment(record.exec_time).format(
-                              "YYYY-MM-DD HH:mm"
-                            )}
+                            {this.$moment(record.exec_time).format("YYYY-MM-DD HH:mm")}
                           </p>
                           <p style={{ width: "240px", marginBottom: "0" }}>
                             预计下次执行时间：
@@ -657,9 +665,7 @@ export default class interIndex extends Component {
                       )}
                     >
                       <span>
-                        {this.$moment(record.exec_time).format(
-                          "YYYY-MM-DD HH:mm"
-                        )}
+                        {this.$moment(record.exec_time).format("YYYY-MM-DD HH:mm")}
                       </span>
                     </Tooltip>
                   </>

@@ -2,7 +2,7 @@
  * @Description: 国际等待取位规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-15 15:58:19
- * @LastEditTime: 2021-01-08 09:40:15
+ * @LastEditTime: 2021-01-12 09:39:06
  * @LastEditors: wish.WuJunLong
  */
 
@@ -102,6 +102,16 @@ export default class intlStopRule extends Component {
       StatusMinute += parseFloat(min) + "分";
     }
     return StatusMinute;
+  }
+
+   // 搜索按钮
+   async searchBtn(){
+    let data = JSON.parse(JSON.stringify(this.state.searchFrom))
+    data.page_no = 1
+    await this.setState({
+      searchFrom: data,
+    });
+    await this.getData()
   }
 
   // 获取待取位规则列表
@@ -266,7 +276,7 @@ export default class intlStopRule extends Component {
         : String(newData.ticket_type);
     newData["limit_set"] = {
       setting_text: newData.setting_text,
-      handler_time: Number(newData.handler_time) || null,
+      handler_time: Number(newData.handler_time) || 0,
     };
     delete newData.setting_text;
     delete newData.handler_time;
@@ -449,7 +459,7 @@ export default class intlStopRule extends Component {
           </div>
 
           <div className="box_list">
-            <Button className="search_btn" type="primary" onClick={() => this.getData()}>
+            <Button className="search_btn" type="primary" onClick={() => this.searchBtn()}>
               搜索
             </Button>
           </div>

@@ -2,7 +2,7 @@
  * @Description: 自愿非自愿规则
  * @Author: wish.WuJunLong
  * @Date: 2020-12-17 10:26:48
- * @LastEditTime: 2021-01-08 11:11:44
+ * @LastEditTime: 2021-01-12 09:38:37
  * @LastEditors: wish.WuJunLong
  */
 
@@ -39,6 +39,7 @@ export default class intlStopRule extends Component {
         total_count: 0,
         rules_type: null,
         airline_code: "",
+        ticket_type: "",
         flight_change_type: "",
         applicable_rules: null,
         rule_state: 0,
@@ -54,6 +55,8 @@ export default class intlStopRule extends Component {
       ticketChangesType: [], // 航变类型
 
       changesChildType: [], // 航变子类型
+
+      ticketTypeList: [], // 票证类型
     };
   }
 
@@ -65,6 +68,20 @@ export default class intlStopRule extends Component {
     });
     await this.getData();
     this.getChangesType();
+    this.getTicketType();
+  }
+
+  // 获取票证类型
+  getTicketType() {
+    axios.get("api/pnr/GetTicketTypes").then((res) => {
+      if (res.data.status === 0) {
+        this.setState({
+          ticketTypeList: res.data.data,
+        });
+      } else {
+        message.warning(res.data.message);
+      }
+    });
   }
 
   // 选择器返回值
@@ -85,6 +102,16 @@ export default class intlStopRule extends Component {
       searchFrom: data,
     });
   };
+
+  // 搜索按钮
+  async searchBtn(){
+    let data = JSON.parse(JSON.stringify(this.state.searchFrom))
+    data.page_no = 1
+    await this.setState({
+      searchFrom: data,
+    });
+    await this.getData()
+  }
 
   // 获取规则列表
   getData() {
@@ -157,6 +184,15 @@ export default class intlStopRule extends Component {
       modalFrom: data,
     });
   };
+   // 票证类型多选
+   modalMultipleType = (val) => {
+    console.log(val);
+    let data = this.state.modalFrom;
+    data["ticket_type"] = val ? val : [];
+    this.setState({
+      modalFrom: data,
+    });
+  };
 
   modalMultipleRule = (val) => {
     console.log(val);
@@ -205,6 +241,11 @@ export default class intlStopRule extends Component {
           })
         : [];
 
+      data["ticket_type"] =
+        data.ticket_type && data.ticket_type.length > 0
+          ? [...new Set(data.ticket_type.split("/"))].filter((d) => d)
+          : [];
+
       data["applicable_rules"] = data.applicable_rules
         ? data.applicable_rules.split("/").filter(function (e) {
             return e.replace(/(\r\n|\n|\r)/gm, "");
@@ -220,6 +261,7 @@ export default class intlStopRule extends Component {
         rules_type: 1,
         airline_code: "",
         applicable_rules: [],
+        ticket_type: [],
         flight_change_type: "",
         flight_change_child_type: [],
         flight_change_diff: null,
@@ -265,6 +307,10 @@ export default class intlStopRule extends Component {
     newData["applicable_rules"] = newData.applicable_rules
       ? String(newData.applicable_rules).replace(/,/g, "/")
       : "";
+    newData["ticket_type"] =
+      newData.ticket_type && newData.ticket_type.length > 1
+        ? String(newData.ticket_type).replace(/,/g, "/")
+        : String(newData.ticket_type);
     let type;
     if (val) {
       type = "add";
@@ -395,7 +441,26 @@ export default class intlStopRule extends Component {
           </div>
 
           <div className="box_list">
-            <Button className="search_btn" type="primary" onClick={() => this.getData()}>
+            <div className="list_title">票证类型</div>
+            <div className="list_item">
+              <Select
+                placeholder="所有"
+                labelInValue
+                allowClear
+                onChange={this.headSelect.bind(this, "ticket_type")}
+                defaultValue={{ value: null }}
+              >
+                {this.state.ticketTypeList.map((item) => (
+                  <Option value={item} key={item}>
+                    {item}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+          </div>
+
+          <div className="box_list">
+            <Button className="search_btn" type="primary" onClick={() => this.searchBtn()}>
               搜索
             </Button>
           </div>
@@ -493,6 +558,26 @@ export default class intlStopRule extends Component {
                   )}
                 >
                   <span>{text.text}</span>
+                </Tooltip>
+              )}
+            />
+
+            <Column
+              title="票证类型"
+              dataIndex="ticket_type"
+              render={(text) => (
+                <Tooltip title={() => <>{text}</>}>
+                  <span
+                    style={{
+                      display: "block",
+                      maxWidth: "100px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {text}
+                  </span>
                 </Tooltip>
               )}
             />
@@ -596,7 +681,7 @@ export default class intlStopRule extends Component {
                 </div>
               </div>
 
-              <div className="modal_box" style={{ marginBottom: "5px" }}>
+              <div className="modal_box">
                 <div className="modal_list">
                   <div className="list_title">航变差大于</div>
                   <div className="list_input refund_fee_input">
@@ -638,6 +723,26 @@ export default class intlStopRule extends Component {
                       {this.state.changesChildType.map((item) => (
                         <Option value={String(item.code)} key={item.code}>
                           {item.name}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+              </div>
+              <div className="modal_box" style={{ marginBottom: "5px" }}>
+                <div className="modal_list">
+                  <div className="list_title">票证类型</div>
+                  <div className="list_input">
+                    <Select
+                      placeholder="请选择"
+                      mode="multiple"
+                      allowClear
+                      onChange={this.modalMultipleType}
+                      value={this.state.modalFrom.ticket_type}
+                    >
+                      {this.state.ticketTypeList.map((item) => (
+                        <Option value={item} key={item}>
+                          {item}
                         </Option>
                       ))}
                     </Select>
