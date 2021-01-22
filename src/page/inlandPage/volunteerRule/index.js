@@ -2,7 +2,7 @@
  * @Description: 自愿规则列表
  * @Author: wish.WuJunLong
  * @Date: 2021-01-14 14:18:23
- * @LastEditTime: 2021-01-19 17:31:45
+ * @LastEditTime: 2021-01-22 14:17:09
  * @LastEditors: wish.WuJunLong
  */
 import React, { Component } from "react";
@@ -24,9 +24,7 @@ import {
   Modal,
   Switch,
   Pagination,
-  Tooltip,
   Spin,
-  InputNumber,
 } from "antd";
 
 const { Column } = Table;
@@ -155,7 +153,7 @@ export default class index extends Component {
     };
 
     if (val === "delete") {
-      let _that = this
+      let _that = this;
       confirm({
         title: "警告",
         icon: <ExclamationCircleOutlined />,
@@ -226,7 +224,7 @@ export default class index extends Component {
     } else {
       let newData = {
         airline_code: "",
-        ticket_type: "",
+        ticket_type: [],
         pnr_operable: null,
         remarks: "",
         suspend_type: "",
@@ -353,13 +351,29 @@ export default class index extends Component {
   };
 
   // 弹窗数据提交
-  submitModal() {
+  async submitModal() {
     let data = JSON.parse(JSON.stringify(this.state.detailData));
+
+    if (
+      !data.airline_code ||
+      data.ticket_type.length < 1 ||
+      !data.pnr_operable ||
+      !data.suspend_type
+    ) {
+      return message.warning("请完善自愿规则");
+    }
+
+    for (let i = 0; i < data.rule_opers.length; i++) {
+      if (!data.rule_opers[i].cabin_codes) {
+        return message.warning("请输入舱位集合");
+      }
+    }
+
     data["ticket_type"] = data.ticket_type
       ? `/${String(data.ticket_type).replace(/,/g, "/")}/`
       : "";
 
-    data.rule_opers.forEach((item) => {
+    await data.rule_opers.forEach((item) => {
       if (item.continuation_rules.length > 0) {
         item["continuation_rules"] = item.continuation_rules
           ? `/${String(item.continuation_rules).replace(/,/g, "/")}/`
@@ -368,7 +382,7 @@ export default class index extends Component {
         item.continuation_rules = "";
       }
     });
-    axios.post("api/DomcVoluntaryRules/set", data).then((res) => {
+    await axios.post("api/DomcVoluntaryRules/set", data).then((res) => {
       if (res.data.status === 0) {
         this.setState({
           modalStatus: false,
@@ -522,6 +536,7 @@ export default class index extends Component {
               <Column
                 title="票证类型"
                 dataIndex="ticket_type"
+                ellipsis={true}
                 render={(text, record, index) => {
                   const obj = {
                     children: text,
